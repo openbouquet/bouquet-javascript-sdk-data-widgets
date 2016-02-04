@@ -168,6 +168,7 @@
         },
 
         clickedVirtualize: function (event) {
+            console.log("Virtualize clicked");
             var t = event.target;
             this.virtualize = (t.checked);
             if (this.materializeDatasetsView === true) {
@@ -177,6 +178,7 @@
 
 
         refreshViewMaterializeDatasets: function () {
+            console.log("test debugger");
             var me = this;
             var viewPort = $(me.viewPort);
             if (this.displayInPopup) {
@@ -317,6 +319,33 @@
             //mprojectButton.$el.click(function () {
             //    me.mprojectModal.render();
             //});
+
+            var dfCollection = new squid_api.view.ProjectCollectionManagementWidget({
+                onSelect: function() {
+                    dfModal.close();
+                }
+            });
+
+            var dfModal = new squid_api.view.ModalView({
+                view : dfCollection
+            });
+
+            var dfButton = new squid_api.view.ProjectSelectorButton({
+                el : '#destProject'
+            });
+
+            dfButton.$el.click(function() {
+                dfModal.render();
+            });
+
+            //var mdomainButton = new squid_api.view.ProjectSelectorButton({
+            //    el: '#destDomain'
+            //});
+            //
+            //mdomainButton.$el.click(function () {
+            //    me.mdomainModal.render();
+            //});
+
 
 
             if (analysis.get("id").projectId) {

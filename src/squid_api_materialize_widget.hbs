@@ -33,29 +33,29 @@
                          title="Use it to define the destination of your current dataset. By default, it will go to our Spark environement.">
                         Destination :
                         <div>
-                            <button class="destSchema btn btn-default squid-api-button-view"
+                            <button class="destSchema"
                                     name="destSchema"
-                                    id="destSchema">Schema
+                                    id="destSchema">Schemas
                             </button>
                         </div>
                         <div>
-                            <div class="destProject project"
+                            <div class="destProject"
                                     name="destProject"
-                                    id="destProject">Project
+                                    id="destProject">Projects
                             </div>
-                        </div>
-                        <div>
-                            <button class="destDomain btn btn-default squid-api-button-view"
-                                    name="destDomain"
-                                    id="destDomain">Domain
-                            </button>
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <a id="view-materializedatasets" class="btn btn-default" target="_blank">Materialize</a>
+                    <a id="materialize-save-as-domain" class="btn btn-default" target="_blank">Save as domain</a>
                 </div>
+
+
+                <div>
+                    <a id="materialize-save-as-tables" class="btn btn-default" target="_blank">Save as table</a>
+                </div>
+
 
             </div>
         {{/if}}
