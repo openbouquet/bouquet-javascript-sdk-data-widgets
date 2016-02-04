@@ -327,13 +327,10 @@
                         var accountID = 0;
                         var facets = config.selection.facets;
                         for (var i = 0; i < facets.length; i++) {
-                            var check = facets[i].id.indexOf("@'shipto_account_name'", facets[i].id.length - "@'shipto_account_name'".length);
-                            if (check !== -1) {
-                                if (facets[i] && facets[i].selectedItems && facets[i].selectedItems.length === 1) {
-                                    var selection = facets[i].selectedItems[0];
-                                    if (selection.attributes && selection.attributes.ID) {
-                                        accountID = selection.attributes.ID;
-                                    }
+                            if (facets[i] && facets[i].selectedItems && facets[i].selectedItems.length === 1) {
+                                var selection = facets[i].selectedItems[0];
+                                if (selection.attributes && selection.attributes.accountID) {
+                                    accountID = selection.attributes.accountID.replace("accountID","");
                                 }
                             }
                         }
