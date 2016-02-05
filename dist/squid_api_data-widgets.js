@@ -789,7 +789,7 @@ function program3(depth0,data) {
   if (helper = helpers.projectName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.projectName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"projectName name=\"projectName\"></div>\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\"";
+    + "\" type=\"text\" id=\"projectName\" name=\"projectName\"></div>\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\"";
   if (helper = helpers.schemaName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.schemaName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -850,7 +850,7 @@ function program3(depth0,data) {
   if (helper = helpers.projectName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.projectName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"projectName name=\"projectName\"></div>\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\"";
+    + "\" type=\"text\" id=\"projectName\" name=\"projectName\"></div>\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\"";
   if (helper = helpers.schemaName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.schemaName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
