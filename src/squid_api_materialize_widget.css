@@ -55,6 +55,7 @@
     z-index: 1;
     padding: 15px 15px;
 	min-height: 15px;
+	min-width: 395px !important;
 }
 
 .squid-api-materialize-panel-popup .ui-dialog-titlebar {

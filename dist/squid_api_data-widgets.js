@@ -429,7 +429,7 @@ function program3(depth0,data) {
   if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\"\r\n                    aria-hidden=\"true\"></button>\r\n\r\n            <div id=\"materializedatasets-view\">\r\n                <div>\r\n                    <button id=\"materialize-save-as-domain\" class=\"btn btn-default\"  data-toggle=\"materialize-virtualize-tooltip\" data-placement=\"bottom\"\r\n                       title=\"Create a virtual dataset. The datasets is not actually reinjected but stays as domain without physical existence.\" target=\"_blank\">Save as domain</button>\r\n                </div>\r\n                <div>\r\n                    <button id=\"materialize-save-as-table\" class=\"btn btn-default\" data-toggle=\"materialize-materialize-tooltip\" data-placement=\"bottom\"\r\n                       title=\"Create a physical dataset. The datasets/table is created on the specified database.\" target=\"_blank\">Save as table</button>\r\n                </div>\r\n            </div>\r\n        ";
+    + "\" data-clavier=\"true\"\r\n                    aria-hidden=\"true\"></button>\r\n\r\n            <div id=\"materializedatasets-view\">\r\n                <div>\r\n                    <button id=\"materialize-save-as-domain\" class=\"btn btn-default\"  data-toggle=\"materialize-virtualize-tooltip\" data-placement=\"bottom\"\r\n                       title=\"Create a virtual dataset. The datasets is not actually reinjected but stays as domain without physical existence.\" target=\"_blank\">Save as domain</button>\r\n                </div>\r\n                <div>\r\n                    <button id=\"materialize-save-as-table\" class=\"btn btn-default\" data-toggle=\"materialize-materialize-tooltip\" data-placement=\"bottom\"\r\n                       title=\"Create a physical dataset. The datasets/table is created on the specified database.\" target=\"_blank\">Save as table</button>\r\n                </div>\r\n                <div>\r\n                    <button id=\"materialize-save-on-spark\" class=\"btn btn-default\" data-toggle=\"materialize-spark-tooltip\" data-placement=\"bottom\"\r\n                            title=\"Send the dataset to spark\" target=\"_blank\">Save on Spark</button>\r\n                </div>\r\n            </div>\r\n        ";
   return buffer;
   }
 
@@ -785,15 +785,15 @@ function program3(depth0,data) {
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"name\" name=\"name\"></div>\r\n                </div>\r\n                <div id=\"saveastable-view\">\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\"";
-  if (helper = helpers.schemaName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.schemaName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"schemaName\" name=\"schemaName\"></div>\r\n                    <div><label for=\"projectName\">Project: </label> <input value=\"";
+    + "\" type=\"text\" id=\"name\" name=\"name\"></div>\r\n                </div>\r\n                <div id=\"saveasdomain-view\">\r\n                    <div><label for=\"projectName\">Project: </label> <input value=\"";
   if (helper = helpers.projectName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.projectName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"projectName name=\"projectName\"></div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n    </div>\r\n</div>\r\n<div class=\"squid-api-model-management-footer\">\r\n    <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close without saving</button>\r\n    <button type=\"button\" class=\"btn btn-default save-close\" data-dismiss=\"modal\">Save and Close</button>\r\n</div>\r\n<!--  end of modal - -->\r\n</div>\r\n";
+    + "\" type=\"text\" id=\"projectName name=\"projectName\"></div>\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\"";
+  if (helper = helpers.schemaName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.schemaName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" type=\"text\" id=\"schemaName\" name=\"schemaName\"></div>\r\n\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n    </div>\r\n</div>\r\n<div class=\"squid-api-model-management-footer\">\r\n    <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close without saving</button>\r\n    <button type=\"button\" class=\"btn btn-default save-close\" data-dismiss=\"modal\">Save and Close</button>\r\n</div>\r\n<!--  end of modal - -->\r\n</div>\r\n";
   return buffer;
   });
 
@@ -846,15 +846,68 @@ function program3(depth0,data) {
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"name\" name=\"name\"></div>\r\n                </div>\r\n                <div id=\"saveastable-view\">\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\"";
-  if (helper = helpers.schemaName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.schemaName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"schemaName\" name=\"schemaName\"></div>\r\n                    <div><label for=\"projectName\">Project: </label> <input value=\"";
+    + "\" type=\"text\" id=\"name\" name=\"name\"></div>\r\n                </div>\r\n                <div id=\"saveastable-view\">\r\n                    <div><label for=\"projectName\">Project: </label> <input value=\"";
   if (helper = helpers.projectName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.projectName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"projectName name=\"projectName\"></div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n    </div>\r\n</div>\r\n<div class=\"squid-api-model-management-footer\">\r\n    <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close without saving</button>\r\n    <button type=\"button\" class=\"btn btn-default save-close\" data-dismiss=\"modal\">Save and Close</button>\r\n</div>\r\n<!--  end of modal - -->\r\n</div>\r\n";
+    + "\" type=\"text\" id=\"projectName name=\"projectName\"></div>\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\"";
+  if (helper = helpers.schemaName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.schemaName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" type=\"text\" id=\"schemaName\" name=\"schemaName\"></div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n    </div>\r\n</div>\r\n<div class=\"squid-api-model-management-footer\">\r\n    <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close without saving</button>\r\n    <button type=\"button\" class=\"btn btn-default save-close\" data-dismiss=\"modal\">Save and Close</button>\r\n</div>\r\n<!--  end of modal - -->\r\n</div>\r\n";
+  return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_saveonspark_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\r\n            <button type=\"button\"  class=\"create btn btn-default\">\r\n                <i class=\"fa fa-plus\"></i> New ";
+  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\r\n            </button>\r\n        ";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\r\n                <div class=\"panel panel-default filter-panel\">\r\n                    <div class=\"panel-heading\">\r\n                        <button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n                                data-target=\"";
+  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" data-clavier=\"true\" aria-hidden=\"true\">\r\n                            <i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n                        </button>\r\n                        <h4 class=\"panel-title\" id=\"myModalLabel\">Save</h4>\r\n                    </div>\r\n                <div class=\"panel-body\">\r\n                    <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
+  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" data-clavier=\"true\"\r\n                            aria-hidden=\"true\"></button>\r\n                ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"modal-header\">\r\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\r\n    <h4 class=\"modal-title\" id=\"myModalLabel\">";
+  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</h4>\r\n</div>\r\n<div class=\"modal-body\">\r\n    <div class=\"squid-api-collection-management-widget\">\r\n        ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n        <div class=\"squid-api-data-widgets-saveastable-widget \">\r\n            <div class=\"download-wrapper\">\r\n                ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n\r\n                <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
+  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" data-clavier=\"true\"\r\n                        aria-hidden=\"true\"></button>\r\n                <div style=\"display: inline-block;\">\r\n                    <div><label for=\"name\">Name: </label> <input value=\"";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" type=\"text\" id=\"name\" name=\"name\"></div>\r\n                </div>\r\n                <div id=\"saveastable-view\">\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n    </div>\r\n</div>\r\n<div class=\"squid-api-model-management-footer\">\r\n    <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close without saving</button>\r\n    <button type=\"button\" class=\"btn btn-default save-close\" data-dismiss=\"modal\">Save and Close</button>\r\n</div>\r\n<!--  end of modal - -->\r\n</div>\r\n";
   return buffer;
   });
 
@@ -3330,6 +3383,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         mprojectButton: null,
         saveAsTableModal: null,
         saveAsDomainModal: null,
+        saveOnSparkModal: null,
 
         initialize: function (options) {
             var me = this;
@@ -3428,6 +3482,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             this.saveAsDomainModal = new squid_api.view.ModalView({
                 view: saveAsDomainView
+            });
+
+            var saveOnSparkView = new squid_api.view.SaveOnSpark({
+                model: this.model
+            });
+
+            this.saveOnSparkModal = new squid_api.view.ModalView({
+                view: saveOnSparkView
             });
 
             //var ddfCollection = new api.view.ProjectCollectionManagementWidget({
@@ -3533,7 +3595,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 
         refreshViewMaterializeDatasets: function () {
-            console.log("test debugger");
             var me = this;
             var viewPort = $(me.viewPort);
             if (this.displayInPopup) {
@@ -3629,6 +3690,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         saveAsTable : function(){
             this.saveAsTableModal.render();
+        },
+
+        saveOnSpark : function(){
+            this.saveOnSparkModal.render();
         },
 
         render: function () {
@@ -3765,6 +3830,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             $(this.viewPort).find("#materialize-save-as-table").click(function() {
                 me.saveAsTable();
+            });
+
+            $(this.viewPort).find("#materialize-save-on-spark").click(function() {
+                me.saveOnSpark();
             });
 
             $(this.viewPort).find('#virtualize').mouseover(
@@ -4742,14 +4811,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         displayScripting: true,
         displayCompression: true,
         materializeDatasetsView: false,
-        downloadButtonLabel: "Create Your DataFrame",
-        popupDialogClass: "squid-api-materialize-panel-popup",
-        mdomainCollection: null,
-        mprojectCollection: null,
-        mdomainModal: null,
-        mdomainButton: null,
-        mprojectModal: null,
-        mprojectButton: null,
+        popupDialogClass: "squid-api-saveastable-panel-popup",
         saveAsTableModal: null,
         saveAsDomainModal: null,
         projectName: null,
@@ -4834,23 +4896,18 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 this.popupDialogClass = options.popupDialogClass;
             }
 
-            //var ddfCollection = new api.view.ProjectCollectionManagementWidget({
-            //    onSelect: function() {
-            //        ddfModal.close();
-            //    }
-            //});
+            this.ddfCollection = new squid_api.view.ProjectCollectionManagementWidget({
+                onSelect: function() {
+                    this.ddfModal.close();
+                    $(this.viewPort).show();
+                }
+            });
 
-            //var ddfModal = new api.view.ModalView({
-            //    view : ddfCollection
-            //});
+            this.ddfModal = new squid_api.view.ModalView({
+                view : this.ddfCollection,
+                el : ".modal-content"
+            });
             //
-            //var ddfButton = new api.view.ProjectSelectorButton({
-            //    el : '#destProject'
-            //});
-            //
-            //ddfButton.$el.click(function() {
-            //    ddfModal.render();
-            //});
 
         },
 
@@ -4935,8 +4992,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 "displayInPopup": me.displayInPopup,
                 "materializeDatasetsView": me.materializeDatasetsView,
                 "data-target": me.renderTo,
-                "displayVirtualize": me.displayVirtualize,
-                "virtualize": (me.virtualize),
                 "origin": "https://api.squidsolutions.com",
                 "customerId": squid_api.customerId,
                 "clientId": squid_api.clientId,
@@ -4945,6 +5000,225 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 "schemaName": this.schemaName,
                 "projectName": this.projectName,
                 "typeLabelPlural": "Save as Table",
+            }));
+
+            $(this.viewPort).find(".save-close").click(function() {
+                me.saveMaterializeDatasets();
+            });
+
+
+
+
+            this.ddfButton = new squid_api.view.ProjectSelectorButton({
+                el : '#destProject'
+            });
+            //
+            this.ddfButton.$el.click(function() {
+                //$(this.viewPort).parents.hide();
+                //me.view = me.ddfModal;
+                me.ddfModal.render();
+            });
+            //this.ddfButton.render();
+
+            return this;
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.SaveOnSpark = factory(root.Backbone, root.squid_api);
+}(this, function (Backbone, squid_api) {
+
+    View = Backbone.View.extend({
+
+        template: null,
+        renderTo: null,
+        compression: true,
+        displayInAccordion: false,
+        viewPort: null,
+        selectedFormatIndex: 0,
+        templateData: null,
+        displayScripting: true,
+        displayCompression: true,
+        materializeDatasetsView: false,
+        popupDialogClass: "squid-api-saveonspark-panel-popup",
+        saveAsTableModal: null,
+        saveAsDomainModal: null,
+        projectName: null,
+        schemaName: null,
+
+        initialize: function (options) {
+            var me = this;
+
+            if (this.model.get("analysis")) {
+                this.listenTo(this.model.get("analysis"), 'change', function () {
+                    me.render();
+                    me.enabled();
+                });
+                this.listenTo(this.model, 'change:templateData', function () {
+                    me.enabled();
+                });
+                this.listenTo(this.model, 'change:templateData', function () {
+                    if (this.materializeDatasetsView === true) {
+                        me.refreshViewMaterializeDatasets();
+                        me.enabled();
+                    }
+                });
+                this.listenTo(this.model, 'change:enabled', this.enabled);
+            } else {
+                this.listenTo(this.model, 'change', function () {
+                    me.render();
+                    me.enabled();
+                });
+            }
+            // setup options
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = squid_api.template.squid_api_saveonspark_widget;
+            }
+            if (options.renderTo) {
+                this.renderTo = options.renderTo;
+            }
+            if (options.displayInAccordion) {
+                this.displayInAccordion = true;
+                this.viewPort = this.renderTo;
+            } else {
+                this.viewPort = this.$el;
+            }
+            if (options.displayInPopup) {
+                this.displayInPopup = true;
+            }
+
+            if (options.mprojectCollection) {
+                this.mprojectCollection = options.mprojectCollection;
+            }
+            if (options.mprojectModal) {
+                this.mprojectModal = options.mprojectModal;
+            }
+            if (options.mprojectButton) {
+                this.mprojectButton = options.mprojectButton;
+            }
+
+            if (options.mdomainCollection) {
+                this.mdomainCollection = options.mdomainCollection;
+            }
+            if (options.mdomainModal) {
+                this.mdomainModal = options.mdomainModal;
+            }
+            if (options.mdomainButton) {
+                this.mdomainButton = options.mdomainButton;
+            }
+
+            if (options.materializeDatasetsView) {
+                this.materializeDatasetsView = true;
+            }
+            if (options.downloadButtonLabel) {
+                this.downloadButtonLabel = options.downloadButtonLabel;
+            }
+            if (options.displayScripting === false) {
+                this.displayScripting = false;
+            }
+            if (options.displayCompression === false) {
+                this.displayCompression = false;
+            }
+            if (options.popupDialogClass) {
+                this.popupDialogClass = options.popupDialogClass;
+            }
+
+        },
+
+
+
+        enabled: function () {
+            var viewPort = this.viewPort;
+            if (this.popup) {
+                viewPort = this.popup;
+            }
+            if (this.model.get("enabled")) {
+                this.$el.find("button").prop("disabled", false);
+                viewPort.find("button#download").prop("disabled", false);
+            } else {
+                this.$el.find("button").prop("disabled", true);
+                viewPort.find("button#download").prop("disabled", true);
+            }
+        },
+
+        setModel: function (model) {
+            this.model = model;
+            this.initialize();
+        },
+
+
+
+        saveMaterializeDatasets: function () {
+            var me = this;
+            var viewPort = $(me.viewPort);
+            if (this.displayInPopup) {
+                viewPort = this.popup;
+            }
+            var analysis = this.model.get("analysis");
+            if (!analysis) {
+                analysis = this.model;
+            }
+
+
+            // prepare materialize datasets download link
+            var downloadBtnD = $(me.viewPort).find("#view-materializedatasets");
+            downloadBtnD.addClass("disabled");
+
+            if (analysis.get("id").projectId) {
+                var newdomain = new squid_api.model.InternalanalysisjobModel();
+                newdomain.set(
+                    {
+                        "name": $(this.viewPort).find("#name").val(),
+                        "options": {
+                            "analysisJob": analysis,
+                            "sourceProjectId": analysis.get("id").projectId,
+                            "destProjectId":  "", //save to spark
+                            "destSchema":  $(this.viewPort).find("#schemaName").val()
+                        }
+                    }
+                );
+                newdomain.save();
+            }
+
+
+            //var downloadBtn = viewPort.find("#view-materializedatasets");
+            //downloadBtn.attr("href", downloadAnalysis.url());
+            //downloadBtn.removeClass("disabled");
+        },
+
+
+
+        render: function () {
+            var me = this;
+            var analysis = this.model.get("analysis");
+            if (!analysis) {
+                analysis = this.model;
+            }
+
+            squid_api.getSelectedProject(true).then(function(project) {
+                me.projectName = project.get("id")["projectId"];
+                me.schemaName = project.get("dbSchemas")[0];
+            });
+
+            $(this.viewPort).html(me.template({
+                "displayInAccordion": me.displayInAccordion,
+                "downloadButtonLabel": me.downloadButtonLabel,
+                "displayInPopup": me.displayInPopup,
+                "materializeDatasetsView": me.materializeDatasetsView,
+                "data-target": me.renderTo,
+                "origin": "https://api.squidsolutions.com",
+                "customerId": squid_api.customerId,
+                "clientId": squid_api.clientId,
+                "redirectURI": "https://api.squidsolutions.com",
+                "apiURL": squid_api.apiURL,
+                "schemaName": this.schemaName,
+                "projectName": this.projectName,
+                "typeLabelPlural": "Save on Spark",
             }));
 
             $(this.viewPort).find(".save-close").click(function() {

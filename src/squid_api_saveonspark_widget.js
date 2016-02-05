@@ -1,5 +1,5 @@
 (function (root, factory) {
-    root.squid_api.view.SaveAsTable = factory(root.Backbone, root.squid_api);
+    root.squid_api.view.SaveOnSpark = factory(root.Backbone, root.squid_api);
 }(this, function (Backbone, squid_api) {
 
     View = Backbone.View.extend({
@@ -14,7 +14,7 @@
         displayScripting: true,
         displayCompression: true,
         materializeDatasetsView: false,
-        popupDialogClass: "squid-api-saveastable-panel-popup",
+        popupDialogClass: "squid-api-saveonspark-panel-popup",
         saveAsTableModal: null,
         saveAsDomainModal: null,
         projectName: null,
@@ -48,7 +48,7 @@
             if (options.template) {
                 this.template = options.template;
             } else {
-                this.template = squid_api.template.squid_api_saveastable_widget;
+                this.template = squid_api.template.squid_api_saveonspark_widget;
             }
             if (options.renderTo) {
                 this.renderTo = options.renderTo;
@@ -99,19 +99,6 @@
                 this.popupDialogClass = options.popupDialogClass;
             }
 
-            this.ddfCollection = new squid_api.view.ProjectCollectionManagementWidget({
-                onSelect: function() {
-                    this.ddfModal.close();
-                    $(this.viewPort).show();
-                }
-            });
-
-            this.ddfModal = new squid_api.view.ModalView({
-                view : this.ddfCollection,
-                el : ".modal-content"
-            });
-            //
-
         },
 
 
@@ -161,7 +148,7 @@
                         "options": {
                             "analysisJob": analysis,
                             "sourceProjectId": analysis.get("id").projectId,
-                            "destProjectId":  $(this.viewPort).find("#projectName").val(),
+                            "destProjectId":  "", //save to spark
                             "destSchema":  $(this.viewPort).find("#schemaName").val()
                         }
                     }
@@ -202,26 +189,12 @@
                 "apiURL": squid_api.apiURL,
                 "schemaName": this.schemaName,
                 "projectName": this.projectName,
-                "typeLabelPlural": "Save as Table",
+                "typeLabelPlural": "Save on Spark",
             }));
 
             $(this.viewPort).find(".save-close").click(function() {
                 me.saveMaterializeDatasets();
             });
-
-
-
-
-            this.ddfButton = new squid_api.view.ProjectSelectorButton({
-                el : '#destProject'
-            });
-            //
-            this.ddfButton.$el.click(function() {
-                //$(this.viewPort).parents.hide();
-                //me.view = me.ddfModal;
-                me.ddfModal.render();
-            });
-            //this.ddfButton.render();
 
             return this;
         }

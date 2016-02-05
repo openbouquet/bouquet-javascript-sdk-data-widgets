@@ -25,6 +25,7 @@
         mprojectButton: null,
         saveAsTableModal: null,
         saveAsDomainModal: null,
+        saveOnSparkModal: null,
 
         initialize: function (options) {
             var me = this;
@@ -123,6 +124,14 @@
 
             this.saveAsDomainModal = new squid_api.view.ModalView({
                 view: saveAsDomainView
+            });
+
+            var saveOnSparkView = new squid_api.view.SaveOnSpark({
+                model: this.model
+            });
+
+            this.saveOnSparkModal = new squid_api.view.ModalView({
+                view: saveOnSparkView
             });
 
             //var ddfCollection = new api.view.ProjectCollectionManagementWidget({
@@ -228,7 +237,6 @@
 
 
         refreshViewMaterializeDatasets: function () {
-            console.log("test debugger");
             var me = this;
             var viewPort = $(me.viewPort);
             if (this.displayInPopup) {
@@ -324,6 +332,10 @@
 
         saveAsTable : function(){
             this.saveAsTableModal.render();
+        },
+
+        saveOnSpark : function(){
+            this.saveOnSparkModal.render();
         },
 
         render: function () {
@@ -460,6 +472,10 @@
 
             $(this.viewPort).find("#materialize-save-as-table").click(function() {
                 me.saveAsTable();
+            });
+
+            $(this.viewPort).find("#materialize-save-on-spark").click(function() {
+                me.saveOnSpark();
             });
 
             $(this.viewPort).find('#virtualize').mouseover(
