@@ -7,7 +7,7 @@
                         data-target="{{data-target}}" data-clavier="true" aria-hidden="true">
                     <i class="glyphicon glyphicon-chevron-up"></i>
                 </button>
-                <h4 class="panel-title" id="myModalLabel">Materialize</h4>
+                <h4 class="panel-title" id="myModalLabel">Save</h4>
             </div>
         <div class="panel-body">
             <button type="button" class="close" data-toggle="collapse" data-target="{{data-target}}" data-clavier="true"
@@ -17,46 +17,16 @@
         {{#if materializeDatasetsView}}
             <button type="button" class="close" data-toggle="collapse" data-target="{{data-target}}" data-clavier="true"
                     aria-hidden="true"></button>
-            <div style="display: inline-block;">
-                <div><label for="name">Name: </label> <input type="text" name="name"></div>
-                <div id="virtualize" data-toggle="materialize-virtualize-tooltip" data-placement="left"
-                     title="Use a virtual dataset. The datasets is not actually reinjected but stays as domain without physical existence.">
-                    <label for="virtualize">Virtualize: </label>
-                    <input
-                            type="checkbox" name="virtualize"
-                            {{#if compression}}checked{{/if}}></div>
-            </div>
+
             <div id="materializedatasets-view">
-                <div id="materializedatasets-destination" style="display: inline-block;">
-                    <div id="materialize-destination-tooltip" data-toggle="materialize-destination-tooltip"
-                         data-placement="left"
-                         title="Use it to define the destination of your current dataset. By default, it will go to our Spark environement.">
-                        Destination :
-                        <div>
-                            <button class="destSchema"
-                                    name="destSchema"
-                                    id="destSchema">Schemas
-                            </button>
-                        </div>
-                        <div>
-                            <div class="destProject"
-                                    name="destProject"
-                                    id="destProject">Projects
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div>
-                    <a id="materialize-save-as-domain" class="btn btn-default" target="_blank">Save as domain</a>
+                    <button id="materialize-save-as-domain" class="btn btn-default"  data-toggle="materialize-virtualize-tooltip" data-placement="bottom"
+                       title="Create a virtual dataset. The datasets is not actually reinjected but stays as domain without physical existence." target="_blank">Save as domain</button>
                 </div>
-
-
                 <div>
-                    <a id="materialize-save-as-tables" class="btn btn-default" target="_blank">Save as table</a>
+                    <button id="materialize-save-as-table" class="btn btn-default" data-toggle="materialize-materialize-tooltip" data-placement="bottom"
+                       title="Create a physical dataset. The datasets/table is created on the specified database." target="_blank">Save as table</button>
                 </div>
-
-
             </div>
         {{/if}}
         {{#if displayInAccordion}}
@@ -67,7 +37,7 @@
     {{#if displayInPopup}}
         <a href="#" data-toggle="materialize-tooltip" data-placement="top"
            title="You can use this button to reinject the current dataset. For example, you may want to reinject the new dataset in the same database as an other table to save your current work.">
-            <button type="button" class="btn popup-trigger form-control">Materialize</button>
+            <button type="button" class="btn popup-trigger form-control">Save</button>
         </a>
     {{/if}}
 </div>

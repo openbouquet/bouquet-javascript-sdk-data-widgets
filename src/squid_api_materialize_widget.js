@@ -23,6 +23,8 @@
         mdomainButton: null,
         mprojectModal: null,
         mprojectButton: null,
+        saveAsTableModal: null,
+        saveAsDomainModal: null,
 
         initialize: function (options) {
             var me = this;
@@ -106,18 +108,65 @@
                 this.popupDialogClass = options.popupDialogClass;
             }
 
+            var saveAsTableView = new squid_api.view.SaveAsTable({
+                model: this.model
+            });
+
+            var saveAsDomainView = new squid_api.view.SaveAsDomain({
+                model: this.model
+            });
+
+
+            this.saveAsTableModal = new squid_api.view.ModalView({
+                view: saveAsTableView
+            });
+
+            this.saveAsDomainModal = new squid_api.view.ModalView({
+                view: saveAsDomainView
+            });
+
+            //var ddfCollection = new api.view.ProjectCollectionManagementWidget({
+            //    onSelect: function() {
+            //        ddfModal.close();
+            //    }
+            //});
+
+            //var ddfModal = new api.view.ModalView({
+            //    view : ddfCollection
+            //});
+            //
+            //var ddfButton = new api.view.ProjectSelectorButton({
+            //    el : '#destProject'
+            //});
+            //
+            //ddfButton.$el.click(function() {
+            //    ddfModal.render();
+            //});
+
+        },
+
+        infovirtualize: function (event) {
+            //if ($(this.viewPort).find('.squid-api-materialize-panel-popup')) {
+            $(this.viewPort).find('[data-toggle="materialize-virtualize-tooltip"]').tooltip('enable');
+            $(this.viewPort).find('[data-toggle="materialize-virtualize-tooltip"]').tooltip();
+
+            //}
+        },
+
+        deinfovirtualize: function (event) {
+            $(this.viewPort).find('[data-toggle="materialize-virtualize-tooltip"]').tooltip('disable');
         },
 
         infomaterialize: function (event) {
             //if ($(this.viewPort).find('.squid-api-materialize-panel-popup')) {
-            $(this.viewPort).find('[data-toggle="materialize-tooltip"]').tooltip('enable');
-            $(this.viewPort).find('[data-toggle="materialize-tooltip"]').tooltip();
+            $(this.viewPort).find('[data-toggle="materialize-materialize-tooltip"]').tooltip('enable');
+            $(this.viewPort).find('[data-toggle="materialize-materialize-tooltip"]').tooltip();
 
             //}
         },
 
         deinfomaterialize: function (event) {
-            $(this.viewPort).find('[data-toggle="materialize-tooltip"]').tooltip('disable');
+            $(this.viewPort).find('[data-toggle="materialize-materialize-tooltip"]').tooltip('disable');
         },
 
         infodestination: function (event) {
@@ -128,11 +177,12 @@
             //}
         },
 
-        infovirtualize: function (event) {
-            this.popup.find('[data-toggle="materialize-virtualize-tooltip"]').tooltip('enable');
-            this.popup.find('[data-toggle="materialize-virtualize-tooltip"]').tooltip();
+        infodataset: function (event) {
+            this.popup.find('[data-toggle="materialize-tooltip"]').tooltip('enable');
+            this.popup.find('[data-toggle="materialize-tooltip"]').tooltip();
 
         },
+
 
 
         enabled: function () {
@@ -267,6 +317,15 @@
             }
         },
 
+        saveAsDomain : function(){
+            //Popup
+            this.saveAsDomainModal.render();
+        },
+
+        saveAsTable : function(){
+            this.saveAsTableModal.render();
+        },
+
         render: function () {
             var me = this;
             var analysis = this.model.get("analysis");
@@ -367,9 +426,9 @@
                     });
             }
 
-            $(this.viewPort).find('.squid-api-data-widgets-materialize-widget').mouseover(
+            $(this.viewPort).find('#materialize-save-as-table').mouseover(
                 function (event) {
-                    if (!me.popup.dialog("isOpen")) {
+                    if (me.popup.dialog("isOpen")) {
                         me.infomaterialize(event);
                     } else {
                         me.deinfomaterialize(event);
@@ -377,12 +436,31 @@
                 }
             );
 
-            $(this.viewPort).find('#materializedatasets-view').mouseover(
+            $(this.viewPort).find('#materialize-save-as-domain').mouseover(
                 function (event) {
-                    me.infodestination(event);
-                    me.deinfomaterialize(event);
+                    if (me.popup.dialog("isOpen")) {
+                        me.infovirtualize(event);
+                    } else {
+                        me.deinfovirtualize(event);
+                    }
                 }
             );
+
+            $(this.viewPort).find('[data-toggle="materialize-tooltip"]').mouseover(
+                function (event) {
+                    if (!me.popup.dialog("isOpen")) {
+                        me.infodataset(event);
+                    }
+                }
+            );
+
+            $(this.viewPort).find("#materialize-save-as-domain").click(function() {
+                me.saveAsDomain();
+            });
+
+            $(this.viewPort).find("#materialize-save-as-table").click(function() {
+                me.saveAsTable();
+            });
 
             $(this.viewPort).find('#virtualize').mouseover(
                 function (event) {
