@@ -4901,11 +4901,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             });
 
             this.ddfModal = new squid_api.view.ModalView({
-                view : this.ddfCollection,
-                el : ".modal-content"
+                view : this.ddfCollection
             });
-            //
-
         },
 
 
