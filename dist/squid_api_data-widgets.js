@@ -3258,13 +3258,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                             maxDate = timeFacet.items[0].upperBound;
                         } else {
                             // if no min and max, arbitrary select a 50 years range
-                            minDate = moment().subtract("50", "years").startOf("day").format(squid_api.DATE_FORMAT);
-                            maxDate = moment().endOf("day").format(squid_api.DATE_FORMAT);
+                            minDate = moment().subtract("50", "years").startOf("day").format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000";
+                            maxDate = moment().endOf("day").format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000";
                         }
                         // select a one month date range
                         timeFacet.selectedItems = [{
                             upperBound : maxDate, 
-                            lowerBound : moment(maxDate).subtract("1", "month").format(squid_api.DATE_FORMAT), 
+                            lowerBound : moment(maxDate).subtract("1", "month").format("YYYY-MM-DDTHH:mm:ss.SSS") + "+0000",
                             type : "i"}];
                         for (ix=0; ix<selection.facets.length; ix++) {
                             if (selection.facets[ix].id === timeFacet.id) {
