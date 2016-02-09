@@ -324,7 +324,7 @@ function program12(depth0,data) {
 function program14(depth0,data) {
   
   
-  return "\r\n		<button type=\"button\" class=\"btn popup-trigger form-control\">Export</button>\r\n	";
+  return "\r\n		<button type=\"button\" class=\"btn popup-trigger form-control\">Export <i class=\"fa fa-download\"></i></button>\r\n	";
   }
 
   buffer += "<div class=\"squid-api-data-widgets-export-widget\">\r\n<div class=\"download-wrapper\">\r\n		";
@@ -442,7 +442,7 @@ function program5(depth0,data) {
 function program7(depth0,data) {
   
   
-  return "\r\n        <a href=\"#\" data-toggle=\"materialize-tooltip\" data-placement=\"top\"\r\n           title=\"You can use this button to reinject the current dataset. For example, you may want to reinject the new dataset in the same database as an other table to save your current work.\">\r\n            <button type=\"button\" class=\"btn popup-trigger form-control\">Save</button>\r\n        </a>\r\n    ";
+  return "\r\n        <a href=\"#\" data-toggle=\"materialize-tooltip\" data-placement=\"top\"\r\n           title=\"You can use this button to reinject the current dataset. For example, you may want to reinject the new dataset in the same database as an other table to save your current work.\">\r\n            <button type=\"button\" class=\"btn popup-trigger form-control\">Save <i class=\"fa fa-cloud\"></i></button>\r\n        </a>\r\n    ";
   }
 
   buffer += "<div class=\"squid-api-data-widgets-materialize-widget\">\r\n    <div class=\"download-wrapper\">\r\n        ";
