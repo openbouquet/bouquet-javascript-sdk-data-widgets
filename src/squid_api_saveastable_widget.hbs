@@ -1,0 +1,47 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="myModalLabel">{{typeLabelPlural}}</h4>
+</div>
+<div class="modal-body">
+    <div class="squid-api-collection-management-widget">
+        {{#if createRole}}
+            <button type="button"  class="create btn btn-default">
+                <i class="fa fa-plus"></i> New {{type}}
+            </button>
+        {{/if}}
+        <div class="squid-api-data-widgets-saveastable-widget ">
+            <div class="download-wrapper">
+                {{#if displayInAccordion}}
+                <div class="panel panel-default filter-panel">
+                    <div class="panel-heading">
+                        <button type="button" class="close" data-toggle="collapse"
+                                data-target="{{data-target}}" data-clavier="true" aria-hidden="true">
+                            <i class="glyphicon glyphicon-chevron-up"></i>
+                        </button>
+                        <h4 class="panel-title" id="myModalLabel">Save</h4>
+                    </div>
+                <div class="panel-body">
+                    <button type="button" class="close" data-toggle="collapse" data-target="{{data-target}}" data-clavier="true"
+                            aria-hidden="true"></button>
+                {{/if}}
+
+                <button type="button" class="close" data-toggle="collapse" data-target="{{data-target}}" data-clavier="true"
+                        aria-hidden="true"></button>
+                <div style="display: inline-block;">
+                    <div><label for="name">Name: </label> <input value="{{name}}" type="text" id="name" name="name"></div>
+                </div>
+                <div id="saveastable-view">
+                    <div><label for="projectName">Project: </label> <input value="{{projectName}}" type="text" id="projectName" name="projectName"></div>
+                    <div><label for="schemaName">Schema: </label> <input value="{{schemaName}}" type="text" id="schemaName" name="schemaName"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="squid-api-model-management-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close without saving</button>
+    <button type="button" class="btn btn-default save-close" data-dismiss="modal">Save and Close</button>
+</div>
+<!--  end of modal - -->
+</div>

@@ -1,0 +1,48 @@
+<div class="squid-api-data-widgets-materialize-widget">
+    <div class="download-wrapper">
+        {{#if displayInAccordion}}
+        <div class="panel panel-default filter-panel">
+            <div class="panel-heading">
+                <button type="button" class="close" data-toggle="collapse"
+                        data-target="{{data-target}}" data-clavier="true" aria-hidden="true">
+                    <i class="glyphicon glyphicon-chevron-up"></i>
+                </button>
+                <h4 class="panel-title" id="myModalLabel">Save</h4>
+            </div>
+        <div class="panel-body">
+            <button type="button" class="close" data-toggle="collapse" data-target="{{data-target}}" data-clavier="true"
+                    aria-hidden="true"></button>
+        {{/if}}
+
+        {{#if materializeDatasetsView}}
+            <button type="button" class="close" data-toggle="collapse" data-target="{{data-target}}" data-clavier="true"
+                    aria-hidden="true"></button>
+
+            <div id="materializedatasets-view">
+                <div>
+                    <button id="materialize-save-as-domain" class="btn btn-default"  data-toggle="materialize-virtualize-tooltip" data-placement="bottom"
+                       title="Create a virtual dataset. The datasets is not actually reinjected but stays as domain without physical existence." target="_blank">Save as domain</button>
+                </div>
+                <div>
+                    <button id="materialize-save-as-table" class="btn btn-default" data-toggle="materialize-materialize-tooltip" data-placement="bottom"
+                       title="Create a physical dataset. The datasets/table is created on the specified database." target="_blank">Save as table</button>
+                </div>
+                <div>
+                    <button id="materialize-save-on-spark" class="btn btn-default" data-toggle="materialize-spark-tooltip" data-placement="bottom"
+                            title="Send the dataset to spark" target="_blank">Save on Spark</button>
+                </div>
+            </div>
+        {{/if}}
+        {{#if displayInAccordion}}
+        </div>
+        </div>
+        {{/if}}
+    </div>
+    {{#if displayInPopup}}
+        <a href="#" data-toggle="materialize-tooltip" data-placement="top"
+           title="You can use this button to reinject the current dataset. For example, you may want to reinject the new dataset in the same database as an other table to save your current work.">
+            <button type="button" class="btn popup-trigger form-control">Save <i class="fa fa-cloud"></i></button>
+        </a>
+    {{/if}}
+</div>
+

@@ -1,0 +1,24 @@
+
+
+.squid-api-data-widgets-saveastable-widget #destProject {
+	clear: both;
+	display: block;
+	padding-left: 10px;
+	width: auto;
+}
+
+.squid-api-data-widgets-saveastable-widget #saveastable-view {
+	clear: both;
+	display: block;
+	padding-left: 10px;
+	max-width: 25%;
+}
+
+
+
+.squid-api-materialize-panel-popup .download-wrapper {
+	min-height: 15px !important;
+	min-width: 395px !important;
+}
+
+
