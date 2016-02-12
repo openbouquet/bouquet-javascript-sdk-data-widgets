@@ -30,14 +30,6 @@ A collection of data (from AnalysisJobs) visualization and manipulation widgets.
   * projectManipulateRender : allows new projects to be created / modified directly from the project selector (takes a DOM element)
   * projectAutomaticLogin : if a new project is being created then automatically log the user in if set to true
 
-## DimensionSelector
-*Renders the dimensions of the current Domain as an INPUT.  Selects and modifies the model if selection changes.  Optionally works as a single selection*
-* model : an array of Dimensions
-* options :
-  * template : a custom Handlebars template
-  * dimensionIdList : a list of dimension oids to filter an order the displayed list
-  * dimensionIndex : the index of the dimension which will be changed in the model (single selection mode)
-
 ## DimensionWidget
 *Displays the list of selected dimensions*
 * model : selectedDimensions / chosenDimensions

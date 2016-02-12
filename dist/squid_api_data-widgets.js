@@ -3996,12 +3996,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     var View = Backbone.View.extend({
         template : template,
-
         selectMetric : false,
         noDataMessage: "No Metrics have been chosen",
 
         initialize: function(options) {
             var me = this;
+            this.status = squid_api.model.status;
 
             // setup options
             if (options) {
@@ -4017,22 +4017,18 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
 
             // setup the models
-            if (!this.model) {
-                this.model = squid_api.model.config;
+            if (!this.config) {
+                this.config = squid_api.model.config;
             }
 
-            this.model.on("change:domain", function() {
+            this.config.on("change:domain", function() {
+                me.render();
+            });
+            this.config.on("change:chosenMetrics", function() {
                 me.render();
             });
 
-            this.model.on("change:chosenMetrics", function() {
-                me.render();
-            });
-        },
-
-        setModel: function(model) {
-            this.model = model;
-            this.initialize();
+            this.renderBase();
         },
 
         events: {
@@ -4052,14 +4048,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     var selectedItem = $(item.currentTarget).attr("data-content");
 
                     // Update
-                    this.model.set({"selectedMetric" : selectedItem});
+                    this.config.set({"selectedMetric" : selectedItem});
                 }
             }
         },
 
         renderMetrics: function(metrics) {
-            var me = this;
-            var jsonData = {"chosenMetrics" : [], "noChosenMetrics" : true, "noDataMessage" : this.noDataMessage};
+            this.jsonData.chosenMetrics = [];
             for (var i = 0; i < metrics.length; i++) {
                 // add to the list
                 var option = {
@@ -4067,29 +4062,36 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         "value" : metrics[i].get("oid"),
                         "selectMetric" : this.selectMetric,
                 };
-                jsonData.chosenMetrics.push(option);
+                this.jsonData.chosenMetrics.push(option);
             }
-            if (jsonData.chosenMetrics.length > 0) {
-                jsonData.noChosenMetrics = false;
+            if (this.jsonData.chosenMetrics.length > 0) {
+                this.jsonData.noChosenMetrics = false;
             }
-            var html = me.template(jsonData);
-            me.$el.html(html);
-            me.$el.show();
+            var html = this.template(this.jsonData);
+            this.$el.html(html);
+        },
+
+        renderBase: function() {
+            this.jsonData = {"chosenMetrics" : [], "noChosenMetrics" : true, "noDataMessage" : this.noDataMessage};
+            var html = this.template(this.jsonData);
+            this.$el.html(html);
+            if (this.afterRender) {
+                this.afterRender.call(this);
+            }
         },
 
         render: function() {
             var me = this;
-            var domainOid = this.model.get("domain");
-            var chosenMetrics = this.model.get("chosenMetrics");
-            
-            
+            var domainOid = this.config.get("domain");
+            var chosenMetrics = this.config.get("chosenMetrics");
+
             if (domainOid && (chosenMetrics)) {
                 // prepare all promises
                 var metricPromises = [];
                 for (var cMetrics = 0; cMetrics < chosenMetrics.length; cMetrics++) {
                     var metric = new squid_api.model.MetricModel();
                     metric.set("id", {
-                        "projectId" : this.model.get("project"),
+                        "projectId" : this.config.get("project"),
                         "domainId" : domainOid,
                         "metricId" : chosenMetrics[cMetrics]
                     });
@@ -4109,7 +4111,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     });
                 });
             } else {
-                me.renderMetrics([]);
+                this.renderMetrics([]);
             }
 
             return this;
