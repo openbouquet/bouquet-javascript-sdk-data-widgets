@@ -83,7 +83,7 @@
                 this.staleMessage = options.staleMessage;
             }
             if (d3) {
-                this.d3Formatter = d3.format(",.f");
+                this.d3Formatter = d3.format(",.2f");
             }
             if (options.format) {
                 this.format = options.format;
@@ -375,9 +375,11 @@
                     newRow = {v:[]};
                     for (colIdx = 0; colIdx<results.cols.length; colIdx++) {
                         v = row.v[colIdx];
-                        if (results.cols[colIdx].dataType === "NUMBER") {
-                            if (v.length > 0) {
-                                v = this.format(v);
+                        if (results.cols[colIdx].extendedType) {
+                            if (results.cols[colIdx].extendedType.name === "NUMERIC") {
+                                if (v.length > 0) {
+                                    v = Math.round(v * 100) / 100;
+                                }
                             }
                         }
                         newRow.v.push(v);
