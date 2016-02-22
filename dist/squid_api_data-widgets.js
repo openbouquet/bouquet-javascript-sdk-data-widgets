@@ -921,7 +921,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.staleMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.staleMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\n		</div>\n	</div>\n	<div id=\"widget\">\n\n	</div>\n	<div id=\"legend\" />\n</div>\n";
+    + "</span>\n		</div>\n	</div>\n	<div id=\"not-in-cache\">\n    		<div class=\"reactiveMessage\">\n    			<span><i class=\"fa fa-refresh\"></i>\n    			<br>";
+  if (helper = helpers.notInCacheMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.notInCacheMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>\n    		</div>\n    	</div>\n	<div id=\"widget\">\n\n	</div>\n	<div id=\"legend\" />\n</div>\n";
   return buffer;
   });
 (function(root, factory) {
@@ -5351,6 +5355,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         multiSeries: null,
         height: 400,
         staleMessage : "Click refresh to update",
+        notInCacheMessage : "Your analysis is not stored in the cache",
         renderTo: ".squid-api-data-widgets-timeseries-widget #widget",
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
 
@@ -5391,6 +5396,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     this.template = options.template;
                 } else {
                     this.template = squid_api.template.squid_api_timeseries_widget;
+                }
+                if (options.notInCacheMessage) {
+                    this.notInCacheMessage = options.notInCacheMessage;
                 }
             }
             if (options.configuration) {
@@ -5516,7 +5524,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 this.$el.find(".sq-loading").show();
             }
             if (status === "DONE") {
-                this.$el.html(this.template());
+                this.$el.html(this.template({
+                    notInCacheMessage: this.notInCacheMessage
+                }));
                 this.$el.find("#stale").hide();
                 this.$el.find(".sq-loading").hide();
 
@@ -5525,6 +5535,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
                 if (data.done && results) {
                     this.$el.find(".sq-loading").hide();
+                    this.$el.find("#not-in-cache").hide();
 
                     // data for timeseries
                     var legend = [];
@@ -5555,6 +5566,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     this.configuration.data = dataset;
 
                     MG.data_graphic(this.configuration);
+                } else {
+                    this.$el.find("#not-in-cache").show();
                 }
             }
 
