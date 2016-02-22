@@ -925,7 +925,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.staleMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.staleMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\n		</div>\n	</div>\n	<div id=\"not-in-cache\">\n    		<div class=\"reactiveMessage\">\n    			<span><i class=\"fa fa-refresh\"></i>\n    			<br>";
+    + "</span>\n		</div>\n	</div>\n	<div id=\"not-in-cache\" style=\"display: none;\">\n    		<div class=\"reactiveMessage\">\n    			<span><i class=\"fa fa-refresh\"></i>\n    			<br>";
   if (helper = helpers.notInCacheMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.notInCacheMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
