@@ -28,6 +28,8 @@
 
         rollups : null,
 
+        notInCacheMessage : "Your analysis is not stored in the cache",
+
         staleMessage : "Click refresh to update",
 
         initialize : function(options) {
@@ -81,6 +83,9 @@
             }
             if (options.staleMessage) {
                 this.staleMessage = options.staleMessage;
+            }
+            if (options.notInCacheMessage) {
+                this.notInCacheMessage = options.notInCacheMessage;
             }
             if (d3) {
                 this.d3Formatter = d3.format(",.2f");
@@ -484,7 +489,10 @@
         },
 
         renderBaseViewPort : function() {
-            this.$el.html(this.template({"staleMessage" : this.staleMessage}));
+            this.$el.html(this.template({
+                "staleMessage" : this.staleMessage,
+                "notInCacheMessage" : this.notInCacheMessage
+            }));
             if (this.paging) {
                 this.paginationView = new squid_api.view.PaginationView( {
                     model : this.model,
@@ -513,7 +521,17 @@
                     }
                     this.$el.find("#error").html("");
                 } else {
-                    this.$el.find("#error").html("Error : "+this.model.get("error").message);
+                    var analysis = this.model;
+                    // in case of a multi-analysis model
+                    if (analysis.get("analyses")) {
+                        analysis = analysis.get("analyses")[0];
+                    }
+                    if (! analysis.get("results")) {
+                        this.$el.find("#not-in-cache").show();
+                    } else {
+                        this.$el.find("#not-in-cache").hide();
+                        this.$el.find("#error").html("Error : "+this.model.get("error").message);
+                    }
                 }
                 this.$el.find("#total").show();
                 this.$el.find(".sq-loading").hide();

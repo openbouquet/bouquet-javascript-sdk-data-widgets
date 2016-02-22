@@ -20,7 +20,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.staleMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.staleMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\r\n		</span></div>\r\n	</div>\r\n	<div class=\"footer\">\r\n		<div id=\"total\">\r\n			Showing <span id=\"count-entries\"></span> of <span id=\"total-entries\"></span> entries\r\n		</div>\r\n		<div id=\"pagination\"></div>\r\n	</div>\r\n</div>\r\n";
+    + "\r\n		</span></div>\r\n	</div>\r\n	<div id=\"not-in-cache\" style=\"display: none;\">\r\n		<div class=\"reactiveMessage\"><span><i class=\"fa fa-refresh\"></i><br>\r\n        			";
+  if (helper = helpers.notInCacheMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.notInCacheMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\r\n		</span></div>\r\n		<span>\r\n	</div>\r\n	<div class=\"footer\">\r\n		<div id=\"total\">\r\n			Showing <span id=\"count-entries\"></span> of <span id=\"total-entries\"></span> entries\r\n		</div>\r\n		<div id=\"pagination\"></div>\r\n	</div>\r\n</div>\r\n";
   return buffer;
   });
 
@@ -1337,6 +1341,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         rollups : null,
 
+        notInCacheMessage : "Your analysis is not stored in the cache",
+
         staleMessage : "Click refresh to update",
 
         initialize : function(options) {
@@ -1390,6 +1396,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
             if (options.staleMessage) {
                 this.staleMessage = options.staleMessage;
+            }
+            if (options.notInCacheMessage) {
+                this.notInCacheMessage = options.notInCacheMessage;
             }
             if (d3) {
                 this.d3Formatter = d3.format(",.2f");
@@ -1793,7 +1802,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         renderBaseViewPort : function() {
-            this.$el.html(this.template({"staleMessage" : this.staleMessage}));
+            this.$el.html(this.template({
+                "staleMessage" : this.staleMessage,
+                "notInCacheMessage" : this.notInCacheMessage
+            }));
             if (this.paging) {
                 this.paginationView = new squid_api.view.PaginationView( {
                     model : this.model,
@@ -1822,7 +1834,17 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     }
                     this.$el.find("#error").html("");
                 } else {
-                    this.$el.find("#error").html("Error : "+this.model.get("error").message);
+                    var analysis = this.model;
+                    // in case of a multi-analysis model
+                    if (analysis.get("analyses")) {
+                        analysis = analysis.get("analyses")[0];
+                    }
+                    if (! analysis.get("results")) {
+                        this.$el.find("#not-in-cache").show();
+                    } else {
+                        this.$el.find("#not-in-cache").hide();
+                        this.$el.find("#error").html("Error : "+this.model.get("error").message);
+                    }
                 }
                 this.$el.find("#total").show();
                 this.$el.find(".sq-loading").hide();
