@@ -1825,6 +1825,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
 
             if (this.model.get("status") === "DONE") {
+                this.$el.find("#total").show();
+                this.$el.find(".sq-loading").hide();
+                this.$el.find("#stale").hide();
+                this.$el.find("#not-in-cache").hide();
+                this.$el.find(".sort-direction").show();
+
                 if (!this.model.get("error")) {
                     // display results
                     this.displayTableContent(selector);
@@ -1842,14 +1848,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     if (! analysis.get("results")) {
                         this.$el.find("#not-in-cache").show();
                     } else {
-                        this.$el.find("#not-in-cache").hide();
                         this.$el.find("#error").html("Error : "+this.model.get("error").message);
                     }
                 }
-                this.$el.find("#total").show();
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").hide();
-                this.$el.find(".sort-direction").show();
             }
 
             if (this.model.get("status") === "RUNNING") {
