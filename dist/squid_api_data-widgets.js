@@ -2467,6 +2467,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             // modal wrapper class
             $(this.indexModal.el).addClass(this.modalElementClassName);
 
+            $(this.indexModal.el).find(".modal-dialog").addClass("modal-lg");
+
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
             Check to make sure it has been removed whenever it isn't displayed.
              */
