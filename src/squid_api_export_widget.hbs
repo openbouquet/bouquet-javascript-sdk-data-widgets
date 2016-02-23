@@ -15,11 +15,11 @@
 		<div class="download-formats">
 			<label>Format: </label> 
 			{{#each formats}}
-				<input type="radio" name="format" value="{{format}}" {{#if selected}}checked{{/if}}> {{format}} 
+				<input type="radio" name="format" value="{{format}}" {{#if selected}}checked{{/if}}> <span class="type">{{format}}</span>
 			{{/each}}
 			{{#if displayCompression}}
 				<div style="display: inline-block;">
-					<label>Compression: </label> <input type="checkbox" name="compression" {{#if compression}}checked{{/if}}> gzip
+					<label>Compression: </label> <input type="checkbox" name="compression" {{#if compression}}checked{{/if}}> <span class="type">gzip</span>
 				</div>
 			{{/if }}
 		</div>
