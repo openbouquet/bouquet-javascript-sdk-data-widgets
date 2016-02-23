@@ -236,18 +236,18 @@ function program1(depth0,data) {
 function program3(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n				<input type=\"radio\" name=\"format\" value=\"";
+  buffer += "\r\n				<span class=\"type\">\r\n					<input type=\"radio\" name=\"format\" value=\"";
   if (helper = helpers.format) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.format); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\" ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "> <span class=\"type\">";
+  buffer += "> <span class=\"type-name\">";
   if (helper = helpers.format) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.format); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\r\n			";
+    + "</span>\r\n				</span>\r\n			";
   return buffer;
   }
 function program4(depth0,data) {
@@ -259,10 +259,10 @@ function program4(depth0,data) {
 function program6(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\r\n				<div style=\"display: inline-block;\">\r\n					<label>Compression: </label> <input type=\"checkbox\" name=\"compression\" ";
+  buffer += "\r\n				<div style=\"display: inline-block;\">\r\n					<span class=\"type\">\r\n						<label>Compression: </label> <input type=\"checkbox\" name=\"compression\" ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.compression), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "> <span class=\"type\">gzip</span>\r\n				</div>\r\n			";
+  buffer += "> <span class=\"type-name\">gzip</span>\r\n					</span>\r\n				</div>\r\n			";
   return buffer;
   }
 
