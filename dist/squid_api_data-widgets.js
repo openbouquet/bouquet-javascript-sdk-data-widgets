@@ -327,8 +327,13 @@ function program12(depth0,data) {
 
 function program14(depth0,data) {
   
-  
-  return "\r\n		<button type=\"button\" class=\"btn popup-trigger form-control\">Export <i class=\"fa fa-download\"></i></button>\r\n	";
+  var buffer = "", stack1, helper;
+  buffer += "\r\n		<button type=\"button\" class=\"btn popup-trigger form-control\">";
+  if (helper = helpers.buttonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.buttonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " <i class=\"fa fa-download\"></i></button>\r\n	";
+  return buffer;
   }
 
   buffer += "<div class=\"squid-api-data-widgets-export-widget\">\r\n<div class=\"download-wrapper\">\r\n		";
@@ -2710,6 +2715,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         displayCompression : true,
         materializeDatasetsView : false,
         downloadButtonLabel : "Download your data",
+        buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
 
         initialize : function(options) {
@@ -2775,6 +2781,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
             if (options.popupDialogClass) {
                 this.popupDialogClass = options.popupDialogClass;
+            }
+            if (options.buttonLabel) {
+                this.buttonLabel = options.buttonLabel;
             }
         },
 
@@ -3073,7 +3082,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 "customerId" : squid_api.customerId,
                 "clientId" : squid_api.clientId,
                 "redirectURI":"https://api.squidsolutions.com",
-                "apiURL":squid_api.apiURL
+                "apiURL":squid_api.apiURL,
+                "buttonLabel": this.buttonLabel
                 })
             );
 

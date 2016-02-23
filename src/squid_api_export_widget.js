@@ -17,6 +17,7 @@
         displayCompression : true,
         materializeDatasetsView : false,
         downloadButtonLabel : "Download your data",
+        buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
 
         initialize : function(options) {
@@ -82,6 +83,9 @@
             }
             if (options.popupDialogClass) {
                 this.popupDialogClass = options.popupDialogClass;
+            }
+            if (options.buttonLabel) {
+                this.buttonLabel = options.buttonLabel;
             }
         },
 
@@ -380,7 +384,8 @@
                 "customerId" : squid_api.customerId,
                 "clientId" : squid_api.clientId,
                 "redirectURI":"https://api.squidsolutions.com",
-                "apiURL":squid_api.apiURL
+                "apiURL":squid_api.apiURL,
+                "buttonLabel": this.buttonLabel
                 })
             );
 
