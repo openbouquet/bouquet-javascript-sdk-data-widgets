@@ -216,7 +216,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 this["squid_api"]["template"]["squid_api_export_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
 function program1(depth0,data) {
   
@@ -345,7 +345,11 @@ function program14(depth0,data) {
   buffer += "\r\n			";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayCompression), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n		</div>\r\n			<div>&nbsp;</div>\r\n		<div>\r\n			<button id=\"download\" class=\"btn btn-default\" target=\"_blank\">download<i class=\"fa fa-download\"></i></button>\r\n		</div>\r\n		";
+  buffer += "\r\n		</div>\r\n			<div>&nbsp;</div>\r\n		<div>\r\n			<button id=\"download\" class=\"btn btn-success\" target=\"_blank\">";
+  if (helper = helpers.downloadButtonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.downloadButtonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</button>\r\n		</div>\r\n		";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.sqlView), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n		";
@@ -2717,6 +2721,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         downloadButtonLabel : "Download your data",
         buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
+        downloadButtonLabel : "Download",
 
         initialize : function(options) {
             var me = this;
@@ -2766,6 +2771,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
             if (options.sqlView) {
             	this.sqlView = true;
+            }
+            if (options.downloadButtonLabel) {
+                this.downloadButtonLabel = options.downloadButtonLabel;
             }
             if (options.materializeDatasetsView) {
                 this.materializeDatasetsView = true;
@@ -3083,7 +3091,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 "clientId" : squid_api.clientId,
                 "redirectURI":"https://api.squidsolutions.com",
                 "apiURL":squid_api.apiURL,
-                "buttonLabel": this.buttonLabel
+                "buttonLabel": this.buttonLabel,
+                "downloadButtonLabel" : this.downloadButtonLabel
                 })
             );
 
