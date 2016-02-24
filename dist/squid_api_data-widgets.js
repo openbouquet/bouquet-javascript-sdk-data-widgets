@@ -20,7 +20,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.staleMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.staleMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\r\n		</span></div>\r\n	</div>\r\n	<div class=\"footer\">\r\n		<div id=\"total\">\r\n			Showing <span id=\"count-entries\"></span> of <span id=\"total-entries\"></span> entries\r\n		</div>\r\n		<div id=\"pagination\"></div>\r\n	</div>\r\n</div>\r\n";
+    + "\r\n		</span></div>\r\n	</div>\r\n	<div id=\"not-in-cache\" style=\"display: none;\">\r\n		<div class=\"reactiveMessage\"><span><i class=\"fa fa-refresh\"></i><br>\r\n        			";
+  if (helper = helpers.notInCacheMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.notInCacheMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\r\n		</span></div>\r\n		<span>\r\n	</div>\r\n	<div class=\"footer\">\r\n		<div id=\"total\">\r\n			Showing <span id=\"count-entries\"></span> of <span id=\"total-entries\"></span> entries\r\n		</div>\r\n		<div id=\"pagination\"></div>\r\n	</div>\r\n</div>\r\n";
   return buffer;
   });
 
@@ -921,7 +925,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.staleMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.staleMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\n		</div>\n	</div>\n	<div id=\"widget\">\n\n	</div>\n	<div id=\"legend\" />\n</div>\n";
+    + "</span>\n		</div>\n	</div>\n	<div id=\"not-in-cache\" style=\"display: none;\">\n    		<div class=\"reactiveMessage\">\n    			<span><i class=\"fa fa-refresh\"></i>\n    			<br>";
+  if (helper = helpers.notInCacheMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.notInCacheMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>\n    		</div>\n    	</div>\n	<div id=\"widget\">\n\n	</div>\n	<div id=\"legend\" />\n</div>\n";
   return buffer;
   });
 (function(root, factory) {
@@ -1333,6 +1341,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         rollups : null,
 
+        notInCacheMessage : "Your analysis is not stored in the cache",
+
         staleMessage : "Click refresh to update",
 
         initialize : function(options) {
@@ -1387,8 +1397,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             if (options.staleMessage) {
                 this.staleMessage = options.staleMessage;
             }
+            if (options.notInCacheMessage) {
+                this.notInCacheMessage = options.notInCacheMessage;
+            }
             if (d3) {
-                this.d3Formatter = d3.format(",.f");
+                this.d3Formatter = d3.format(",.2f");
             }
             if (options.format) {
                 this.format = options.format;
@@ -1680,9 +1693,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     newRow = {v:[]};
                     for (colIdx = 0; colIdx<results.cols.length; colIdx++) {
                         v = row.v[colIdx];
-                        if (results.cols[colIdx].dataType === "NUMBER") {
-                            if (v.length > 0) {
-                                v = this.format(v);
+                        if (results.cols[colIdx].extendedType) {
+                            if (results.cols[colIdx].extendedType.name === "NUMERIC") {
+                                if (v.length > 0) {
+                                    v = Math.round(v * 100) / 100;
+                                }
                             }
                         }
                         newRow.v.push(v);
@@ -1787,7 +1802,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         renderBaseViewPort : function() {
-            this.$el.html(this.template({"staleMessage" : this.staleMessage}));
+            this.$el.html(this.template({
+                "staleMessage" : this.staleMessage,
+                "notInCacheMessage" : this.notInCacheMessage
+            }));
             if (this.paging) {
                 this.paginationView = new squid_api.view.PaginationView( {
                     model : this.model,
@@ -1807,6 +1825,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
 
             if (this.model.get("status") === "DONE") {
+                this.$el.find("#total").show();
+                this.$el.find(".sq-loading").hide();
+                this.$el.find("#stale").hide();
+                this.$el.find("#not-in-cache").hide();
+                this.$el.find(".sort-direction").show();
+
                 if (!this.model.get("error")) {
                     // display results
                     this.displayTableContent(selector);
@@ -1816,12 +1840,17 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     }
                     this.$el.find("#error").html("");
                 } else {
-                    this.$el.find("#error").html("Error : "+this.model.get("error").message);
+                    var analysis = this.model;
+                    // in case of a multi-analysis model
+                    if (analysis.get("analyses")) {
+                        analysis = analysis.get("analyses")[0];
+                    }
+                    if (! analysis.get("results")) {
+                        this.$el.find("#not-in-cache").show();
+                    } else {
+                        this.$el.find("#error").html("Error : "+this.model.get("error").message);
+                    }
                 }
-                this.$el.find("#total").show();
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").hide();
-                this.$el.find(".sort-direction").show();
             }
 
             if (this.model.get("status") === "RUNNING") {
@@ -2437,6 +2466,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             // modal wrapper class
             $(this.indexModal.el).addClass(this.modalElementClassName);
+
+            $(this.indexModal.el).find(".modal-dialog").addClass("modal-lg");
 
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
             Check to make sure it has been removed whenever it isn't displayed.
@@ -3996,12 +4027,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     var View = Backbone.View.extend({
         template : template,
-
         selectMetric : false,
         noDataMessage: "No Metrics have been chosen",
 
         initialize: function(options) {
             var me = this;
+            this.status = squid_api.model.status;
 
             // setup options
             if (options) {
@@ -4017,22 +4048,18 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
 
             // setup the models
-            if (!this.model) {
-                this.model = squid_api.model.config;
+            if (!this.config) {
+                this.config = squid_api.model.config;
             }
 
-            this.model.on("change:domain", function() {
+            this.config.on("change:domain", function() {
+                me.render();
+            });
+            this.config.on("change:chosenMetrics", function() {
                 me.render();
             });
 
-            this.model.on("change:chosenMetrics", function() {
-                me.render();
-            });
-        },
-
-        setModel: function(model) {
-            this.model = model;
-            this.initialize();
+            this.renderBase();
         },
 
         events: {
@@ -4052,14 +4079,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     var selectedItem = $(item.currentTarget).attr("data-content");
 
                     // Update
-                    this.model.set({"selectedMetric" : selectedItem});
+                    this.config.set({"selectedMetric" : selectedItem});
                 }
             }
         },
 
         renderMetrics: function(metrics) {
-            var me = this;
-            var jsonData = {"chosenMetrics" : [], "noChosenMetrics" : true, "noDataMessage" : this.noDataMessage};
+            this.jsonData.chosenMetrics = [];
             for (var i = 0; i < metrics.length; i++) {
                 // add to the list
                 var option = {
@@ -4067,29 +4093,36 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         "value" : metrics[i].get("oid"),
                         "selectMetric" : this.selectMetric,
                 };
-                jsonData.chosenMetrics.push(option);
+                this.jsonData.chosenMetrics.push(option);
             }
-            if (jsonData.chosenMetrics.length > 0) {
-                jsonData.noChosenMetrics = false;
+            if (this.jsonData.chosenMetrics.length > 0) {
+                this.jsonData.noChosenMetrics = false;
             }
-            var html = me.template(jsonData);
-            me.$el.html(html);
-            me.$el.show();
+            var html = this.template(this.jsonData);
+            this.$el.html(html);
+        },
+
+        renderBase: function() {
+            this.jsonData = {"chosenMetrics" : [], "noChosenMetrics" : true, "noDataMessage" : this.noDataMessage};
+            var html = this.template(this.jsonData);
+            this.$el.html(html);
+            if (this.afterRender) {
+                this.afterRender.call(this);
+            }
         },
 
         render: function() {
             var me = this;
-            var domainOid = this.model.get("domain");
-            var chosenMetrics = this.model.get("chosenMetrics");
-            
-            
+            var domainOid = this.config.get("domain");
+            var chosenMetrics = this.config.get("chosenMetrics");
+
             if (domainOid && (chosenMetrics)) {
                 // prepare all promises
                 var metricPromises = [];
                 for (var cMetrics = 0; cMetrics < chosenMetrics.length; cMetrics++) {
                     var metric = new squid_api.model.MetricModel();
                     metric.set("id", {
-                        "projectId" : this.model.get("project"),
+                        "projectId" : this.config.get("project"),
                         "domainId" : domainOid,
                         "metricId" : chosenMetrics[cMetrics]
                     });
@@ -4109,7 +4142,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     });
                 });
             } else {
-                me.renderMetrics([]);
+                this.renderMetrics([]);
             }
 
             return this;
@@ -5346,6 +5379,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         multiSeries: null,
         height: 400,
         staleMessage : "Click refresh to update",
+        notInCacheMessage : "Your analysis is not stored in the cache",
         renderTo: ".squid-api-data-widgets-timeseries-widget #widget",
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
 
@@ -5386,6 +5420,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     this.template = options.template;
                 } else {
                     this.template = squid_api.template.squid_api_timeseries_widget;
+                }
+                if (options.notInCacheMessage) {
+                    this.notInCacheMessage = options.notInCacheMessage;
                 }
             }
             if (options.configuration) {
@@ -5511,7 +5548,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 this.$el.find(".sq-loading").show();
             }
             if (status === "DONE") {
-                this.$el.html(this.template());
+                this.$el.html(this.template({
+                    notInCacheMessage: this.notInCacheMessage
+                }));
                 this.$el.find("#stale").hide();
                 this.$el.find(".sq-loading").hide();
 
@@ -5520,6 +5559,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
                 if (data.done && results) {
                     this.$el.find(".sq-loading").hide();
+                    this.$el.find("#not-in-cache").hide();
 
                     // data for timeseries
                     var legend = [];
@@ -5550,6 +5590,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     this.configuration.data = dataset;
 
                     MG.data_graphic(this.configuration);
+                } else {
+                    this.$el.find("#not-in-cache").show();
                 }
             }
 

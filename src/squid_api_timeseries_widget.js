@@ -17,6 +17,7 @@
         multiSeries: null,
         height: 400,
         staleMessage : "Click refresh to update",
+        notInCacheMessage : "Your analysis is not stored in the cache",
         renderTo: ".squid-api-data-widgets-timeseries-widget #widget",
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
 
@@ -57,6 +58,9 @@
                     this.template = options.template;
                 } else {
                     this.template = squid_api.template.squid_api_timeseries_widget;
+                }
+                if (options.notInCacheMessage) {
+                    this.notInCacheMessage = options.notInCacheMessage;
                 }
             }
             if (options.configuration) {
@@ -182,7 +186,9 @@
                 this.$el.find(".sq-loading").show();
             }
             if (status === "DONE") {
-                this.$el.html(this.template());
+                this.$el.html(this.template({
+                    notInCacheMessage: this.notInCacheMessage
+                }));
                 this.$el.find("#stale").hide();
                 this.$el.find(".sq-loading").hide();
 
@@ -191,6 +197,7 @@
 
                 if (data.done && results) {
                     this.$el.find(".sq-loading").hide();
+                    this.$el.find("#not-in-cache").hide();
 
                     // data for timeseries
                     var legend = [];
@@ -221,6 +228,8 @@
                     this.configuration.data = dataset;
 
                     MG.data_graphic(this.configuration);
+                } else {
+                    this.$el.find("#not-in-cache").show();
                 }
             }
 
