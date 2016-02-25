@@ -115,13 +115,25 @@
         events : ({
             "click thead th" : function(event) {
                 if (this.ordering) {
+                    var orderBy = this.config.get("orderBy");
                 	var expressionValue = $(event.currentTarget).attr("data-content");
                 	var obj = {"expression" : {"value" : expressionValue}};
-                	if ($(event.currentTarget).hasClass("ASC")) {
-                		obj.direction = "DESC";
-                    } else {
-                        obj.direction = "ASC";
+                    if (orderBy) {
+                        if (orderBy[0]) {
+                            if (orderBy[0].expression) {
+                                if (orderBy[0].expression.value == expressionValue) {
+                                    if ($(event.currentTarget).hasClass("ASC")) {
+                                        obj.direction = "DESC";
+                                    } else {
+                                        obj.direction = "ASC";
+                                    }
+                                } else {
+                                    obj.direction = "DESC";
+                                }
+                            }
+                        }
                     }
+
                     this.config.set("orderBy", [obj]);
                 }
             }
@@ -532,11 +544,12 @@
                     if (analysis.get("analyses")) {
                         analysis = analysis.get("analyses")[0];
                     }
-                    if (! analysis.get("results")) {
-                        this.$el.find("#not-in-cache").show();
-                    } else {
-                        this.$el.find("#error").html("Error : "+this.model.get("error").message);
-                    }
+                    //if (! analysis.get("results")) {
+                    //    this.$el.find("#not-in-cache").show();
+                    //} else {
+                    //    this.$el.find("#error").html("Error : "+this.model.get("error").message);
+                    //}
+                    this.$el.find("#error").html("Error : "+this.model.get("error").message);
                 }
             }
 

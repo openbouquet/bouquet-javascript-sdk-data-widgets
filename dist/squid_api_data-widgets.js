@@ -216,7 +216,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 this["squid_api"]["template"]["squid_api_export_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
 function program1(depth0,data) {
   
@@ -236,18 +236,18 @@ function program1(depth0,data) {
 function program3(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n				<input type=\"radio\" name=\"format\" value=\"";
+  buffer += "\r\n				<span class=\"type\">\r\n					<input type=\"radio\" name=\"format\" value=\"";
   if (helper = helpers.format) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.format); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\" ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "> ";
+  buffer += "> <span class=\"type-name\">";
   if (helper = helpers.format) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.format); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + " \r\n			";
+    + "</span>\r\n				</span>\r\n			";
   return buffer;
   }
 function program4(depth0,data) {
@@ -259,10 +259,10 @@ function program4(depth0,data) {
 function program6(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\r\n				<div style=\"display: inline-block;\">\r\n					<label>Compression: </label> <input type=\"checkbox\" name=\"compression\" ";
+  buffer += "\r\n				<div style=\"display: inline-block;\">\r\n					<span class=\"type\">\r\n						<label>Compression: </label> <input type=\"checkbox\" name=\"compression\" ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.compression), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "> gzip\r\n				</div>\r\n			";
+  buffer += "> <span class=\"type-name\">gzip</span>\r\n					</span>\r\n				</div>\r\n			";
   return buffer;
   }
 
@@ -327,8 +327,13 @@ function program12(depth0,data) {
 
 function program14(depth0,data) {
   
-  
-  return "\r\n		<button type=\"button\" class=\"btn popup-trigger form-control\">Export <i class=\"fa fa-download\"></i></button>\r\n	";
+  var buffer = "", stack1, helper;
+  buffer += "\r\n		<button type=\"button\" class=\"btn popup-trigger form-control\">";
+  if (helper = helpers.buttonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.buttonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " <i class=\"fa fa-download\"></i></button>\r\n	";
+  return buffer;
   }
 
   buffer += "<div class=\"squid-api-data-widgets-export-widget\">\r\n<div class=\"download-wrapper\">\r\n		";
@@ -340,7 +345,11 @@ function program14(depth0,data) {
   buffer += "\r\n			";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayCompression), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n		</div>\r\n			<div>&nbsp;</div>\r\n		<div>\r\n			<button id=\"download\" class=\"btn btn-default\" target=\"_blank\">download<i class=\"fa fa-download\"></i></button>\r\n		</div>\r\n		";
+  buffer += "\r\n		</div>\r\n			<div>&nbsp;</div>\r\n		<div>\r\n			<button id=\"download\" class=\"btn btn-small btn-sm btn-success\" target=\"_blank\">";
+  if (helper = helpers.downloadButtonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.downloadButtonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</button>\r\n		</div>\r\n		";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.sqlView), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n		";
@@ -1428,13 +1437,25 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         events : ({
             "click thead th" : function(event) {
                 if (this.ordering) {
+                    var orderBy = this.config.get("orderBy");
                 	var expressionValue = $(event.currentTarget).attr("data-content");
                 	var obj = {"expression" : {"value" : expressionValue}};
-                	if ($(event.currentTarget).hasClass("ASC")) {
-                		obj.direction = "DESC";
-                    } else {
-                        obj.direction = "ASC";
+                    if (orderBy) {
+                        if (orderBy[0]) {
+                            if (orderBy[0].expression) {
+                                if (orderBy[0].expression.value == expressionValue) {
+                                    if ($(event.currentTarget).hasClass("ASC")) {
+                                        obj.direction = "DESC";
+                                    } else {
+                                        obj.direction = "ASC";
+                                    }
+                                } else {
+                                    obj.direction = "DESC";
+                                }
+                            }
+                        }
                     }
+
                     this.config.set("orderBy", [obj]);
                 }
             }
@@ -1845,11 +1866,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     if (analysis.get("analyses")) {
                         analysis = analysis.get("analyses")[0];
                     }
-                    if (! analysis.get("results")) {
-                        this.$el.find("#not-in-cache").show();
-                    } else {
-                        this.$el.find("#error").html("Error : "+this.model.get("error").message);
-                    }
+                    //if (! analysis.get("results")) {
+                    //    this.$el.find("#not-in-cache").show();
+                    //} else {
+                    //    this.$el.find("#error").html("Error : "+this.model.get("error").message);
+                    //}
+                    this.$el.find("#error").html("Error : "+this.model.get("error").message);
                 }
             }
 
@@ -2698,7 +2720,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         displayCompression : true,
         materializeDatasetsView : false,
         downloadButtonLabel : "Download your data",
+        buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
+        downloadButtonLabel : "Download",
 
         initialize : function(options) {
             var me = this;
@@ -2749,6 +2773,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             if (options.sqlView) {
             	this.sqlView = true;
             }
+            if (options.downloadButtonLabel) {
+                this.downloadButtonLabel = options.downloadButtonLabel;
+            }
             if (options.materializeDatasetsView) {
                 this.materializeDatasetsView = true;
             }
@@ -2763,6 +2790,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
             if (options.popupDialogClass) {
                 this.popupDialogClass = options.popupDialogClass;
+            }
+            if (options.buttonLabel) {
+                this.buttonLabel = options.buttonLabel;
             }
         },
 
@@ -3061,7 +3091,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 "customerId" : squid_api.customerId,
                 "clientId" : squid_api.clientId,
                 "redirectURI":"https://api.squidsolutions.com",
-                "apiURL":squid_api.apiURL
+                "apiURL":squid_api.apiURL,
+                "buttonLabel": this.buttonLabel,
+                "downloadButtonLabel" : this.downloadButtonLabel
                 })
             );
 
@@ -5591,7 +5623,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
                     MG.data_graphic(this.configuration);
                 } else {
-                    this.$el.find("#not-in-cache").show();
+                    //this.$el.find("#not-in-cache").show();
                 }
             }
 

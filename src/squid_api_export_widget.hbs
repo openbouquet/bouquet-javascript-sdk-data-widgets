@@ -15,17 +15,21 @@
 		<div class="download-formats">
 			<label>Format: </label> 
 			{{#each formats}}
-				<input type="radio" name="format" value="{{format}}" {{#if selected}}checked{{/if}}> {{format}} 
+				<span class="type">
+					<input type="radio" name="format" value="{{format}}" {{#if selected}}checked{{/if}}> <span class="type-name">{{format}}</span>
+				</span>
 			{{/each}}
 			{{#if displayCompression}}
 				<div style="display: inline-block;">
-					<label>Compression: </label> <input type="checkbox" name="compression" {{#if compression}}checked{{/if}}> gzip
+					<span class="type">
+						<label>Compression: </label> <input type="checkbox" name="compression" {{#if compression}}checked{{/if}}> <span class="type-name">gzip</span>
+					</span>
 				</div>
 			{{/if }}
 		</div>
 			<div>&nbsp;</div>
 		<div>
-			<button id="download" class="btn btn-default" target="_blank">download<i class="fa fa-download"></i></button>
+			<button id="download" class="btn btn-small btn-sm btn-success" target="_blank">{{downloadButtonLabel}}</button>
 		</div>
 		{{#if sqlView}}
 			<div>
@@ -57,7 +61,7 @@
 		<form id="download-form" style="visibility: hidden;"></form>
 	</div>
 	{{#if displayInPopup}}
-		<button type="button" class="btn popup-trigger form-control">Export <i class="fa fa-download"></i></button>
+		<button type="button" class="btn popup-trigger form-control">{{buttonLabel}} <i class="fa fa-download"></i></button>
 	{{/if}}
 </div>
 

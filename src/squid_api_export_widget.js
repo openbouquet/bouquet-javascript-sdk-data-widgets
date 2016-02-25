@@ -17,7 +17,9 @@
         displayCompression : true,
         materializeDatasetsView : false,
         downloadButtonLabel : "Download your data",
+        buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
+        downloadButtonLabel : "Download",
 
         initialize : function(options) {
             var me = this;
@@ -68,6 +70,9 @@
             if (options.sqlView) {
             	this.sqlView = true;
             }
+            if (options.downloadButtonLabel) {
+                this.downloadButtonLabel = options.downloadButtonLabel;
+            }
             if (options.materializeDatasetsView) {
                 this.materializeDatasetsView = true;
             }
@@ -82,6 +87,9 @@
             }
             if (options.popupDialogClass) {
                 this.popupDialogClass = options.popupDialogClass;
+            }
+            if (options.buttonLabel) {
+                this.buttonLabel = options.buttonLabel;
             }
         },
 
@@ -380,7 +388,9 @@
                 "customerId" : squid_api.customerId,
                 "clientId" : squid_api.clientId,
                 "redirectURI":"https://api.squidsolutions.com",
-                "apiURL":squid_api.apiURL
+                "apiURL":squid_api.apiURL,
+                "buttonLabel": this.buttonLabel,
+                "downloadButtonLabel" : this.downloadButtonLabel
                 })
             );
 
