@@ -1866,11 +1866,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     if (analysis.get("analyses")) {
                         analysis = analysis.get("analyses")[0];
                     }
-                    if (! analysis.get("results")) {
-                        this.$el.find("#not-in-cache").show();
-                    } else {
-                        this.$el.find("#error").html("Error : "+this.model.get("error").message);
-                    }
+                    //if (! analysis.get("results")) {
+                    //    this.$el.find("#not-in-cache").show();
+                    //} else {
+                    //    this.$el.find("#error").html("Error : "+this.model.get("error").message);
+                    //}
+                    this.$el.find("#error").html("Error : "+this.model.get("error").message);
                 }
             }
 
@@ -5623,7 +5624,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
                     MG.data_graphic(this.configuration);
                 } else {
-                    this.$el.find("#not-in-cache").show();
+                    //this.$el.find("#not-in-cache").show();
                 }
             }
 

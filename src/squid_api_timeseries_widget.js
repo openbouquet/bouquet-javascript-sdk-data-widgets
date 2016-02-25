@@ -229,7 +229,7 @@
 
                     MG.data_graphic(this.configuration);
                 } else {
-                    this.$el.find("#not-in-cache").show();
+                    //this.$el.find("#not-in-cache").show();
                 }
             }
 
