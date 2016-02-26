@@ -393,9 +393,33 @@
                     for (colIdx = 0; colIdx<results.cols.length; colIdx++) {
                         v = row.v[colIdx];
                         if (results.cols[colIdx].extendedType) {
-                            if (results.cols[colIdx].extendedType.name === "NUMERIC") {
-                                if (v.length > 0) {
-                                    v = Math.round(v * 100) / 100;
+                            var words = results.cols[colIdx].name.split(" ");
+                            var toRound = true;
+                            for (i=0; i<words.length; i++) {
+                                if (words[i].toLowerCase() == "duration" || words[i].toLowerCase() == "time") {
+                                    var d = moment.duration(parseInt(v), 'milliseconds');
+                                    var hours = d.asHours();
+                                    var minutes = d.asMinutes();
+                                    var seconds = d.asSeconds();
+                                    if (seconds > 1) {
+                                        toRound = false;
+                                        v = seconds + "s ";
+                                        if (minutes > 1) {
+                                            v = minutes + "m " + v;
+                                            if (hours > 1) {
+                                                v = hours + "m " + v;
+                                            }
+                                        }
+                                    } else {
+                                        v = v;
+                                    }
+                                }
+                            }
+                            if (toRound) {
+                                if (results.cols[colIdx].extendedType.name === "NUMERIC") {
+                                    if (v.length > 0) {
+                                        v = Math.round(v * 100) / 100;
+                                    }
                                 }
                             }
                         }
