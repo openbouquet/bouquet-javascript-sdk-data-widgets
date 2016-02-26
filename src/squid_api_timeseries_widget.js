@@ -264,9 +264,12 @@
                 var data = this.getData();
                 this.results = data.results;
 
-                if (data.done && this.results) {
+                if (data.done && this.results && ! this.model.get("error")) {
                     this.renderGraphic();
                 } else {
+                    if (this.model.get("error")) {
+                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                    }
                     //this.$el.find("#not-in-cache").show();
                 }
             }

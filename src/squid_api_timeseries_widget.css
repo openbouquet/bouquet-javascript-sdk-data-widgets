@@ -39,6 +39,11 @@
 	border-radius: 4px;
 }
 
+.squid-api-data-widgets-timeseries-widget #error {
+	font-size: medium;
+	color: red;
+}
+
 .squid-api-data-widgets-timeseries-widget #slider .ui-slider-handle {
 	border: 1px solid #ccc;
 	background: #fff;

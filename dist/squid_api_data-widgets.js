@@ -938,7 +938,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.notInCacheMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.notInCacheMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\n    		</div>\n    	</div>\n	<div id=\"widget\">\n\n	</div>\n	<div id=\"legend\" />\n</div>\n";
+    + "</span>\n    		</div>\n    	</div>\n	<div id=\"widget\">\n\n	</div>\n	<div id=\"legend\" />\n	<div id=\"error\" />\n</div>\n";
   return buffer;
   });
 (function(root, factory) {
@@ -5683,9 +5683,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 var data = this.getData();
                 this.results = data.results;
 
-                if (data.done && this.results) {
+                if (data.done && this.results && ! this.model.get("error")) {
                     this.renderGraphic();
                 } else {
+                    if (this.model.get("error")) {
+                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                    }
                     //this.$el.find("#not-in-cache").show();
                 }
             }
