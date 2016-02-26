@@ -5415,6 +5415,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         notInCacheMessage : "Your analysis is not stored in the cache",
         renderTo: ".squid-api-data-widgets-timeseries-widget #widget",
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
+        legendState: {},
 
         initialize : function(options) {
             this.config = squid_api.model.config;
@@ -5570,14 +5571,27 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         events: {
             "click #legend span": function(event) {
-                var item = _.findWhere(this.results.cols, {name: event.target.textContent.substring(2).slice(0, -2)});
+                // obtain column data when clicking on a legend item
+                var name = event.target.textContent.substring(2).slice(0, -2);
+                var text = $(event.target).text();
+                var item = _.findWhere(this.results.cols, {name: name});
                 var index = _.indexOf(this.results.cols, item);
+                var enabled = true;
                 if (this.results.cols[index].enabled || this.results.cols[index].enabled === undefined) {
                     this.results.cols[index].enabled = false;
+                    enabled = false;
                 } else {
                     this.results.cols[index].enabled = true;
                 }
+                this.legendState[text] = enabled;
+                // re-render
                 this.renderGraphic();
+                // apply classes on legend
+                for (var x in this.legendState) {
+                    if (! this.legendState[x]) {
+                        this.$el.find("#legend span:contains(" + x + ")").addClass("disactive");
+                    }
+                }
             }
         },
 
