@@ -1718,12 +1718,17 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                             var words = results.cols[colIdx].name.split(" ");
                             var toRound = true;
                             for (i=0; i<words.length; i++) {
+                                // see if column header contains the text duration / time
                                 if (words[i].toLowerCase() == "duration" || words[i].toLowerCase() == "time") {
+                                    // parse value with moment
                                     var d = moment.duration(parseInt(v), 'milliseconds');
-                                    var hours = d.asHours();
-                                    var minutes = d.asMinutes();
-                                    var seconds = d.asSeconds();
+                                    // obtain hours / minutes & seconds
+                                    var hours = Math.round(d.asHours() * 100) / 100;
+                                    var minutes = Math.round(d.asMinutes() * 100) / 100;
+                                    var seconds = Math.round(d.asSeconds() * 100) / 100;
+                                    // contruct readable time values
                                     if (seconds > 1) {
+                                        // don't automatically round these numbers (changed to strings)
                                         toRound = false;
                                         v = seconds + "s ";
                                         if (minutes > 1) {
@@ -1733,10 +1738,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                                             }
                                         }
                                     } else {
+                                        // milliseconds by default
                                         v = v;
                                     }
                                 }
                             }
+                            // by default round numeric types
                             if (toRound) {
                                 if (results.cols[colIdx].extendedType.name === "NUMERIC") {
                                     if (v.length > 0) {
