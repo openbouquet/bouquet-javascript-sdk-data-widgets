@@ -1410,7 +1410,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 this.notInCacheMessage = options.notInCacheMessage;
             }
             if (d3) {
-                this.d3Formatter = d3.format(",.2f");
+                this.d3Formatter = d3.format(",");
             }
             if (options.format) {
                 this.format = options.format;
@@ -1747,7 +1747,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                             if (toRound) {
                                 if (results.cols[colIdx].extendedType.name === "NUMERIC") {
                                     if (v.length > 0) {
-                                        v = Math.round(v * 100) / 100;
+                                        v = this.d3Formatter(Math.round(v * 100) / 100);
                                     }
                                 }
                             }
