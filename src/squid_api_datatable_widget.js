@@ -393,9 +393,40 @@
                     for (colIdx = 0; colIdx<results.cols.length; colIdx++) {
                         v = row.v[colIdx];
                         if (results.cols[colIdx].extendedType) {
-                            if (results.cols[colIdx].extendedType.name === "NUMERIC") {
-                                if (v.length > 0) {
-                                    v = Math.round(v * 100) / 100;
+                            var words = results.cols[colIdx].name.split(" ");
+                            var toRound = true;
+                            for (i=0; i<words.length; i++) {
+                                // see if column header contains the text duration / time
+                                if (words[i].toLowerCase() == "duration" || words[i].toLowerCase() == "time") {
+                                    // parse value with moment
+                                    var d = moment.duration(parseInt(v), 'milliseconds');
+                                    // obtain hours / minutes & seconds
+                                    var hours = Math.round(d.asHours() * 100) / 100;
+                                    var minutes = Math.round(d.asMinutes() * 100) / 100;
+                                    var seconds = Math.round(d.asSeconds() * 100) / 100;
+                                    // contruct readable time values
+                                    if (seconds > 1) {
+                                        // don't automatically round these numbers (changed to strings)
+                                        toRound = false;
+                                        v = seconds + "s ";
+                                        if (minutes > 1) {
+                                            v = minutes + "m " + v;
+                                            if (hours > 1) {
+                                                v = hours + "m " + v;
+                                            }
+                                        }
+                                    } else {
+                                        // milliseconds by default
+                                        v = v;
+                                    }
+                                }
+                            }
+                            // by default round numeric types
+                            if (toRound) {
+                                if (results.cols[colIdx].extendedType.name === "NUMERIC") {
+                                    if (v.length > 0) {
+                                        v = Math.round(v * 100) / 100;
+                                    }
                                 }
                             }
                         }

@@ -20,6 +20,7 @@
         notInCacheMessage : "Your analysis is not stored in the cache",
         renderTo: ".squid-api-data-widgets-timeseries-widget #widget",
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
+        legendState: {},
 
         initialize : function(options) {
             this.config = squid_api.model.config;
@@ -173,6 +174,74 @@
             MG.data_graphic(this.configuration);
         },
 
+        events: {
+            "click #legend span": function(event) {
+                // obtain column data when clicking on a legend item
+                var name = event.target.textContent.substring(2).slice(0, -2);
+                var text = $(event.target).text();
+                var item = _.findWhere(this.results.cols, {name: name});
+                var index = _.indexOf(this.results.cols, item);
+                var enabled = true;
+                if (this.results.cols[index].enabled || this.results.cols[index].enabled === undefined) {
+                    this.results.cols[index].enabled = false;
+                    enabled = false;
+                } else {
+                    this.results.cols[index].enabled = true;
+                }
+                this.legendState[text] = enabled;
+                // re-render
+                this.renderGraphic();
+                // apply classes on legend
+                for (var x in this.legendState) {
+                    if (! this.legendState[x]) {
+                        this.$el.find("#legend span:contains(" + x + ")").addClass("disactive");
+                    }
+                }
+            }
+        },
+
+        renderGraphic: function() {
+            this.$el.find(".sq-loading").hide();
+            this.$el.find("#not-in-cache").hide();
+
+            // data for timeseries
+            var legend = [];
+            var dataset = [];
+
+            // sort dates
+            this.results.rows = this.sortDates(this.results.rows);
+
+            // get data
+            for (i=1; i<this.results.cols.length; i++) {
+                legend.push(this.results.cols[i].name);
+                var arr = [];
+                for (ix=0; ix<this.results.rows.length; ix++) {
+                    var obj = {};
+                    if (this.results.cols[i].enabled || this.results.cols[i].enabled === undefined) {
+                        obj.date = this.results.rows[ix].v[0];
+                        obj.value = parseFloat(this.results.rows[ix].v[i]);
+                        arr.push(obj);
+                    } else {
+                        obj.date = this.results.rows[ix].v[0];
+                        obj.value = parseFloat(this.results.rows[ix].v[i]);
+                        arr.push(obj);
+                        break;
+                    }
+                }
+                arr = MG.convert.date(arr, 'date');
+                dataset.push(arr);
+            }
+
+            // set width
+            this.configuration.width = $(this.renderTo).width();
+
+            // set legend & data
+            this.configuration.legend = legend;
+            this.configuration.data = dataset;
+
+            MG.data_graphic(this.configuration);
+        },
+
         render : function() {
             var status = this.model.get("status");
             this.YearOverYear = this.config.get("YearOverYear");
@@ -193,42 +262,14 @@
                 this.$el.find(".sq-loading").hide();
 
                 var data = this.getData();
-                var results = data.results;
+                this.results = data.results;
 
-                if (data.done && results) {
-                    this.$el.find(".sq-loading").hide();
-                    this.$el.find("#not-in-cache").hide();
-
-                    // data for timeseries
-                    var legend = [];
-                    var dataset = [];
-
-                    // sort dates
-                    results.rows = this.sortDates(results.rows);
-
-                    // get data
-                    for (i=1; i<results.cols.length; i++) {
-                        legend.push(results.cols[i].name);
-                        var arr = [];
-                        for (ix=0; ix<results.rows.length; ix++) {
-                            var obj = {};
-                            obj.date = results.rows[ix].v[0];
-                            obj.value = parseFloat(results.rows[ix].v[i]);
-                            arr.push(obj);
-                        }
-                        arr = MG.convert.date(arr, 'date');
-                        dataset.push(arr);
-                    }
-
-                    // set width
-                    this.configuration.width = $(this.renderTo).width();
-
-                    // set legend & data
-                    this.configuration.legend = legend;
-                    this.configuration.data = dataset;
-
-                    MG.data_graphic(this.configuration);
+                if (data.done && this.results && ! this.model.get("error")) {
+                    this.renderGraphic();
                 } else {
+                    if (this.model.get("error")) {
+                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                    }
                     //this.$el.find("#not-in-cache").show();
                 }
             }

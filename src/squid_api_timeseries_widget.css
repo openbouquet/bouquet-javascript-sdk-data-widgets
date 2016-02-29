@@ -39,6 +39,11 @@
 	border-radius: 4px;
 }
 
+.squid-api-data-widgets-timeseries-widget #error {
+	font-size: medium;
+	color: red;
+}
+
 .squid-api-data-widgets-timeseries-widget #slider .ui-slider-handle {
 	border: 1px solid #ccc;
 	background: #fff;
@@ -118,6 +123,11 @@
 
 .squid-api-data-widgets-timeseries-widget #legend {
 	margin-left: 50px;
+	cursor: pointer;
+}
+
+.squid-api-data-widgets-timeseries-widget #legend .disactive {
+	opacity: 0.5;
 }
 
 .squid-api-data-widgets-timeseries-widget svg:not(:root) {
