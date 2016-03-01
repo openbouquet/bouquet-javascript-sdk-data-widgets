@@ -3199,7 +3199,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     dialogClass: this.popupDialogClass,
                     autoOpen: false,
                     position: {
-                        my: "left-70 top", at: "left-70 bottom", of: this.$el.find("button.popup-trigger")
+                        my: "left-70 top+13", at: "left-70 bottom", of: this.$el.find("button.popup-trigger")
                     },
                     clickOutside: true, // clicking outside the dialog will close it
                     clickOutsideTrigger: this.$el.find("button.popup-trigger"), // Element (id or class) that triggers the dialog opening
