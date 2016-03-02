@@ -17,9 +17,9 @@
         multiSeries: null,
         height: 400,
         staleMessage : "Click refresh to update",
-        notInCacheMessage : "Your analysis is not stored in the cache",
         renderTo: ".squid-api-data-widgets-timeseries-widget #widget",
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
+        reRunMessage: "Please manually refresh your analysis",
         legendState: {},
 
         initialize : function(options) {
@@ -60,8 +60,8 @@
                 } else {
                     this.template = squid_api.template.squid_api_timeseries_widget;
                 }
-                if (options.notInCacheMessage) {
-                    this.notInCacheMessage = options.notInCacheMessage;
+                if (options.reRunMessage) {
+                    this.reRunMessage = options.reRunMessage;
                 }
             }
             if (options.configuration) {
@@ -202,7 +202,7 @@
 
         renderGraphic: function() {
             this.$el.find(".sq-loading").hide();
-            this.$el.find("#not-in-cache").hide();
+            this.$el.find("#re-run").hide();
 
             // data for timeseries
             var legend = [];
@@ -256,7 +256,7 @@
             }
             if (status === "DONE") {
                 this.$el.html(this.template({
-                    notInCacheMessage: this.notInCacheMessage
+                    reRunMessage: this.reRunMessage
                 }));
                 this.$el.find("#stale").hide();
                 this.$el.find(".sq-loading").hide();
@@ -268,9 +268,12 @@
                     this.renderGraphic();
                 } else {
                     if (this.model.get("error")) {
-                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                        if (this.model.get("error").enableRerun) {
+                            this.$el.find("#re-run").show();
+                        } else {
+                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                        }
                     }
-                    //this.$el.find("#not-in-cache").show();
                 }
             }
 

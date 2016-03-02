@@ -28,7 +28,7 @@
 
         rollups : null,
 
-        notInCacheMessage : "Your analysis is not stored in the cache",
+        reRunMessage : "Please manually refresh your analysis",
 
         staleMessage : "Click refresh to update",
 
@@ -84,8 +84,8 @@
             if (options.staleMessage) {
                 this.staleMessage = options.staleMessage;
             }
-            if (options.notInCacheMessage) {
-                this.notInCacheMessage = options.notInCacheMessage;
+            if (options.reRunMessage) {
+                this.reRunMessage = options.reRunMessage;
             }
             if (d3) {
                 this.d3Formatter = d3.format(",");
@@ -158,7 +158,7 @@
             var me = this;
             var i;
             var metrics;
-            
+
             if (! me.headerInformation) {
                 var parentId = this.config.get("domain");
                 return squid_api.getCustomer().then(function(customer) {
@@ -202,7 +202,7 @@
                 } else {
                     // use analysis columns
                     columns = [];
-                    
+
                     var obj;
                     var facets = this.model.get("facets");
                     if (facets) {
@@ -410,9 +410,9 @@
                                         toRound = false;
                                         v = seconds + "s ";
                                         if (minutes > 1) {
-                                            v = minutes + "m " + v;
+                                            v = minutes + "m ";
                                             if (hours > 1) {
-                                                v = hours + "m " + v;
+                                                v = hours + "m ";
                                             }
                                         }
                                     } else {
@@ -534,7 +534,7 @@
         renderBaseViewPort : function() {
             this.$el.html(this.template({
                 "staleMessage" : this.staleMessage,
-                "notInCacheMessage" : this.notInCacheMessage
+                "reRunMessage" : this.reRunMessage
             }));
             if (this.paging) {
                 this.paginationView = new squid_api.view.PaginationView( {
@@ -558,7 +558,7 @@
                 this.$el.find("#total").show();
                 this.$el.find(".sq-loading").hide();
                 this.$el.find("#stale").hide();
-                this.$el.find("#not-in-cache").hide();
+                this.$el.find("#re-run").hide();
                 this.$el.find(".sort-direction").show();
 
                 if (!this.model.get("error")) {
@@ -575,12 +575,11 @@
                     if (analysis.get("analyses")) {
                         analysis = analysis.get("analyses")[0];
                     }
-                    //if (! analysis.get("results")) {
-                    //    this.$el.find("#not-in-cache").show();
-                    //} else {
-                    //    this.$el.find("#error").html("Error : "+this.model.get("error").message);
-                    //}
-                    this.$el.find("#error").html("Error : "+this.model.get("error").message);
+                    if (this.model.get("error").enableRerun) {
+                        this.$el.find("#re-run").show();
+                    } else {
+                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                    }
                 }
             }
 

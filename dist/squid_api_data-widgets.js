@@ -20,9 +20,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.staleMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.staleMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\r\n		</span></div>\r\n	</div>\r\n	<div id=\"not-in-cache\" style=\"display: none;\">\r\n		<div class=\"reactiveMessage\"><span><i class=\"fa fa-refresh\"></i><br>\r\n        			";
-  if (helper = helpers.notInCacheMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.notInCacheMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+    + "\r\n		</span></div>\r\n	</div>\r\n	<div id=\"re-run\" style=\"display: none;\">\r\n		<div class=\"reactiveMessage\"><span><i class=\"fa fa-refresh\"></i><br>\r\n        	";
+  if (helper = helpers.reRunMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.reRunMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\r\n		</span></div>\r\n		<span>\r\n	</div>\r\n	<div class=\"footer\">\r\n		<div id=\"total\">\r\n			Showing <span id=\"count-entries\"></span> of <span id=\"total-entries\"></span> entries\r\n		</div>\r\n		<div id=\"pagination\"></div>\r\n	</div>\r\n</div>\r\n";
   return buffer;
@@ -934,9 +934,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.staleMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.staleMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\n		</div>\n	</div>\n	<div id=\"not-in-cache\" style=\"display: none;\">\n    		<div class=\"reactiveMessage\">\n    			<span><i class=\"fa fa-refresh\"></i>\n    			<br>";
-  if (helper = helpers.notInCacheMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.notInCacheMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+    + "</span>\n		</div>\n	</div>\n	<div id=\"re-run\" style=\"display: none;\">\n    		<div class=\"reactiveMessage\">\n    			<span><i class=\"fa fa-refresh\"></i>\n    			<br>";
+  if (helper = helpers.reRunMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.reRunMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "</span>\n    		</div>\n    	</div>\n	<div id=\"widget\">\n\n	</div>\n	<div id=\"legend\" />\n	<div id=\"error\" />\n</div>\n";
   return buffer;
@@ -1350,7 +1350,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         rollups : null,
 
-        notInCacheMessage : "Your analysis is not stored in the cache",
+        reRunMessage : "Please manually refresh your analysis",
 
         staleMessage : "Click refresh to update",
 
@@ -1406,8 +1406,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             if (options.staleMessage) {
                 this.staleMessage = options.staleMessage;
             }
-            if (options.notInCacheMessage) {
-                this.notInCacheMessage = options.notInCacheMessage;
+            if (options.reRunMessage) {
+                this.reRunMessage = options.reRunMessage;
             }
             if (d3) {
                 this.d3Formatter = d3.format(",");
@@ -1480,7 +1480,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             var me = this;
             var i;
             var metrics;
-            
+
             if (! me.headerInformation) {
                 var parentId = this.config.get("domain");
                 return squid_api.getCustomer().then(function(customer) {
@@ -1524,7 +1524,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 } else {
                     // use analysis columns
                     columns = [];
-                    
+
                     var obj;
                     var facets = this.model.get("facets");
                     if (facets) {
@@ -1732,9 +1732,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                                         toRound = false;
                                         v = seconds + "s ";
                                         if (minutes > 1) {
-                                            v = minutes + "m " + v;
+                                            v = minutes + "m ";
                                             if (hours > 1) {
-                                                v = hours + "m " + v;
+                                                v = hours + "m ";
                                             }
                                         }
                                     } else {
@@ -1856,7 +1856,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         renderBaseViewPort : function() {
             this.$el.html(this.template({
                 "staleMessage" : this.staleMessage,
-                "notInCacheMessage" : this.notInCacheMessage
+                "reRunMessage" : this.reRunMessage
             }));
             if (this.paging) {
                 this.paginationView = new squid_api.view.PaginationView( {
@@ -1880,7 +1880,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 this.$el.find("#total").show();
                 this.$el.find(".sq-loading").hide();
                 this.$el.find("#stale").hide();
-                this.$el.find("#not-in-cache").hide();
+                this.$el.find("#re-run").hide();
                 this.$el.find(".sort-direction").show();
 
                 if (!this.model.get("error")) {
@@ -1897,12 +1897,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     if (analysis.get("analyses")) {
                         analysis = analysis.get("analyses")[0];
                     }
-                    //if (! analysis.get("results")) {
-                    //    this.$el.find("#not-in-cache").show();
-                    //} else {
-                    //    this.$el.find("#error").html("Error : "+this.model.get("error").message);
-                    //}
-                    this.$el.find("#error").html("Error : "+this.model.get("error").message);
+                    if (this.model.get("error").enableRerun) {
+                        this.$el.find("#re-run").show();
+                    } else {
+                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                    }
                 }
             }
 
@@ -3199,7 +3198,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     dialogClass: this.popupDialogClass,
                     autoOpen: false,
                     position: {
-                        my: "left-70 top", at: "left-70 bottom", of: this.$el.find("button.popup-trigger")
+                        my: "left-70 top+13", at: "left-70 bottom", of: this.$el.find("button.popup-trigger")
                     },
                     clickOutside: true, // clicking outside the dialog will close it
                     clickOutsideTrigger: this.$el.find("button.popup-trigger"), // Element (id or class) that triggers the dialog opening
@@ -5442,9 +5441,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         multiSeries: null,
         height: 400,
         staleMessage : "Click refresh to update",
-        notInCacheMessage : "Your analysis is not stored in the cache",
         renderTo: ".squid-api-data-widgets-timeseries-widget #widget",
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
+        reRunMessage: "Please manually refresh your analysis",
         legendState: {},
 
         initialize : function(options) {
@@ -5485,8 +5484,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 } else {
                     this.template = squid_api.template.squid_api_timeseries_widget;
                 }
-                if (options.notInCacheMessage) {
-                    this.notInCacheMessage = options.notInCacheMessage;
+                if (options.reRunMessage) {
+                    this.reRunMessage = options.reRunMessage;
                 }
             }
             if (options.configuration) {
@@ -5627,7 +5626,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         renderGraphic: function() {
             this.$el.find(".sq-loading").hide();
-            this.$el.find("#not-in-cache").hide();
+            this.$el.find("#re-run").hide();
 
             // data for timeseries
             var legend = [];
@@ -5681,7 +5680,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
             if (status === "DONE") {
                 this.$el.html(this.template({
-                    notInCacheMessage: this.notInCacheMessage
+                    reRunMessage: this.reRunMessage
                 }));
                 this.$el.find("#stale").hide();
                 this.$el.find(".sq-loading").hide();
@@ -5693,9 +5692,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     this.renderGraphic();
                 } else {
                     if (this.model.get("error")) {
-                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                        if (this.model.get("error").enableRerun) {
+                            this.$el.find("#re-run").show();
+                        } else {
+                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                        }
                     }
-                    //this.$el.find("#not-in-cache").show();
                 }
             }
 
