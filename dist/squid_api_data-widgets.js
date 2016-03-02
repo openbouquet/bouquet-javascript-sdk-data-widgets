@@ -1732,9 +1732,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                                         toRound = false;
                                         v = seconds + "s ";
                                         if (minutes > 1) {
-                                            v = minutes + "m " + v;
+                                            v = minutes + "m ";
                                             if (hours > 1) {
-                                                v = hours + "m " + v;
+                                                v = hours + "m ";
                                             }
                                         }
                                     } else {
