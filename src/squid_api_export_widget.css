@@ -70,15 +70,26 @@
 
 .squid-api-export-panel-popup:before {
 	position: absolute;
-    top: -6px;
-    left: 9px;
-    z-index: 2;
-    display: inline-block;
-    border-right: 7px solid transparent;
-    border-bottom: 7px solid #ccc;
-    border-left: 7px solid transparent;
-    border-bottom-color: #fff;
-    content: '';
+	top: -7px;
+	left: 9px;
+	z-index: 2;
+	display: inline-block;
+	border-right: 7px solid transparent;
+	border-bottom: 7px solid #ccc;
+	border-left: 7px solid transparent;
+	content: '';
+}
+
+.squid-api-export-panel-popup:after {
+	position: absolute;
+	top: -6px;
+	left: 10px;
+	z-index: 99;
+	display: inline-block;
+	border-right: 6px solid transparent;
+	border-bottom: 6px solid #fff;
+	border-left: 6px solid transparent;
+	content: '';
 }
 
 .squid-api-export-panel-popup .ui-dialog-titlebar-close {
