@@ -399,7 +399,7 @@
                                 // see if column header contains the text duration / time
                                 if (words[i].toLowerCase() == "duration" || words[i].toLowerCase() == "time") {
                                     // parse value with moment
-                                    var d = moment.duration(parseInt(v), 'milliseconds');
+                                    var d = moment.duration(parseFloat(v), 'milliseconds');
                                     // obtain hours / minutes & seconds
                                     var hours = Math.round(d.asHours() * 100) / 100;
                                     var minutes = Math.round(d.asMinutes() * 100) / 100;
