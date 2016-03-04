@@ -1725,6 +1725,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                                     // obtain hours / minutes & seconds
                                     var hours = d.asHours();
                                     var minutes = d.asMinutes();
+                                    var days = d.asDays();
+                                    var years = d.asYears();
                                     var seconds = d.asSeconds();
                                     var milliseconds = d.asMilliseconds();
                                     var timeData = d._data;
