@@ -1734,7 +1734,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                                         if (minutes > 1) {
                                             v = minutes + "m ";
                                             if (hours > 1) {
-                                                v = hours + "m ";
+                                                v = hours + "h ";
                                             }
                                         }
                                     } else {
