@@ -1750,6 +1750,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                                             }
                                         }
                                     }
+                                } else {
+                                    if (results.cols[colIdx].extendedType.name === "NUMERIC") {
+                                        if (v.length > 0) {
+                                            v = this.d3Formatter(Math.round(v * 100) / 100);
+                                        }
+                                    }
                                 }
                             }
                         }
