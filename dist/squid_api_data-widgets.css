@@ -849,3 +849,13 @@ Pagination
 .squid-api-data-widgets-timeseries-widget svg:not(:root) {
 	overflow: visible;
 }
+
+.squid-api-data-widgets-timeseries-widget #metricselector .squid-api-data-widgets-metric-selector-open ul  {
+	position: absolute;
+	top: 30px;
+}
+
+.squid-api-data-widgets-timeseries-widget button.multiselect {
+	border: none;
+	color: #5f5d5f;
+}
