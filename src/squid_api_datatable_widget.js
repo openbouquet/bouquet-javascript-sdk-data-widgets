@@ -399,33 +399,40 @@
                                 // see if column header contains the text duration / time
                                 if (words[i].toLowerCase() == "duration" || words[i].toLowerCase() == "time") {
                                     // parse value with moment
-                                    var d = moment.duration(parseInt(v), 'milliseconds');
+                                    var d = moment.duration(parseFloat(v), 'milliseconds');
                                     // obtain hours / minutes & seconds
-                                    var hours = Math.round(d.asHours() * 100) / 100;
-                                    var minutes = Math.round(d.asMinutes() * 100) / 100;
-                                    var seconds = Math.round(d.asSeconds() * 100) / 100;
+                                    var hours = d.asHours();
+                                    var minutes = d.asMinutes();
+                                    var days = d.asDays();
+                                    var years = d.asYears();
+                                    var seconds = d.asSeconds();
+                                    var milliseconds = d.asMilliseconds();
+                                    var timeData = d._data;
+
                                     // contruct readable time values
-                                    if (seconds > 1) {
-                                        // don't automatically round these numbers (changed to strings)
-                                        toRound = false;
-                                        v = seconds + "s ";
-                                        if (minutes > 1) {
-                                            v = minutes + "m ";
-                                            if (hours > 1) {
-                                                v = hours + "m ";
+                                    if (milliseconds > 1) {
+                                        v = this.d3Formatter(Math.round(timeData.milliseconds * 100) / 100);
+                                        if (seconds > 1) {
+                                            v = timeData.seconds + "s";
+                                            if (minutes > 1) {
+                                                v = timeData.minutes + "m " + v;
+                                                if (hours > 1) {
+                                                    v = timeData.hours + "h " + v;
+                                                    if (days > 1) {
+                                                        v = timeData.days + "d " + v;
+                                                        if (years > 1) {
+                                                            v = timeData.years + "y " + v;
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
-                                    } else {
-                                        // milliseconds by default
-                                        v = v;
                                     }
-                                }
-                            }
-                            // by default round numeric types
-                            if (toRound) {
-                                if (results.cols[colIdx].extendedType.name === "NUMERIC") {
-                                    if (v.length > 0) {
-                                        v = this.d3Formatter(Math.round(v * 100) / 100);
+                                } else {
+                                    if (results.cols[colIdx].extendedType.name === "NUMERIC") {
+                                        if (v.length > 0) {
+                                            v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
+                                        }
                                     }
                                 }
                             }

@@ -1721,33 +1721,40 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                                 // see if column header contains the text duration / time
                                 if (words[i].toLowerCase() == "duration" || words[i].toLowerCase() == "time") {
                                     // parse value with moment
-                                    var d = moment.duration(parseInt(v), 'milliseconds');
+                                    var d = moment.duration(parseFloat(v), 'milliseconds');
                                     // obtain hours / minutes & seconds
-                                    var hours = Math.round(d.asHours() * 100) / 100;
-                                    var minutes = Math.round(d.asMinutes() * 100) / 100;
-                                    var seconds = Math.round(d.asSeconds() * 100) / 100;
+                                    var hours = d.asHours();
+                                    var minutes = d.asMinutes();
+                                    var days = d.asDays();
+                                    var years = d.asYears();
+                                    var seconds = d.asSeconds();
+                                    var milliseconds = d.asMilliseconds();
+                                    var timeData = d._data;
+
                                     // contruct readable time values
-                                    if (seconds > 1) {
-                                        // don't automatically round these numbers (changed to strings)
-                                        toRound = false;
-                                        v = seconds + "s ";
-                                        if (minutes > 1) {
-                                            v = minutes + "m ";
-                                            if (hours > 1) {
-                                                v = hours + "m ";
+                                    if (milliseconds > 1) {
+                                        v = this.d3Formatter(Math.round(timeData.milliseconds * 100) / 100);
+                                        if (seconds > 1) {
+                                            v = timeData.seconds + "s";
+                                            if (minutes > 1) {
+                                                v = timeData.minutes + "m " + v;
+                                                if (hours > 1) {
+                                                    v = timeData.hours + "h " + v;
+                                                    if (days > 1) {
+                                                        v = timeData.days + "d " + v;
+                                                        if (years > 1) {
+                                                            v = timeData.years + "y " + v;
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
-                                    } else {
-                                        // milliseconds by default
-                                        v = v;
                                     }
-                                }
-                            }
-                            // by default round numeric types
-                            if (toRound) {
-                                if (results.cols[colIdx].extendedType.name === "NUMERIC") {
-                                    if (v.length > 0) {
-                                        v = this.d3Formatter(Math.round(v * 100) / 100);
+                                } else {
+                                    if (results.cols[colIdx].extendedType.name === "NUMERIC") {
+                                        if (v.length > 0) {
+                                            v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
+                                        }
                                     }
                                 }
                             }
@@ -5437,7 +5444,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         colorPalette: null,
         interpolationRange: null,
         yearSwitcherView: null,
-        metricSelectorView: null,
         multiSeries: null,
         height: 400,
         staleMessage : "Click refresh to update",
@@ -5466,9 +5472,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 }
                 if (options.yearAnalysis) {
                     this.yearAnalysis = options.yearAnalysis;
-                }
-                if (options.metricSelectorView) {
-                    this.metricSelectorView = options.metricSelectorView;
                 }
                 if (options.multiSeries) {
                     this.multiSeries = options.multiSeries;
@@ -5499,7 +5502,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     x_accessor: 'date',
                     area: false,
                     y_accessor: 'value',
-                    animate_on_load: true,
+                    animate_on_load: false,
                     legend_target: this.renderLegend,
                     colors: this.colorPalette,
                 };
@@ -5598,33 +5601,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             MG.data_graphic(this.configuration);
         },
 
-        events: {
-            "click #legend span": function(event) {
-                // obtain column data when clicking on a legend item
-                var name = event.target.textContent.substring(2).slice(0, -2);
-                var text = $(event.target).text();
-                var item = _.findWhere(this.results.cols, {name: name});
-                var index = _.indexOf(this.results.cols, item);
-                var enabled = true;
-                if (this.results.cols[index].enabled || this.results.cols[index].enabled === undefined) {
-                    this.results.cols[index].enabled = false;
-                    enabled = false;
-                } else {
-                    this.results.cols[index].enabled = true;
-                }
-                this.legendState[text] = enabled;
-                // re-render
-                this.renderGraphic();
-                // apply classes on legend
-                for (var x in this.legendState) {
-                    if (! this.legendState[x]) {
-                        this.$el.find("#legend span:contains(" + x + ")").addClass("disactive");
-                    }
-                }
-            }
-        },
-
-        renderGraphic: function() {
+        renderGraphic: function(metrics) {
             this.$el.find(".sq-loading").hide();
             this.$el.find("#re-run").hide();
 
@@ -5637,37 +5614,42 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             // get data
             for (i=1; i<this.results.cols.length; i++) {
-                legend.push(this.results.cols[i].name);
-                var arr = [];
-                for (ix=0; ix<this.results.rows.length; ix++) {
-                    var obj = {};
-                    if (this.results.cols[i].enabled || this.results.cols[i].enabled === undefined) {
+                if (_.contains(metrics, this.results.cols[i].id) || ! metrics) {
+                    legend.push(this.results.cols[i].name);
+                    var arr = [];
+                    for (ix=0; ix<this.results.rows.length; ix++) {
+                        var obj = {};
                         obj.date = this.results.rows[ix].v[0];
                         obj.value = parseFloat(this.results.rows[ix].v[i]);
                         arr.push(obj);
-                    } else {
-                        obj.date = this.results.rows[ix].v[0];
-                        obj.value = parseFloat(this.results.rows[ix].v[i]);
-                        arr.push(obj);
-                        break;
                     }
+                    arr = MG.convert.date(arr, 'date');
+                    dataset.push(arr);
                 }
-                arr = MG.convert.date(arr, 'date');
-                dataset.push(arr);
             }
 
             // set width
             this.configuration.width = $(this.renderTo).width();
 
             // set legend & data
-            this.configuration.legend = legend;
-            this.configuration.data = dataset;
+            if (legend.length === 0) {
+                this.configuration.chart_type = 'missing-data';
+            } else {
+                delete this.configuration.chart_type;
+                this.configuration.legend = legend;
+                this.configuration.data = dataset;
+            }
 
+            // empty timeseries div
+            $(this.renderTo).empty();
+
+            // reinitialize timeseries
             MG.data_graphic(this.configuration);
         },
 
         render : function() {
             var status = this.model.get("status");
+            var me = this;
             this.YearOverYear = this.config.get("YearOverYear");
 
             if (status === "PENDING") {
@@ -5682,14 +5664,38 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 this.$el.html(this.template({
                     reRunMessage: this.reRunMessage
                 }));
+                // additional timeserie analysis views
+                if (this.yearSwitcherView){
+                    this.renderAdditionalView(this.yearSwitcherView, this.$el.find("#yearswitcher"));
+                }
+
                 this.$el.find("#stale").hide();
                 this.$el.find(".sq-loading").hide();
 
                 var data = this.getData();
                 this.results = data.results;
 
+                // render metric selector view
+                var resultMetrics = [];
+                if (this.results) {
+                    for (i=0; i<this.results.cols.length; i++) {
+                        resultMetrics.push(this.results.cols[i].id);
+                    }
+                }
+
                 if (data.done && this.results && ! this.model.get("error")) {
                     this.renderGraphic();
+                    this.renderAdditionalView(new squid_api.view.MetricSelectorView({
+                        filterBy : resultMetrics,
+                        buttonText : "<i class='fa fa-cog'></i>",
+                        onChangeHandler: function() {
+                            var metrics = this.$el.find("select").val();
+                            if (! metrics) {
+                                metrics = [];
+                            }
+                            me.renderGraphic(metrics);
+                        }
+                    }), this.$el.find("#metricselector"));
                 } else {
                     if (this.model.get("error")) {
                         if (this.model.get("error").enableRerun) {
@@ -5699,14 +5705,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         }
                     }
                 }
-            }
-
-            // additional timeserie analysis views
-            if (this.yearSwitcherView){
-                this.renderAdditionalView(this.yearSwitcherView, this.$el.find("#yearswitcher"));
-            }
-            if (this.metricSelectorView) {
-                this.renderAdditionalView(this.metricSelectorView, this.$el.find("#metricselector"));
             }
         },
 
