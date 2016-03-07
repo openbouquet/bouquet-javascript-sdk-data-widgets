@@ -256,7 +256,7 @@
                     this.renderGraphic();
                     this.renderAdditionalView(new squid_api.view.MetricSelectorView({
                         filterBy : resultMetrics,
-                        buttonText : "Show / Hide Metrics",
+                        buttonText : "<i class='fa fa-cog'></i>",
                         onChangeHandler: function() {
                             var metrics = this.$el.find("select").val();
                             if (! metrics) {
