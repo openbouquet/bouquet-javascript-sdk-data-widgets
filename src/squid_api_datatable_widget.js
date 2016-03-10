@@ -32,6 +32,8 @@
 
         staleMessage : "Click refresh to update",
 
+        currentDomain : null,
+
         initialize : function(options) {
             var me = this;
 
@@ -159,7 +161,8 @@
             var i;
             var metrics;
 
-            if (! me.headerInformation) {
+            if (! me.headerInformation || this.currentDomain !== this.config.get("domain")) {
+                this.currentDomain = this.config.get("domain");
                 var parentId = this.config.get("domain");
                 return squid_api.getCustomer().then(function(customer) {
                     return customer.get("projects").load(me.config.get("project")).then(function(project) {
@@ -350,6 +353,8 @@
                     }
                 }
             }
+
+            //this.currentDomain = this.config.get("domain");
         },
 
         displayTableContent : function(selector) {

@@ -63,7 +63,9 @@
     z-index: 1;
     padding: 15px 15px;
 }
-
+.squid-api-export-panel-popup:focus {
+	outline: none;
+}
 .squid-api-export-panel-popup .ui-dialog-titlebar {
 	display: none;
 }
