@@ -403,6 +403,7 @@
                             for (i=0; i<words.length; i++) {
                                 // see if column header contains the text duration / time
                                 if (words[i].toLowerCase() == "duration" || words[i].toLowerCase() == "time") {
+                                    toRound = false;
                                     // parse value with moment
                                     var d = moment.duration(parseFloat(v), 'milliseconds');
                                     // obtain hours / minutes & seconds
@@ -413,7 +414,6 @@
                                     var seconds = d.asSeconds();
                                     var milliseconds = d.asMilliseconds();
                                     var timeData = d._data;
-
                                     // contruct readable time values
                                     if (milliseconds > 1) {
                                         v = this.d3Formatter(Math.round(timeData.milliseconds * 100) / 100);
@@ -433,12 +433,11 @@
                                             }
                                         }
                                     }
-                                } else {
-                                    if (results.cols[colIdx].extendedType.name === "NUMERIC") {
-                                        if (v.length > 0) {
-                                            v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
-                                        }
-                                    }
+                                }
+                            }
+                            if (results.cols[colIdx].extendedType.name === "NUMERIC" && toRound) {
+                                if (v.length > 0) {
+                                    v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
                                 }
                             }
                         }
