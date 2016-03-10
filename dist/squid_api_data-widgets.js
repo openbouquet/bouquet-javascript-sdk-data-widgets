@@ -5715,6 +5715,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         renderAdditionalView: function(view, element) {
             view.setElement(element);
+            view.renderBase();
             view.render();
         }
     });
