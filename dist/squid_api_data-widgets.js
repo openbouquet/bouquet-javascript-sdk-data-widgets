@@ -1757,10 +1757,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                                     }
                                 }
                             }
-                            if (results.cols[colIdx].extendedType.name === "NUMERIC" && toRound) {
-                                if (v.length > 0) {
-                                    v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
-                                }
+                            if (typeof v === "number" && toRound) {
+                                v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
                             }
                         }
                         newRow.v.push(v);
