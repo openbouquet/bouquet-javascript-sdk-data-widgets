@@ -5503,7 +5503,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     height: this.height,
                     target: this.renderTo,
                     x_accessor: 'date',
-                    missing_is_hidden: true,
                     area: false,
                     y_accessor: 'value',
                     animate_on_load: false,
@@ -5631,11 +5630,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
                         var date = currentDay.format('YYYY-MM-DD');
                         var dataExists = false;
-
                         var obj = {
                             "date" : date
                         };
-
                         for (ix=0; ix<this.results.rows.length; ix++) {
                             if (this.results.rows[ix].v[0] == date) {
                                 dataExists = true;
@@ -5643,8 +5640,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                             }
                         }
                         if (! dataExists) {
-                            obj.value = null;
-
+                            obj.value = 0;
                         }
                         arr.push(obj);
                     }
@@ -5653,9 +5649,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     dataset.push(arr);
                 }
             }
-
-            // manipulate the data so we have contain all dates
-            //dataset = this.manipulateData(dataset);
 
             // set width
             this.configuration.width = $(this.renderTo).width();

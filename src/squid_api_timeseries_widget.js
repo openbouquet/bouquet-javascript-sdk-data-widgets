@@ -69,7 +69,6 @@
                     height: this.height,
                     target: this.renderTo,
                     x_accessor: 'date',
-                    missing_is_hidden: true,
                     area: false,
                     y_accessor: 'value',
                     animate_on_load: false,
@@ -207,7 +206,7 @@
                             }
                         }
                         if (! dataExists) {
-                            obj.value = null;
+                            obj.value = 0;
                         }
                         arr.push(obj);
                     }
