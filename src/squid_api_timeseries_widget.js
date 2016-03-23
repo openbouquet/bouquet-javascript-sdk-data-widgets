@@ -144,7 +144,7 @@
                     analysis = this.model.get("analyses")[0];
                 }
             } else {
-                 analysis = this.model;
+                analysis = this.model;
             }
 
             data = analysis.toJSON();
@@ -184,14 +184,33 @@
             // get data
             for (i=1; i<this.results.cols.length; i++) {
                 if (_.contains(metrics, this.results.cols[i].id) || ! metrics) {
-                    legend.push(this.results.cols[i].name);
                     var arr = [];
-                    for (ix=0; ix<this.results.rows.length; ix++) {
-                        var obj = {};
-                        obj.date = this.results.rows[ix].v[0];
-                        obj.value = parseFloat(this.results.rows[ix].v[i]);
+
+                    // store legend
+                    legend.push(this.results.cols[i].name);
+
+                    var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
+                    var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
+
+                    // make sure a value is available for every day
+                    for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+                        var date = currentDay.format('YYYY-MM-DD');
+                        var dataExists = false;
+                        var obj = {
+                            "date" : date
+                        };
+                        for (ix=0; ix<this.results.rows.length; ix++) {
+                            if (this.results.rows[ix].v[0] == date) {
+                                dataExists = true;
+                                obj.value = this.results.rows[ix].v[i];
+                            }
+                        }
+                        if (! dataExists) {
+                            obj.value = 0;
+                        }
                         arr.push(obj);
                     }
+
                     arr = MG.convert.date(arr, 'date');
                     dataset.push(arr);
                 }
