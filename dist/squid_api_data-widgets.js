@@ -979,6 +979,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 if (options.onChangeHandler) {
                     this.onChangeHandler = options.onChangeHandler;
                 }
+                if (options.onStartIndexChangeHandler) {
+                    this.onStartIndexChangeHandler = options.onStartIndexChangeHandler;
+                }
             }
 
             if (!this.config) {
@@ -1017,6 +1020,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             this.config.on('change:selection', function() {
                 me.refreshAnalysis();
+            });
+
+            this.config.on("change:startIndex", function() {
+                me.onChangeHandler(me.analysis);
             });
         },
 
