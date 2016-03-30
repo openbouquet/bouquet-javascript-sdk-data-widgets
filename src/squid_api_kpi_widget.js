@@ -40,23 +40,22 @@
         render : function() {
             var jsonData, results, values;
             if (this.model.isDone()) {
-                jsonData = {};
+                jsonData = [];
                 jsonData.done = true;
                 results = this.model.get("results");
                 if (results) {
-                    if (results.rows.length === 1) {
-                        values = results.rows[0].v;
-                        if (values.length === 2) {
-                            jsonData.value = this.format((values[1] / values[0]) * 100);
-                            jsonData.unit = "%";
-                            jsonData.name = results.cols[1].lname;
-                        }
-                    } 
+                    var values = results.rows[0].v;
+                    for (var i=0; i<results.cols.length; i++) {
+                        var col = results.cols[i];
+                        var kpi = {};
+                        kpi.value = this.format(values[i]);
+                        kpi.unit = "";
+                        kpi.name = col.name;
+                        jsonData.push(kpi);
+                    }
                 }
             }
-            var tableContent = this.$el;
-            var tableHTML = this.template(jsonData);
-            tableContent.html(tableHTML);
+            this.$el.html(this.template(jsonData));
             return this;
         }
     });
