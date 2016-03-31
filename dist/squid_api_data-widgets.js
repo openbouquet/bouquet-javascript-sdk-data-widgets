@@ -1137,16 +1137,16 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     var View = Backbone.View.extend({
         template : null,
-        
+
         format : null,
-        
+
         d3Formatter : null,
 
         initialize: function(options) {
             var me = this;
 
             if (this.model) {
-                this.listenTo(this.model, 'change:status', this.update);
+                this.listenTo(this.model, 'change:status', this.render);
                 this.listenTo(this.model, 'change:error', this.render);
             }
 
@@ -1156,7 +1156,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             } else {
                 this.template = template;
             }
-            
+
             if (d3) {
                 this.d3Formatter = d3.format(",.f");
             }
@@ -1178,6 +1178,17 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     };
                 }
             }
+            $(window).on("resize", _.bind(this.resize(),this));
+        },
+
+        resize : function() {
+            var resizing = true;
+            return function() {
+                if (this.resizing) {
+                    window.clearTimeout(resizing);
+                }
+                this.resizing = window.setTimeout(_.bind(this.render,this), 100);
+            };
         },
 
         setModel: function(model) {
@@ -1226,10 +1237,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             return this;
         },
 
-        update: function() {
-          if (this.model.get("dimensions").length < 2) {
-              this.render();
-          }
+        hide: function() {
+            this.$el.hide();
+        },
+
+        show: function() {
+            this.$el.show();
         },
 
         render: function() {
@@ -1445,7 +1458,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             } else if (viewName === "timeView") {
                 analysis = this.timeView.model;
                 currentAnalysis = "timeAnalysis";
-            } else if (viewName === "barAnalysis") {
+            } else if (viewName === "barView") {
                 analysis = this.barView.model;
                 currentAnalysis = "barAnalysis";
             }

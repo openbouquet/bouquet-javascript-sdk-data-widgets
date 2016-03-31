@@ -68,7 +68,7 @@
             } else if (viewName === "timeView") {
                 analysis = this.timeView.model;
                 currentAnalysis = "timeAnalysis";
-            } else if (viewName === "barAnalysis") {
+            } else if (viewName === "barView") {
                 analysis = this.barView.model;
                 currentAnalysis = "barAnalysis";
             }
