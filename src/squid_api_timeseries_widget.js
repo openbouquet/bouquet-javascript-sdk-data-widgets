@@ -235,6 +235,14 @@
             MG.data_graphic(this.configuration);
         },
 
+        hide: function() {
+            this.$el.hide();
+        },
+
+        show: function() {
+            this.$el.show();
+        },
+
         render : function() {
             var status = this.model.get("status");
             var me = this;

@@ -70,6 +70,10 @@
                 me.refreshAnalysis();
             });
 
+            this.config.on('change:currentAnalysis', function() {
+                me.refreshAnalysis();
+            });
+
             this.config.on("change:startIndex", function() {
                 me.onChangeHandler(me.analysis);
             });

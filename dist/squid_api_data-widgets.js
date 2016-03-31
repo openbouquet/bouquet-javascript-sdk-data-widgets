@@ -10,6 +10,41 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return "<div id=\"bar_chart\" class=\"squid-api-data-widgets-bar-chart\" />";
   });
 
+this["squid_api"]["template"]["squid_api_basic_displaytype_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n    	<li data-content=\"";
+  if (helper = helpers.view) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.view); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.isActive), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "><i class=\"fa ";
+  if (helper = helpers.icon) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.icon); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " fa-2x\"></i></li>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return "class=\"active\"";
+  }
+
+  buffer += "<ul class=\"squid-api-data-widgets-displaytype-selector\">\n    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>";
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_datatable_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -1022,6 +1057,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 me.refreshAnalysis();
             });
 
+            this.config.on('change:currentAnalysis', function() {
+                me.refreshAnalysis();
+            });
+
             this.config.on("change:startIndex", function() {
                 me.onChangeHandler(me.analysis);
             });
@@ -1334,6 +1373,155 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     });
 
     return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.BasicDisplayTypeSelectorView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_basic_displaytype_selector_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+
+        template : null,
+        config : null,
+        tableView : null,
+        barView : null,
+        timeView : null,
+        displayOnly : null,
+
+        initialize: function(options) {
+
+            if (options) {
+                // setup options
+                if (options.config) {
+                    this.config = options.config;
+                }
+
+                // Store template
+                if (options.template) {
+                    this.template = options.template;
+                } else {
+                    this.template = template;
+                }
+                if (options.displayOnly) {
+                    this.displayOnly = options.displayOnly;
+                }
+
+                this.tableView = options.tableView;
+                this.barView = options.barView;
+                this.timeView = options.timeView;
+            }
+
+
+            if (this.model) {
+                this.listenTo(this.model,"change", this.render);
+            }
+
+            if (!this.config) {
+                this.config = squid_api.model.config;
+            }
+            this.listenTo(this.config, "change:selection", this.render);
+        },
+
+        setModel: function(model) {
+            this.model = model;
+            this.initialize();
+        },
+
+        events: {
+            "click li": "changeWidget",
+            "click button":"openPopOver"
+        },
+
+        changeWidget: function(item){
+            var viewName = item.currentTarget.dataset.content;
+            var analysis;
+            var currentAnalysis;
+
+            // create the new view
+            if (viewName === "tableView") {
+                analysis = this.tableView.model;
+                currentAnalysis = "tableAnalysis";
+            } else if (viewName === "timeView") {
+                analysis = this.timeView.model;
+                currentAnalysis = "timeAnalysis";
+            } else if (viewName === "barAnalysis") {
+                analysis = this.barView.model;
+                currentAnalysis = "barAnalysis";
+            }
+
+            this.config.set("currentAnalysis", currentAnalysis);
+            this.model.set("currentAnalysis", analysis);
+        },
+
+        addCompatibleView : function(list, name) {
+            // check it is available
+            if (this[name]) {
+                list.push(name);
+            }
+        },
+
+        render: function() {
+            var me = this;
+
+            // compute the view types compatible with the model
+            var selectedDimension = this.model.get("selectedDimension");
+            var compatibleViews = [];
+
+            this.addCompatibleView(compatibleViews, "tableView");
+            this.addCompatibleView(compatibleViews, "timeView");
+            this.addCompatibleView(compatibleViews, "barView");
+
+            // compute the current selected view
+            var analysis = this.model.get("currentAnalysis");
+            var currentViewName;
+
+            if (this.tableView) {
+                if (analysis === this.tableView.model) {
+                    currentViewName = "tableView";
+                }
+            }
+            if (this.barView) {
+                if (analysis === this.barView.model) {
+                    currentViewName = "barView";
+                }
+            }
+            if (this.timeView) {
+                if (analysis === this.timeView.model) {
+                    currentViewName = "timeView";
+                }
+            }
+
+            // display the view selector
+            var data = {"options" : []};
+            for (idx2 = 0; idx2<compatibleViews.length; idx2++) {
+                var view2 = compatibleViews[idx2];
+                var icon;
+                if (view2 === "tableView") {
+                    icon = "fa-table";
+                } else if (view2 === "timeView") {
+                    icon = "fa-line-chart";
+                } else if (view2 === "barView") {
+                    icon = "fa-bar-chart";
+                }
+                var isActive = false;
+                if (view2 === currentViewName) {
+                    isActive = true;
+                }
+                data.options.push({"view" : view2, "icon" : icon, "isActive" : isActive});
+            }
+
+            this.$el.find("button").popover({
+                content: this.template(data),
+                html: true
+            });
+
+            return this;
+        }
+    });
+
+    return View;
+
 }));
 
 (function (root, factory) {
@@ -1951,6 +2139,93 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             return this;
         }
 
+    });
+
+    return View;
+}));
+
+(function(root, factory) {
+    root.squid_api.controller.DateAnalysisController = factory(root.Backbone,
+        root.squid_api);
+
+}(this, function(Backbone, squid_api) {
+
+    var View = squid_api.controller.AnalysisController.extend({
+        analysis : null,
+        config : null,
+
+        refreshAnalysis : function(silent) {
+            var changed = false;
+            var a = this.analysis;
+            var config = this.config;
+            if (silent !== false) {
+                silent = true;
+            }
+
+            a.set({
+                "id" : {
+                    "projectId" : config.get("project"),
+                    "analysisJobId" : a.get("id").analysisJobId
+                }
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            a.set({
+                "domains" : [ {
+                    "projectId" : config.get("project"),
+                    "domainId" : config.get("domain")
+                } ]
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            var selection = this.config.get("selection");
+            if (selection) {
+                var toDate = false;
+                squid_api.utils.checkAPIVersion(">=4.2.1").done(function(v){
+                    toDate = true;
+                });
+                for (i=0; i<selection.facets.length; i++) {
+                    if (selection.facets[i].dimension.type == "CONTINUOUS" && selection.facets[i].dimension.valueType == "DATE") {
+                        if (toDate) {
+                            a.setFacets([selection.facets[i].id], silent);
+                            a.set("facets", [{value: "TO_DATE(" + selection.facets[i].id + ")"}], {silent : true});
+                        } else {
+                            a.setFacets([selection.facets[i].id], silent);
+                        }
+                        break;
+                    }
+                }
+            }
+            changed = changed || a.hasChanged();
+            a.setMetrics(config.get("chosenMetrics"), silent);
+            changed = changed || a.hasChanged();
+            a.setSelection(config.get("selection"), silent);
+            changed = changed || a.hasChanged();
+            a.set({
+                "limit" : config.get("limit")
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            a.set({
+                "rollups" : config.get("rollups")
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            a.set({
+                "orderBy" : config.get("orderBy")
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+
+            if (changed === true) {
+                this.onChangeHandler(this.analysis);
+            }
+        }
     });
 
     return View;
@@ -5682,6 +5957,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             // reinitialize timeseries
             MG.data_graphic(this.configuration);
+        },
+
+        hide: function() {
+            this.$el.hide();
+        },
+
+        show: function() {
+            this.$el.show();
         },
 
         render : function() {
