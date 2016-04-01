@@ -9,8 +9,8 @@
         config : null,
 
         initialize : function(options) {
-
             var me = this;
+            this.status = squid_api.model.status;
 
             if (this.model) {
                 this.analysis = this.model;
