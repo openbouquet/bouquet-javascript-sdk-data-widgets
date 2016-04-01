@@ -429,32 +429,49 @@ function program2(depth0,data) {
   if (helper = helpers.unit) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.unit); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\r\n		</div>\r\n	</div>\r\n	";
+    + "</span>\r\n		</div>\r\n		";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.compareToValue), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n	</div>\r\n	";
+  return buffer;
+  }
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\r\n		<div>\r\n			<span class=\"compareToValue\">";
+  if (helper = helpers.compareToValue) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.compareToValue); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>\r\n			<span class=\"unit\">";
+  if (helper = helpers.unit) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.unit); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>\r\n		</div>\r\n		";
   return buffer;
   }
 
-function program4(depth0,data) {
+function program5(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\r\n	";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.done), {hash:{},inverse:self.program(7, program7, data),fn:self.program(5, program5, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.done), {hash:{},inverse:self.program(8, program8, data),fn:self.program(6, program6, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n";
   return buffer;
   }
-function program5(depth0,data) {
+function program6(depth0,data) {
   
   
   return "\r\n  		No Data\r\n  	";
   }
 
-function program7(depth0,data) {
+function program8(depth0,data) {
   
   
   return "\r\n  		Computing\r\n  	";
   }
 
-  stack1 = helpers['if'].call(depth0, depth0, {hash:{},inverse:self.program(4, program4, data),fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, depth0, {hash:{},inverse:self.program(5, program5, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { return stack1; }
   else { return ''; }
   });
@@ -3739,20 +3756,40 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 jsonData.done = true;
                 results = this.model.get("results");
                 if (results) {
+                    var cols = results.cols;
+                    
+                    // resolve compareTo columns
+                    var compareMap = {};
+                    for (var i = 0; i < cols.length; i++) {
+                        var colA = cols[i];
+                        if (colA.originType === "COMPARETO") {
+                            // key = col oid, value = compare col index
+                            compareMap[colA.id] = i;
+                        }
+                    }
+
+                    // build display data
                     var values = results.rows[0].v;
-                    for (var i=0; i<results.cols.length; i++) {
-                        var col = results.cols[i];
-                        var kpi = {};
-                        kpi.value = this.format(values[i]);
-                        kpi.unit = "";
-                        kpi.name = col.name;
-                        jsonData.push(kpi);
+                    for (var i=0; i<cols.length; i++) {
+                        var col = cols[i];
+                        if (col.originType === "USER") {
+                            var kpi = {};
+                            kpi.value = this.format(values[i]);
+                            var compareIndex = compareMap[col.id];
+                            if (compareIndex) {
+                                kpi.compareToValue = this.format(values[compareIndex]);
+                            }
+                            kpi.unit = "";
+                            kpi.name = col.name;
+                            jsonData.push(kpi);
+                        }
                     }
                 }
             }
             this.$el.html(this.template(jsonData));
             return this;
         }
+        
     });
 
     return View;

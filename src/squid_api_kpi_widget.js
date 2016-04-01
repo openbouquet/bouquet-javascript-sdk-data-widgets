@@ -44,20 +44,40 @@
                 jsonData.done = true;
                 results = this.model.get("results");
                 if (results) {
+                    var cols = results.cols;
+                    
+                    // resolve compareTo columns
+                    var compareMap = {};
+                    for (var i = 0; i < cols.length; i++) {
+                        var colA = cols[i];
+                        if (colA.originType === "COMPARETO") {
+                            // key = col oid, value = compare col index
+                            compareMap[colA.id] = i;
+                        }
+                    }
+
+                    // build display data
                     var values = results.rows[0].v;
-                    for (var i=0; i<results.cols.length; i++) {
-                        var col = results.cols[i];
-                        var kpi = {};
-                        kpi.value = this.format(values[i]);
-                        kpi.unit = "";
-                        kpi.name = col.name;
-                        jsonData.push(kpi);
+                    for (var i=0; i<cols.length; i++) {
+                        var col = cols[i];
+                        if (col.originType === "USER") {
+                            var kpi = {};
+                            kpi.value = this.format(values[i]);
+                            var compareIndex = compareMap[col.id];
+                            if (compareIndex) {
+                                kpi.compareToValue = this.format(values[compareIndex]);
+                            }
+                            kpi.unit = "";
+                            kpi.name = col.name;
+                            jsonData.push(kpi);
+                        }
                     }
                 }
             }
             this.$el.html(this.template(jsonData));
             return this;
         }
+        
     });
 
     return View;

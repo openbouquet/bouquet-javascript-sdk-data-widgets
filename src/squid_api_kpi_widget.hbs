@@ -8,6 +8,12 @@
 			<span class="value">{{value}}</span>
 			<span class="unit">{{unit}}</span>
 		</div>
+		{{#if compareToValue}}
+		<div>
+			<span class="compareToValue">{{compareToValue}}</span>
+			<span class="unit">{{unit}}</span>
+		</div>
+		{{/if}}
 	</div>
 	{{/each}}
 {{else}}
