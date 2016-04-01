@@ -1013,8 +1013,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         config : null,
 
         initialize : function(options) {
-
             var me = this;
+            this.status = squid_api.model.status;
 
             if (this.model) {
                 this.analysis = this.model;
@@ -5864,12 +5864,21 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
             if (this.model) {
                 this.listenTo(this.model, 'change:status', this.render);
+                this.listenTo(this.model, 'change:disabled', this.toggleDisplay);
                 this.listenTo(this.model, 'change:error', this.render);
                 this.listenTo(this.config, 'change:configDisplay', this.updateHeight);
             }
 
             // Resize
             $(window).on("resize", _.bind(this.resize(),this));
+        },
+
+        toggleDisplay: function() {
+            if (this.model.get("disabled")) {
+                this.hide();
+            } else {
+                this.show();
+            }
         },
 
         resize : function() {
