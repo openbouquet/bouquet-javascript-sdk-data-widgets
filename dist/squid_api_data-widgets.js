@@ -1736,7 +1736,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     });
                 });
             } else  {
-                var columns;
+                var columns = [];;
                 var originalColumns;//unaltered by rollup splice
                 var invalidSelection = false;
                 var status = this.model.get("status");
@@ -1749,7 +1749,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 var results = analysis.get("results");
                 var rollups;
                 if (results && status !== "PENDING" && status !== "RUNNING") {
-                    // use results columns
+                    // Analysis computed : use results columns
                     columns = results.cols;
 
                     // init rollups
@@ -1759,88 +1759,88 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     }
                     originalColumns = columns;
                 } else {
-                    // use analysis columns
-                    columns = [];
-
-                    var obj;
-                    var facets = this.model.get("facets");
-                    if (facets) {
-                        for (i=0; i<facets.length; i++) {
-                            obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value);
-                            if (obj) {
-                                obj.dataType = "STRING";
-                                columns.push(obj);
-                            } else {
-                                // impossible to get column data from selection
-                                invalidSelection = true;
-                            }
-                        }
-                    }
-                    metrics = this.model.get("metricList");
-                    if (metrics) {
-                        if (metrics.length === 0) {
-                            metrics = squid_api.model.config.get("chosenMetrics");
-                        }
-                    }
-                    if (metrics) {
-                        var metric;
-                        for (i=0; i<metrics.length; i++) {
-                            metric = metrics[i];
-                            if (metrics[i].id) {
-                                for (ix=0; ix<me.domainMetrics.length; ix++) {
-                                    if (metrics[i].id.metricId === me.domainMetrics[ix].oid) {
-                                        metrics[i].name = me.domainMetrics[ix].name;
-                                    }
-                                }
-                                obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
+                    // Analysis not computed yet : use analysis definition
+                    if (this.filters.get("selection")) {
+                        var obj;
+                        var facets = this.model.get("facets");
+                        if (facets) {
+                            for (i=0; i<facets.length; i++) {
+                                obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value);
                                 if (obj) {
-                                    obj.dataType = "NUMBER";
+                                    obj.dataType = "STRING";
+                                    columns.push(obj);
                                 } else {
                                     // impossible to get column data from selection
                                     invalidSelection = true;
                                 }
-                            } else {
-                                obj = {
-                                        "id" : null,
-                                        "name" : metrics[i].name,
-                                        "dataType" : "NUMBER"
-                                };
                             }
-                            columns.push(obj);
                         }
-                    }
-                    if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
-                        originalColumns = columns.slice();
-                        columns.splice(this.config.get("rollups")[0].col, 1);
-                    } else {
-                        originalColumns = columns;
+                        metrics = this.model.get("metricList");
+                        if (metrics) {
+                            if (metrics.length === 0) {
+                                metrics = squid_api.model.config.get("chosenMetrics");
+                            }
+                        }
+                        if (metrics) {
+                            var metric;
+                            for (i=0; i<metrics.length; i++) {
+                                metric = metrics[i];
+                                if (metrics[i].id) {
+                                    for (ix=0; ix<me.domainMetrics.length; ix++) {
+                                        if (metrics[i].id.metricId === me.domainMetrics[ix].oid) {
+                                            metrics[i].name = me.domainMetrics[ix].name;
+                                        }
+                                    }
+                                    obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
+                                    if (obj) {
+                                        obj.dataType = "NUMBER";
+                                    } else {
+                                        // impossible to get column data from selection
+                                        invalidSelection = true;
+                                    }
+                                } else {
+                                    obj = {
+                                            "id" : null,
+                                            "name" : metrics[i].name,
+                                            "dataType" : "NUMBER"
+                                    };
+                                }
+                                columns.push(obj);
+                            }
+                        }
+                        if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
+                            originalColumns = columns.slice();
+                            columns.splice(this.config.get("rollups")[0].col, 1);
+                        } else {
+                            originalColumns = columns;
+                        }
                     }
                 }
 
                 var orderBy = this.model.get("orderBy");
                 if (orderBy) {
                     // add orderBy direction
-                	for (col=0; col<columns.length; col++) {
-                		if (columns[col]) {
-                			columns[col].orderDirection = undefined;
-	                		for (ix=0; ix<orderBy.length; ix++) {
-	                			if (this.ordering) {
-	                            	if (columns[col].definition) {
-	                            		if (orderBy[ix].expression) {
-	                            			if (columns[col].definition === orderBy[ix].expression.value) {
-	                                			columns[col].orderDirection = orderBy[ix].direction;
-	                                			break;
-	                                		}
-	                            		}
-	                            	} else if (orderBy[ix].expression) {
-	                            		if (columns[col].id === orderBy[ix].expression.value) {
-	                            			columns[col].orderDirection = orderBy[ix].direction;
-	                                		break;
-	                            		}
-	                            	}
-	                            }
-	                        }
-                		}
+                    for (col=0; col<columns.length; col++) {
+                        if (columns[col]) {
+                            columns[col].orderDirection = undefined;
+                            for (ix=0; ix<orderBy.length; ix++) {
+                                if (this.ordering) {
+                                    if (columns[col].definition) {
+                                        if (orderBy[ix].expression) {
+                                            if (columns[col].definition === orderBy[ix].expression.value) {
+                                                columns[col].orderDirection = orderBy[ix].direction;
+                                                break;
+                                            }
+                                        }
+                                    } else if (orderBy[ix].expression) {
+                                        if (columns[col].id === orderBy[ix].expression.value) {
+                                            columns[col].orderDirection = orderBy[ix].direction;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -1909,8 +1909,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     }
                 }
             }
-
-            //this.currentDomain = this.config.get("domain");
         },
 
         displayTableContent : function(selector) {
@@ -2114,10 +2112,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         render : function() {
 
             var selector = "#"+this.el.id+" .sq-table";
-            if (this.model.get("facets") && this.filters.get("selection")) {
-                // display table header
-                this.displayTableHeader(selector);
-            }
+            
+            // display table header
+            this.displayTableHeader(selector);
 
             if (this.model.get("status") === "DONE") {
                 this.$el.find("#total").show();
