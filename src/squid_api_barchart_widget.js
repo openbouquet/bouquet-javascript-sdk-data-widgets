@@ -123,6 +123,12 @@
             this.$el.show();
         },
 
+        renderBase: function(done) {
+            this.$el.html(this.template({
+                done: done
+            }));
+        },
+
         render: function() {
             var me = this;
             var data = this.getData();
@@ -130,7 +136,7 @@
             if (data.done) {
 
                 // Print Template
-                this.$el.html(this.template());
+                this.renderBase(true);
 
                 // Obtain Bar Chart Data
                 var barData = this.barDataValues(data.results.rows);
@@ -256,6 +262,9 @@
                     yAxisAppend.attr("transform", function(d, i) {
                         return "translate(0," + (15 + (i * ySpacing)) + ")";
                     });
+                } else {
+                    // Print Template
+                    this.renderBase(false);
                 }
 
             return this;

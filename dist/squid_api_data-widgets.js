@@ -1272,6 +1272,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             this.$el.show();
         },
 
+        renderBase: function(done) {
+            this.$el.html(this.template({
+                done: done
+            }));
+        },
+
         render: function() {
             var me = this;
             var data = this.getData();
@@ -1279,7 +1285,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             if (data.done) {
 
                 // Print Template
-                this.$el.html(this.template());
+                this.renderBase(true);
 
                 // Obtain Bar Chart Data
                 var barData = this.barDataValues(data.results.rows);
@@ -1405,6 +1411,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     yAxisAppend.attr("transform", function(d, i) {
                         return "translate(0," + (15 + (i * ySpacing)) + ")";
                     });
+                } else {
+                    // Print Template
+                    this.renderBase(false);
                 }
 
             return this;
@@ -6033,10 +6042,18 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             this.$el.show();
         },
 
+        renderTemplate: function(done) {
+            this.$el.html(this.template({
+                reRunMessage: this.reRunMessage,
+                done: done
+            }));
+        },
+
         render : function() {
             var status = this.model.get("status");
             var me = this;
             this.YearOverYear = this.config.get("YearOverYear");
+            this.renderTemplate(false);
 
             if (status === "PENDING") {
                 this.$el.html(this.template({"staleMessage" : this.staleMessage}));
@@ -6047,9 +6064,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 this.$el.find(".sq-loading").show();
             }
             if (status === "DONE") {
-                this.$el.html(this.template({
-                    reRunMessage: this.reRunMessage
-                }));
+                this.renderTemplate(true);
                 // additional timeserie analysis views
                 if (this.yearSwitcherView){
                     this.renderAdditionalView(this.yearSwitcherView, this.$el.find("#yearswitcher"));

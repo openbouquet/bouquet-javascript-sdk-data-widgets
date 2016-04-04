@@ -252,10 +252,18 @@
             this.$el.show();
         },
 
+        renderTemplate: function(done) {
+            this.$el.html(this.template({
+                reRunMessage: this.reRunMessage,
+                done: done
+            }));
+        },
+
         render : function() {
             var status = this.model.get("status");
             var me = this;
             this.YearOverYear = this.config.get("YearOverYear");
+            this.renderTemplate(false);
 
             if (status === "PENDING") {
                 this.$el.html(this.template({"staleMessage" : this.staleMessage}));
@@ -266,9 +274,7 @@
                 this.$el.find(".sq-loading").show();
             }
             if (status === "DONE") {
-                this.$el.html(this.template({
-                    reRunMessage: this.reRunMessage
-                }));
+                this.renderTemplate(true);
                 // additional timeserie analysis views
                 if (this.yearSwitcherView){
                     this.renderAdditionalView(this.yearSwitcherView, this.$el.find("#yearswitcher"));
