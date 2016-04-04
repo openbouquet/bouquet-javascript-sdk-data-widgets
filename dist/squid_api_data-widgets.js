@@ -5858,11 +5858,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     var existsInChosen = chosenDimensions.includes(id);
                     if (chosenDimensions) {
                         if (config.get("chosenDimensions").length > 0) {
-                            if (existsInChosen) {
-                                this.setDimension(a, facet.id);
-                                facetFound = true;
-                                break;
-                            }
+                            this.setDimension(a, chosenDimensions[0]);
+                            break;
                         } else {
                             this.setDimension(a, facet.id);
                             break;
