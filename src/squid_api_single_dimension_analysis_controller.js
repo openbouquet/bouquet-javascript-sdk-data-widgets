@@ -41,7 +41,6 @@
                     var facet = selection.facets[i];
                     var chosenDimensions = config.get("chosenDimensions");
                     var id = facet.id;
-                    var existsInChosen = chosenDimensions.includes(id);
                     if (chosenDimensions) {
                         if (config.get("chosenDimensions").length > 0) {
                             this.setDimension(a, chosenDimensions[0]);
