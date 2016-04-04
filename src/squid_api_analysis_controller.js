@@ -71,7 +71,7 @@
             });
 
             this.config.on('change:currentAnalysis', function() {
-                me.refreshAnalysis();
+                me.onChangeHandler(me.analysis);
             });
 
             this.config.on("change:startIndex", function() {

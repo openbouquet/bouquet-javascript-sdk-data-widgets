@@ -1075,7 +1075,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             });
 
             this.config.on('change:currentAnalysis', function() {
-                me.refreshAnalysis();
+                me.onChangeHandler(me.analysis);
             });
 
             this.config.on("change:startIndex", function() {
@@ -1161,10 +1161,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         initialize: function(options) {
             var me = this;
+            this.config = squid_api.model.config;
 
             if (this.model) {
                 this.listenTo(this.model, 'change:status', this.render);
                 this.listenTo(this.model, 'change:error', this.render);
+                this.listenTo(this.model, 'change:disabled', this.toggleDisplay);
             }
 
             // setup options
@@ -1196,6 +1198,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 }
             }
             $(window).on("resize", _.bind(this.resize(),this));
+        },
+
+        toggleDisplay: function() {
+            if (this.model.get("disabled") || this.config.get("currentAnalysis") !== "barAnalysis") {
+                this.hide();
+            } else {
+                this.show();
+            }
         },
 
         resize : function() {
@@ -5871,7 +5881,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         toggleDisplay: function() {
-            if (this.model.get("disabled")) {
+            if (this.model.get("disabled") || this.config.get("currentAnalysis") !== "timeAnalysis") {
                 this.hide();
             } else {
                 this.show();

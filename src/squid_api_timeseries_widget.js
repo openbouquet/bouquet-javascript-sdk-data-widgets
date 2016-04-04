@@ -100,7 +100,7 @@
         },
 
         toggleDisplay: function() {
-            if (this.model.get("disabled")) {
+            if (this.model.get("disabled") || this.config.get("currentAnalysis") !== "timeAnalysis") {
                 this.hide();
             } else {
                 this.show();

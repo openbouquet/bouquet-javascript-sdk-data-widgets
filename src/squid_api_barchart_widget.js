@@ -12,10 +12,12 @@
 
         initialize: function(options) {
             var me = this;
+            this.config = squid_api.model.config;
 
             if (this.model) {
                 this.listenTo(this.model, 'change:status', this.render);
                 this.listenTo(this.model, 'change:error', this.render);
+                this.listenTo(this.model, 'change:disabled', this.toggleDisplay);
             }
 
             // setup options
@@ -47,6 +49,14 @@
                 }
             }
             $(window).on("resize", _.bind(this.resize(),this));
+        },
+
+        toggleDisplay: function() {
+            if (this.model.get("disabled") || this.config.get("currentAnalysis") !== "barAnalysis") {
+                this.hide();
+            } else {
+                this.show();
+            }
         },
 
         resize : function() {
