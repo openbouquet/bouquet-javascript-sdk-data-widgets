@@ -36,19 +36,28 @@
             changed = changed || a.hasChanged();
             var selection = this.config.get("selection");
             if (selection) {
-                var toDate = false;
-                squid_api.utils.checkAPIVersion(">=4.2.1").done(function(v){
-                    toDate = true;
-                });
+                var dateFound = false;
                 for (i=0; i<selection.facets.length; i++) {
-                    if (selection.facets[i].dimension.type == "CONTINUOUS" && selection.facets[i].dimension.valueType == "DATE") {
-                        if (toDate) {
-                            a.setFacets([selection.facets[i].id], silent);
-                            a.set("facets", [{value: "TO_DATE(" + selection.facets[i].id + ")"}], {silent : true});
-                        } else {
-                            a.setFacets([selection.facets[i].id], silent);
+                    // search for date facet within chosenDimensions
+                    var facet = selection.facets[i];
+                    var chosenDimensions = config.get("chosenDimensions");
+                    var id = facet.id;
+                    var existsInChosen = _.findWhere(chosenDimensions, id);
+                    if (config.get("chosenDimensions").length > 0) {
+                        if (existsInChosen && facet.dimension.type == "CONTINUOUS" && facet.dimension.valueType == "DATE") {
+                            this.setDateFacet(a, facet.id);
+                            dateFound = true;
+                            break;
                         }
-                        break;
+                    }
+                }
+                if (! dateFound) {
+                    // if no date is found, use the first one found
+                    for (i=0; i<selection.facets.length; i++) {
+                        if (selection.facets[i].dimension.type == "CONTINUOUS" && selection.facets[i].dimension.valueType == "DATE") {
+                            this.setDateFacet(a, selection.facets[i].id);
+                            break;
+                        }
                     }
                 }
             }
@@ -78,6 +87,19 @@
 
             if (changed === true) {
                 this.onChangeHandler(this.analysis);
+            }
+        },
+
+        setDateFacet: function(a, id) {
+            var toDate = false;
+            squid_api.utils.checkAPIVersion(">=4.2.1").done(function(v){
+                toDate = true;
+            });
+            if (toDate) {
+                // a.setFacets([id], silent);
+                a.set("facets", [{value: "TO_DATE(" + id + ")"}], {silent : true});
+            } else {
+                a.setFacets([id], silent);
             }
         }
     });
