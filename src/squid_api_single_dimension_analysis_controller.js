@@ -1,5 +1,5 @@
 (function(root, factory) {
-    root.squid_api.controller.DateAnalysisController = factory(root.Backbone,
+    root.squid_api.controller.SingleDimensionAnalysisController = factory(root.Backbone,
         root.squid_api);
 
 }(this, function(Backbone, squid_api) {
@@ -36,30 +36,26 @@
             changed = changed || a.hasChanged();
             var selection = this.config.get("selection");
             if (selection) {
-                var dateFound = false;
+                var facetFound = false;
                 for (i=0; i<selection.facets.length; i++) {
-                    // search for date facet within chosenDimensions
                     var facet = selection.facets[i];
                     var chosenDimensions = config.get("chosenDimensions");
                     var id = facet.id;
                     var existsInChosen = chosenDimensions.includes(id);
                     if (chosenDimensions) {
                         if (config.get("chosenDimensions").length > 0) {
-                            if (existsInChosen && facet.dimension.type == "CONTINUOUS" && facet.dimension.valueType == "DATE") {
-                                this.setDateFacet(a, facet.id);
-                                dateFound = true;
+                            if (existsInChosen) {
+                                this.setDimension(a, facet.id);
+                                facetFound = true;
                                 break;
                             }
-                        }
-                    }
-                }
-                if (! dateFound) {
-                    // if no date is found, use the first one found
-                    for (i=0; i<selection.facets.length; i++) {
-                        if (selection.facets[i].dimension.type == "CONTINUOUS" && selection.facets[i].dimension.valueType == "DATE") {
-                            this.setDateFacet(a, selection.facets[i].id);
+                        } else {
+                            this.setDimension(a, facet.id);
                             break;
                         }
+                    } else {
+                        this.setDimension(a, facet.id);
+                        break;
                     }
                 }
             }
@@ -92,17 +88,8 @@
             }
         },
 
-        setDateFacet: function(a, id) {
-            var toDate = false;
-            squid_api.utils.checkAPIVersion(">=4.2.1").done(function(v){
-                toDate = true;
-            });
-            if (toDate) {
-                // a.setFacets([id], silent);
-                a.set("facets", [{value: "TO_DATE(" + id + ")"}], {silent : true});
-            } else {
-                a.setFacets([id], silent);
-            }
+        setDimension: function(a, id) {
+            a.set("facets", [{value: id}], {silent : true});
         }
     });
 
