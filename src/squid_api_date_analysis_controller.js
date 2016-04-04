@@ -45,10 +45,14 @@
                     if (chosenDimensions) {
                         var existsInChosen = chosenDimensions.includes(id);
                         if (config.get("chosenDimensions").length > 0) {
-                            if (existsInChosen && facet.dimension.type == "CONTINUOUS" && facet.dimension.valueType == "DATE") {
-                                this.setDateFacet(a, facet.id);
-                                dateFound = true;
-                                break;
+                            if (existsInChosen && facet.dimension.valueType == "DATE") {
+                                if (facet.dimension.type == "CONTINUOUS") {
+                                    this.setDateFacet(a, facet.id);
+                                    dateFound = true;
+                                    break;
+                                } else {
+                                    this.status.set({"message" : "dimension " + facet.name + " is not indexed for use with this visulisation"});
+                                }
                             }
                         }
                     }
