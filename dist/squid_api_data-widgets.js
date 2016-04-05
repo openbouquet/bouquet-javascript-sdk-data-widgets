@@ -3761,7 +3761,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     View = Backbone.View.extend( {
 
         template : null,
-        
+
         format : null,
 
         initialize : function(options) {
@@ -3801,7 +3801,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 results = this.model.get("results");
                 if (results) {
                     var cols = results.cols;
-                    
+
                     // resolve compareTo columns
                     var compareMap = {};
                     for (var i = 0; i < cols.length; i++) {
@@ -3825,6 +3825,20 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                             }
                             kpi.unit = "";
                             kpi.name = col.name;
+                            if (typeof kpi.compareToValue != "undefined"
+                              && kpi.compareToValue != null) {
+                              let lvalue = parseFloat(kpi.value.replace(",",""));
+                              let rvalue = parseFloat(kpi.compareToValue.replace(",",""));
+                              kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
+                              if (kpi.growth > 0) {
+                                kpi.compareTextColor = 'text-success';
+                              }  else if (kpi.growth < 0) {
+                                kpi.compareTextColor = 'text-danger';
+                              } else {
+                                kpi.growth = 0;
+                                kpi.compareTextColor = 'text-info';
+                              }
+                            }
                             jsonData.push(kpi);
                         }
                     }
@@ -3833,7 +3847,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             this.$el.html(this.template(jsonData));
             return this;
         }
-        
+
     });
 
     return View;
