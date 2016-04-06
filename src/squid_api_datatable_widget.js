@@ -180,7 +180,7 @@
                     });
                 });
             } else  {
-                var columns = [];;
+                var columns = [];
                 var originalColumns;//unaltered by rollup splice
                 var invalidSelection = false;
                 var status = this.model.get("status");
@@ -554,57 +554,58 @@
         },
 
         render : function() {
+            if (this.el) {
+                var selector = "#"+this.el.id+" .sq-table";
 
-            var selector = "#"+this.el.id+" .sq-table";
-            
-            // display table header
-            this.displayTableHeader(selector);
+                // display table header
+                this.displayTableHeader(selector);
 
-            if (this.model.get("status") === "DONE") {
-                this.$el.find("#total").show();
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").hide();
-                this.$el.find("#re-run").hide();
-                this.$el.find(".sort-direction").show();
+                if (this.model.get("status") === "DONE") {
+                    this.$el.find("#total").show();
+                    this.$el.find(".sq-loading").hide();
+                    this.$el.find("#stale").hide();
+                    this.$el.find("#re-run").hide();
+                    this.$el.find(".sort-direction").show();
 
-                if (!this.model.get("error")) {
-                    // display results
-                    this.displayTableContent(selector);
-                    if (this.paging) {
-                        this.paginationView.render();
-                        this.$el.find("#pagination").show();
-                    }
-                    this.$el.find("#error").html("");
-                } else {
-                    var analysis = this.model;
-                    // in case of a multi-analysis model
-                    if (analysis.get("analyses")) {
-                        analysis = analysis.get("analyses")[0];
-                    }
-                    if (this.model.get("error").enableRerun) {
-                        this.$el.find("#re-run").show();
+                    if (!this.model.get("error")) {
+                        // display results
+                        this.displayTableContent(selector);
+                        if (this.paging) {
+                            this.paginationView.render();
+                            this.$el.find("#pagination").show();
+                        }
+                        this.$el.find("#error").html("");
                     } else {
-                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                        var analysis = this.model;
+                        // in case of a multi-analysis model
+                        if (analysis.get("analyses")) {
+                            analysis = analysis.get("analyses")[0];
+                        }
+                        if (this.model.get("error").enableRerun) {
+                            this.$el.find("#re-run").show();
+                        } else {
+                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                        }
                     }
                 }
-            }
 
-            if (this.model.get("status") === "RUNNING") {
-                // computing in progress
-                this.$el.find(".sq-loading").show();
-                this.$el.find("#stale").hide();
-                this.$el.find(".sort-direction").show();
-                this.$el.find("#error").html("");
-            }
+                if (this.model.get("status") === "RUNNING") {
+                    // computing in progress
+                    this.$el.find(".sq-loading").show();
+                    this.$el.find("#stale").hide();
+                    this.$el.find(".sort-direction").show();
+                    this.$el.find("#error").html("");
+                }
 
-            if (this.model.get("status") === "PENDING") {
-                // refresh needed
-                d3.select(selector).select("tbody").selectAll("tr").remove();
-                this.$el.find("#pagination").hide();
-                this.$el.find("#total").hide();
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").show();
-                this.$el.find("#error").html("");
+                if (this.model.get("status") === "PENDING") {
+                    // refresh needed
+                    d3.select(selector).select("tbody").selectAll("tr").remove();
+                    this.$el.find("#pagination").hide();
+                    this.$el.find("#total").hide();
+                    this.$el.find(".sq-loading").hide();
+                    this.$el.find("#stale").show();
+                    this.$el.find("#error").html("");
+                }
             }
 
             return this;
