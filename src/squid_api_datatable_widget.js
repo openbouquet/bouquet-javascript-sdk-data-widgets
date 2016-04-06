@@ -180,7 +180,7 @@
                     });
                 });
             } else  {
-                var columns;
+                var columns = [];
                 var originalColumns;//unaltered by rollup splice
                 var invalidSelection = false;
                 var status = this.model.get("status");
@@ -193,7 +193,7 @@
                 var results = analysis.get("results");
                 var rollups;
                 if (results && status !== "PENDING" && status !== "RUNNING") {
-                    // use results columns
+                    // Analysis computed : use results columns
                     columns = results.cols;
 
                     // init rollups
@@ -203,88 +203,88 @@
                     }
                     originalColumns = columns;
                 } else {
-                    // use analysis columns
-                    columns = [];
-
-                    var obj;
-                    var facets = this.model.get("facets");
-                    if (facets) {
-                        for (i=0; i<facets.length; i++) {
-                            obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value);
-                            if (obj) {
-                                obj.dataType = "STRING";
-                                columns.push(obj);
-                            } else {
-                                // impossible to get column data from selection
-                                invalidSelection = true;
-                            }
-                        }
-                    }
-                    metrics = this.model.get("metricList");
-                    if (metrics) {
-                        if (metrics.length === 0) {
-                            metrics = squid_api.model.config.get("chosenMetrics");
-                        }
-                    }
-                    if (metrics) {
-                        var metric;
-                        for (i=0; i<metrics.length; i++) {
-                            metric = metrics[i];
-                            if (metrics[i].id) {
-                                for (ix=0; ix<me.domainMetrics.length; ix++) {
-                                    if (metrics[i].id.metricId === me.domainMetrics[ix].oid) {
-                                        metrics[i].name = me.domainMetrics[ix].name;
-                                    }
-                                }
-                                obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
+                    // Analysis not computed yet : use analysis definition
+                    if (this.filters.get("selection")) {
+                        var obj;
+                        var facets = this.model.get("facets");
+                        if (facets) {
+                            for (i=0; i<facets.length; i++) {
+                                obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value);
                                 if (obj) {
-                                    obj.dataType = "NUMBER";
+                                    obj.dataType = "STRING";
+                                    columns.push(obj);
                                 } else {
                                     // impossible to get column data from selection
                                     invalidSelection = true;
                                 }
-                            } else {
-                                obj = {
-                                        "id" : null,
-                                        "name" : metrics[i].name,
-                                        "dataType" : "NUMBER"
-                                };
                             }
-                            columns.push(obj);
                         }
-                    }
-                    if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
-                        originalColumns = columns.slice();
-                        columns.splice(this.config.get("rollups")[0].col, 1);
-                    } else {
-                        originalColumns = columns;
+                        metrics = this.model.get("metricList");
+                        if (metrics) {
+                            if (metrics.length === 0) {
+                                metrics = squid_api.model.config.get("chosenMetrics");
+                            }
+                        }
+                        if (metrics) {
+                            var metric;
+                            for (i=0; i<metrics.length; i++) {
+                                metric = metrics[i];
+                                if (metrics[i].id) {
+                                    for (ix=0; ix<me.domainMetrics.length; ix++) {
+                                        if (metrics[i].id.metricId === me.domainMetrics[ix].oid) {
+                                            metrics[i].name = me.domainMetrics[ix].name;
+                                        }
+                                    }
+                                    obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
+                                    if (obj) {
+                                        obj.dataType = "NUMBER";
+                                    } else {
+                                        // impossible to get column data from selection
+                                        invalidSelection = true;
+                                    }
+                                } else {
+                                    obj = {
+                                            "id" : null,
+                                            "name" : metrics[i].name,
+                                            "dataType" : "NUMBER"
+                                    };
+                                }
+                                columns.push(obj);
+                            }
+                        }
+                        if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
+                            originalColumns = columns.slice();
+                            columns.splice(this.config.get("rollups")[0].col, 1);
+                        } else {
+                            originalColumns = columns;
+                        }
                     }
                 }
 
                 var orderBy = this.model.get("orderBy");
                 if (orderBy) {
                     // add orderBy direction
-                	for (col=0; col<columns.length; col++) {
-                		if (columns[col]) {
-                			columns[col].orderDirection = undefined;
-	                		for (ix=0; ix<orderBy.length; ix++) {
-	                			if (this.ordering) {
-	                            	if (columns[col].definition) {
-	                            		if (orderBy[ix].expression) {
-	                            			if (columns[col].definition === orderBy[ix].expression.value) {
-	                                			columns[col].orderDirection = orderBy[ix].direction;
-	                                			break;
-	                                		}
-	                            		}
-	                            	} else if (orderBy[ix].expression) {
-	                            		if (columns[col].id === orderBy[ix].expression.value) {
-	                            			columns[col].orderDirection = orderBy[ix].direction;
-	                                		break;
-	                            		}
-	                            	}
-	                            }
-	                        }
-                		}
+                    for (col=0; col<columns.length; col++) {
+                        if (columns[col]) {
+                            columns[col].orderDirection = undefined;
+                            for (ix=0; ix<orderBy.length; ix++) {
+                                if (this.ordering) {
+                                    if (columns[col].definition) {
+                                        if (orderBy[ix].expression) {
+                                            if (columns[col].definition === orderBy[ix].expression.value) {
+                                                columns[col].orderDirection = orderBy[ix].direction;
+                                                break;
+                                            }
+                                        }
+                                    } else if (orderBy[ix].expression) {
+                                        if (columns[col].id === orderBy[ix].expression.value) {
+                                            columns[col].orderDirection = orderBy[ix].direction;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -353,8 +353,6 @@
                     }
                 }
             }
-
-            //this.currentDomain = this.config.get("domain");
         },
 
         displayTableContent : function(selector) {
@@ -556,58 +554,58 @@
         },
 
         render : function() {
+            if (this.el) {
+                var selector = "#"+this.el.id+" .sq-table";
 
-            var selector = "#"+this.el.id+" .sq-table";
-            if (this.model.get("facets") && this.filters.get("selection")) {
                 // display table header
                 this.displayTableHeader(selector);
-            }
 
-            if (this.model.get("status") === "DONE") {
-                this.$el.find("#total").show();
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").hide();
-                this.$el.find("#re-run").hide();
-                this.$el.find(".sort-direction").show();
+                if (this.model.get("status") === "DONE") {
+                    this.$el.find("#total").show();
+                    this.$el.find(".sq-loading").hide();
+                    this.$el.find("#stale").hide();
+                    this.$el.find("#re-run").hide();
+                    this.$el.find(".sort-direction").show();
 
-                if (!this.model.get("error")) {
-                    // display results
-                    this.displayTableContent(selector);
-                    if (this.paging) {
-                        this.paginationView.render();
-                        this.$el.find("#pagination").show();
-                    }
-                    this.$el.find("#error").html("");
-                } else {
-                    var analysis = this.model;
-                    // in case of a multi-analysis model
-                    if (analysis.get("analyses")) {
-                        analysis = analysis.get("analyses")[0];
-                    }
-                    if (this.model.get("error").enableRerun) {
-                        this.$el.find("#re-run").show();
+                    if (!this.model.get("error")) {
+                        // display results
+                        this.displayTableContent(selector);
+                        if (this.paging) {
+                            this.paginationView.render();
+                            this.$el.find("#pagination").show();
+                        }
+                        this.$el.find("#error").html("");
                     } else {
-                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                        var analysis = this.model;
+                        // in case of a multi-analysis model
+                        if (analysis.get("analyses")) {
+                            analysis = analysis.get("analyses")[0];
+                        }
+                        if (this.model.get("error").enableRerun) {
+                            this.$el.find("#re-run").show();
+                        } else {
+                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                        }
                     }
                 }
-            }
 
-            if (this.model.get("status") === "RUNNING") {
-                // computing in progress
-                this.$el.find(".sq-loading").show();
-                this.$el.find("#stale").hide();
-                this.$el.find(".sort-direction").show();
-                this.$el.find("#error").html("");
-            }
+                if (this.model.get("status") === "RUNNING") {
+                    // computing in progress
+                    this.$el.find(".sq-loading").show();
+                    this.$el.find("#stale").hide();
+                    this.$el.find(".sort-direction").show();
+                    this.$el.find("#error").html("");
+                }
 
-            if (this.model.get("status") === "PENDING") {
-                // refresh needed
-                d3.select(selector).select("tbody").selectAll("tr").remove();
-                this.$el.find("#pagination").hide();
-                this.$el.find("#total").hide();
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").show();
-                this.$el.find("#error").html("");
+                if (this.model.get("status") === "PENDING") {
+                    // refresh needed
+                    d3.select(selector).select("tbody").selectAll("tr").remove();
+                    this.$el.find("#pagination").hide();
+                    this.$el.find("#total").hide();
+                    this.$el.find(".sq-loading").hide();
+                    this.$el.find("#stale").show();
+                    this.$el.find("#error").html("");
+                }
             }
 
             return this;

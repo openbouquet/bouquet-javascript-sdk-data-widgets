@@ -5,17 +5,19 @@
 
     var View = Backbone.View.extend({
         template : null,
-        
+
         format : null,
-        
+
         d3Formatter : null,
 
         initialize: function(options) {
             var me = this;
+            this.config = squid_api.model.config;
 
             if (this.model) {
-                this.listenTo(this.model, 'change:status', this.update);
+                this.listenTo(this.model, 'change:status', this.render);
                 this.listenTo(this.model, 'change:error', this.render);
+                this.listenTo(this.model, 'change:disabled', this.toggleDisplay);
             }
 
             // setup options
@@ -24,7 +26,7 @@
             } else {
                 this.template = template;
             }
-            
+
             if (d3) {
                 this.d3Formatter = d3.format(",.f");
             }
@@ -46,6 +48,25 @@
                     };
                 }
             }
+            $(window).on("resize", _.bind(this.resize(),this));
+        },
+
+        toggleDisplay: function() {
+            if (this.model.get("disabled") || this.config.get("currentAnalysis") !== "barAnalysis") {
+                this.hide();
+            } else {
+                this.show();
+            }
+        },
+
+        resize : function() {
+            var resizing = true;
+            return function() {
+                if (this.resizing) {
+                    window.clearTimeout(resizing);
+                }
+                this.resizing = window.setTimeout(_.bind(this.render,this), 100);
+            };
         },
 
         setModel: function(model) {
@@ -94,10 +115,18 @@
             return this;
         },
 
-        update: function() {
-          if (this.model.get("dimensions").length < 2) {
-              this.render();
-          }
+        hide: function() {
+            this.$el.hide();
+        },
+
+        show: function() {
+            this.$el.show();
+        },
+
+        renderBase: function(done) {
+            this.$el.html(this.template({
+                done: done
+            }));
         },
 
         render: function() {
@@ -107,7 +136,7 @@
             if (data.done) {
 
                 // Print Template
-                this.$el.html(this.template());
+                this.renderBase(true);
 
                 // Obtain Bar Chart Data
                 var barData = this.barDataValues(data.results.rows);
@@ -233,6 +262,9 @@
                     yAxisAppend.attr("transform", function(d, i) {
                         return "translate(0," + (15 + (i * ySpacing)) + ")";
                     });
+                } else {
+                    // Print Template
+                    this.renderBase(false);
                 }
 
             return this;

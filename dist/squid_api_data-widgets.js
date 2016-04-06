@@ -10,6 +10,41 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return "<div id=\"bar_chart\" class=\"squid-api-data-widgets-bar-chart\" />";
   });
 
+this["squid_api"]["template"]["squid_api_basic_displaytype_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n    	<li data-content=\"";
+  if (helper = helpers.view) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.view); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.isActive), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "><i class=\"fa ";
+  if (helper = helpers.icon) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.icon); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " fa-2x\"></i></li>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return "class=\"active\"";
+  }
+
+  buffer += "<ul class=\"squid-api-data-widgets-displaytype-selector\">\n    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>";
+  return buffer;
+  });
+
 this["squid_api"]["template"]["squid_api_datatable_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -372,45 +407,71 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1, helper;
-  buffer += "\r\n	<div class='sq-kpi squid-api-data-widgets-kpi-widget'>\r\n		<span class=\"value\" style=\"font-size: large;\">";
-  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</span><span class=\"unit\">";
-  if (helper = helpers.unit) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.unit); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</span>\r\n	    <span class=\"name\">\r\n	        ";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\r\n	    </span>\r\n	</div>\r\n";
-  return buffer;
-  }
-
-function program3(depth0,data) {
-  
   var buffer = "", stack1;
   buffer += "\r\n	";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.done), {hash:{},inverse:self.program(6, program6, data),fn:self.program(4, program4, data),data:data});
+  stack1 = helpers.each.call(depth0, depth0, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n";
   return buffer;
   }
-function program4(depth0,data) {
+function program2(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\r\n	<div class='sq-kpi squid-api-data-widgets-kpi-widget'>\r\n		<div class=\"name\">\r\n	        ";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\r\n	    </div>\r\n		<div>\r\n			<span class=\"value\">";
+  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>\r\n			<span class=\"unit\">";
+  if (helper = helpers.unit) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.unit); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>\r\n		</div>\r\n		";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.compareToValue), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n	</div>\r\n	";
+  return buffer;
+  }
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\r\n		<div>\r\n			<span class=\"compareToValue\">";
+  if (helper = helpers.compareToValue) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.compareToValue); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>\r\n			<span class=\"unit\">";
+  if (helper = helpers.unit) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.unit); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>\r\n		</div>\r\n		";
+  return buffer;
+  }
+
+function program5(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\r\n	";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.done), {hash:{},inverse:self.program(8, program8, data),fn:self.program(6, program6, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n";
+  return buffer;
+  }
+function program6(depth0,data) {
   
   
   return "\r\n  		No Data\r\n  	";
   }
 
-function program6(depth0,data) {
+function program8(depth0,data) {
   
   
   return "\r\n  		Computing\r\n  	";
   }
 
-  stack1 = helpers['if'].call(depth0, depth0, {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, depth0, {hash:{},inverse:self.program(5, program5, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { return stack1; }
   else { return ''; }
   });
@@ -952,8 +1013,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         config : null,
 
         initialize : function(options) {
-
             var me = this;
+            this.status = squid_api.model.status;
 
             if (this.model) {
                 this.analysis = this.model;
@@ -969,6 +1030,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 }
                 if (options.onChangeHandler) {
                     this.onChangeHandler = options.onChangeHandler;
+                }
+                if (options.onStartIndexChangeHandler) {
+                    this.onStartIndexChangeHandler = options.onStartIndexChangeHandler;
                 }
             }
 
@@ -1008,6 +1072,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
             this.config.on('change:selection', function() {
                 me.refreshAnalysis();
+            });
+
+            this.config.on('change:currentAnalysis', function() {
+                me.onChangeHandler(me.analysis);
+            });
+
+            this.config.on("change:startIndex", function() {
+                me.onChangeHandler(me.analysis);
             });
         },
 
@@ -1082,17 +1154,19 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     var View = Backbone.View.extend({
         template : null,
-        
+
         format : null,
-        
+
         d3Formatter : null,
 
         initialize: function(options) {
             var me = this;
+            this.config = squid_api.model.config;
 
             if (this.model) {
-                this.listenTo(this.model, 'change:status', this.update);
+                this.listenTo(this.model, 'change:status', this.render);
                 this.listenTo(this.model, 'change:error', this.render);
+                this.listenTo(this.model, 'change:disabled', this.toggleDisplay);
             }
 
             // setup options
@@ -1101,7 +1175,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             } else {
                 this.template = template;
             }
-            
+
             if (d3) {
                 this.d3Formatter = d3.format(",.f");
             }
@@ -1123,6 +1197,25 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     };
                 }
             }
+            $(window).on("resize", _.bind(this.resize(),this));
+        },
+
+        toggleDisplay: function() {
+            if (this.model.get("disabled") || this.config.get("currentAnalysis") !== "barAnalysis") {
+                this.hide();
+            } else {
+                this.show();
+            }
+        },
+
+        resize : function() {
+            var resizing = true;
+            return function() {
+                if (this.resizing) {
+                    window.clearTimeout(resizing);
+                }
+                this.resizing = window.setTimeout(_.bind(this.render,this), 100);
+            };
         },
 
         setModel: function(model) {
@@ -1171,10 +1264,18 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             return this;
         },
 
-        update: function() {
-          if (this.model.get("dimensions").length < 2) {
-              this.render();
-          }
+        hide: function() {
+            this.$el.hide();
+        },
+
+        show: function() {
+            this.$el.show();
+        },
+
+        renderBase: function(done) {
+            this.$el.html(this.template({
+                done: done
+            }));
         },
 
         render: function() {
@@ -1184,7 +1285,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             if (data.done) {
 
                 // Print Template
-                this.$el.html(this.template());
+                this.renderBase(true);
 
                 // Obtain Bar Chart Data
                 var barData = this.barDataValues(data.results.rows);
@@ -1310,6 +1411,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     yAxisAppend.attr("transform", function(d, i) {
                         return "translate(0," + (15 + (i * ySpacing)) + ")";
                     });
+                } else {
+                    // Print Template
+                    this.renderBase(false);
                 }
 
             return this;
@@ -1318,6 +1422,155 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     });
 
     return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.BasicDisplayTypeSelectorView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_basic_displaytype_selector_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+
+        template : null,
+        config : null,
+        tableView : null,
+        barView : null,
+        timeView : null,
+        displayOnly : null,
+
+        initialize: function(options) {
+
+            if (options) {
+                // setup options
+                if (options.config) {
+                    this.config = options.config;
+                }
+
+                // Store template
+                if (options.template) {
+                    this.template = options.template;
+                } else {
+                    this.template = template;
+                }
+                if (options.displayOnly) {
+                    this.displayOnly = options.displayOnly;
+                }
+
+                this.tableView = options.tableView;
+                this.barView = options.barView;
+                this.timeView = options.timeView;
+            }
+
+
+            if (this.model) {
+                this.listenTo(this.model,"change", this.render);
+            }
+
+            if (!this.config) {
+                this.config = squid_api.model.config;
+            }
+            this.listenTo(this.config, "change:selection", this.render);
+        },
+
+        setModel: function(model) {
+            this.model = model;
+            this.initialize();
+        },
+
+        events: {
+            "click li": "changeWidget",
+            "click button":"openPopOver"
+        },
+
+        changeWidget: function(item){
+            var viewName = item.currentTarget.dataset.content;
+            var analysis;
+            var currentAnalysis;
+
+            // create the new view
+            if (viewName === "tableView") {
+                analysis = this.tableView.model;
+                currentAnalysis = "tableAnalysis";
+            } else if (viewName === "timeView") {
+                analysis = this.timeView.model;
+                currentAnalysis = "timeAnalysis";
+            } else if (viewName === "barView") {
+                analysis = this.barView.model;
+                currentAnalysis = "barAnalysis";
+            }
+
+            this.config.set("currentAnalysis", currentAnalysis);
+            this.model.set("currentAnalysis", analysis);
+        },
+
+        addCompatibleView : function(list, name) {
+            // check it is available
+            if (this[name]) {
+                list.push(name);
+            }
+        },
+
+        render: function() {
+            var me = this;
+
+            // compute the view types compatible with the model
+            var selectedDimension = this.model.get("selectedDimension");
+            var compatibleViews = [];
+
+            this.addCompatibleView(compatibleViews, "tableView");
+            this.addCompatibleView(compatibleViews, "timeView");
+            this.addCompatibleView(compatibleViews, "barView");
+
+            // compute the current selected view
+            var analysis = this.model.get("currentAnalysis");
+            var currentViewName;
+
+            if (this.tableView) {
+                if (analysis === this.tableView.model) {
+                    currentViewName = "tableView";
+                }
+            }
+            if (this.barView) {
+                if (analysis === this.barView.model) {
+                    currentViewName = "barView";
+                }
+            }
+            if (this.timeView) {
+                if (analysis === this.timeView.model) {
+                    currentViewName = "timeView";
+                }
+            }
+
+            // display the view selector
+            var data = {"options" : []};
+            for (idx2 = 0; idx2<compatibleViews.length; idx2++) {
+                var view2 = compatibleViews[idx2];
+                var icon;
+                if (view2 === "tableView") {
+                    icon = "fa-table";
+                } else if (view2 === "timeView") {
+                    icon = "fa-line-chart";
+                } else if (view2 === "barView") {
+                    icon = "fa-bar-chart";
+                }
+                var isActive = false;
+                if (view2 === currentViewName) {
+                    isActive = true;
+                }
+                data.options.push({"view" : view2, "icon" : icon, "isActive" : isActive});
+            }
+
+            this.$el.find("button").popover({
+                content: this.template(data),
+                html: true
+            });
+
+            return this;
+        }
+    });
+
+    return View;
+
 }));
 
 (function (root, factory) {
@@ -1502,7 +1755,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     });
                 });
             } else  {
-                var columns;
+                var columns = [];
                 var originalColumns;//unaltered by rollup splice
                 var invalidSelection = false;
                 var status = this.model.get("status");
@@ -1515,7 +1768,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 var results = analysis.get("results");
                 var rollups;
                 if (results && status !== "PENDING" && status !== "RUNNING") {
-                    // use results columns
+                    // Analysis computed : use results columns
                     columns = results.cols;
 
                     // init rollups
@@ -1525,88 +1778,88 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     }
                     originalColumns = columns;
                 } else {
-                    // use analysis columns
-                    columns = [];
-
-                    var obj;
-                    var facets = this.model.get("facets");
-                    if (facets) {
-                        for (i=0; i<facets.length; i++) {
-                            obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value);
-                            if (obj) {
-                                obj.dataType = "STRING";
-                                columns.push(obj);
-                            } else {
-                                // impossible to get column data from selection
-                                invalidSelection = true;
-                            }
-                        }
-                    }
-                    metrics = this.model.get("metricList");
-                    if (metrics) {
-                        if (metrics.length === 0) {
-                            metrics = squid_api.model.config.get("chosenMetrics");
-                        }
-                    }
-                    if (metrics) {
-                        var metric;
-                        for (i=0; i<metrics.length; i++) {
-                            metric = metrics[i];
-                            if (metrics[i].id) {
-                                for (ix=0; ix<me.domainMetrics.length; ix++) {
-                                    if (metrics[i].id.metricId === me.domainMetrics[ix].oid) {
-                                        metrics[i].name = me.domainMetrics[ix].name;
-                                    }
-                                }
-                                obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
+                    // Analysis not computed yet : use analysis definition
+                    if (this.filters.get("selection")) {
+                        var obj;
+                        var facets = this.model.get("facets");
+                        if (facets) {
+                            for (i=0; i<facets.length; i++) {
+                                obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value);
                                 if (obj) {
-                                    obj.dataType = "NUMBER";
+                                    obj.dataType = "STRING";
+                                    columns.push(obj);
                                 } else {
                                     // impossible to get column data from selection
                                     invalidSelection = true;
                                 }
-                            } else {
-                                obj = {
-                                        "id" : null,
-                                        "name" : metrics[i].name,
-                                        "dataType" : "NUMBER"
-                                };
                             }
-                            columns.push(obj);
                         }
-                    }
-                    if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
-                        originalColumns = columns.slice();
-                        columns.splice(this.config.get("rollups")[0].col, 1);
-                    } else {
-                        originalColumns = columns;
+                        metrics = this.model.get("metricList");
+                        if (metrics) {
+                            if (metrics.length === 0) {
+                                metrics = squid_api.model.config.get("chosenMetrics");
+                            }
+                        }
+                        if (metrics) {
+                            var metric;
+                            for (i=0; i<metrics.length; i++) {
+                                metric = metrics[i];
+                                if (metrics[i].id) {
+                                    for (ix=0; ix<me.domainMetrics.length; ix++) {
+                                        if (metrics[i].id.metricId === me.domainMetrics[ix].oid) {
+                                            metrics[i].name = me.domainMetrics[ix].name;
+                                        }
+                                    }
+                                    obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
+                                    if (obj) {
+                                        obj.dataType = "NUMBER";
+                                    } else {
+                                        // impossible to get column data from selection
+                                        invalidSelection = true;
+                                    }
+                                } else {
+                                    obj = {
+                                            "id" : null,
+                                            "name" : metrics[i].name,
+                                            "dataType" : "NUMBER"
+                                    };
+                                }
+                                columns.push(obj);
+                            }
+                        }
+                        if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
+                            originalColumns = columns.slice();
+                            columns.splice(this.config.get("rollups")[0].col, 1);
+                        } else {
+                            originalColumns = columns;
+                        }
                     }
                 }
 
                 var orderBy = this.model.get("orderBy");
                 if (orderBy) {
                     // add orderBy direction
-                	for (col=0; col<columns.length; col++) {
-                		if (columns[col]) {
-                			columns[col].orderDirection = undefined;
-	                		for (ix=0; ix<orderBy.length; ix++) {
-	                			if (this.ordering) {
-	                            	if (columns[col].definition) {
-	                            		if (orderBy[ix].expression) {
-	                            			if (columns[col].definition === orderBy[ix].expression.value) {
-	                                			columns[col].orderDirection = orderBy[ix].direction;
-	                                			break;
-	                                		}
-	                            		}
-	                            	} else if (orderBy[ix].expression) {
-	                            		if (columns[col].id === orderBy[ix].expression.value) {
-	                            			columns[col].orderDirection = orderBy[ix].direction;
-	                                		break;
-	                            		}
-	                            	}
-	                            }
-	                        }
-                		}
+                    for (col=0; col<columns.length; col++) {
+                        if (columns[col]) {
+                            columns[col].orderDirection = undefined;
+                            for (ix=0; ix<orderBy.length; ix++) {
+                                if (this.ordering) {
+                                    if (columns[col].definition) {
+                                        if (orderBy[ix].expression) {
+                                            if (columns[col].definition === orderBy[ix].expression.value) {
+                                                columns[col].orderDirection = orderBy[ix].direction;
+                                                break;
+                                            }
+                                        }
+                                    } else if (orderBy[ix].expression) {
+                                        if (columns[col].id === orderBy[ix].expression.value) {
+                                            columns[col].orderDirection = orderBy[ix].direction;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -1675,8 +1928,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     }
                 }
             }
-
-            //this.currentDomain = this.config.get("domain");
         },
 
         displayTableContent : function(selector) {
@@ -1878,63 +2129,182 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         },
 
         render : function() {
+            if (this.el) {
+                var selector = "#"+this.el.id+" .sq-table";
 
-            var selector = "#"+this.el.id+" .sq-table";
-            if (this.model.get("facets") && this.filters.get("selection")) {
                 // display table header
                 this.displayTableHeader(selector);
-            }
 
-            if (this.model.get("status") === "DONE") {
-                this.$el.find("#total").show();
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").hide();
-                this.$el.find("#re-run").hide();
-                this.$el.find(".sort-direction").show();
+                if (this.model.get("status") === "DONE") {
+                    this.$el.find("#total").show();
+                    this.$el.find(".sq-loading").hide();
+                    this.$el.find("#stale").hide();
+                    this.$el.find("#re-run").hide();
+                    this.$el.find(".sort-direction").show();
 
-                if (!this.model.get("error")) {
-                    // display results
-                    this.displayTableContent(selector);
-                    if (this.paging) {
-                        this.paginationView.render();
-                        this.$el.find("#pagination").show();
-                    }
-                    this.$el.find("#error").html("");
-                } else {
-                    var analysis = this.model;
-                    // in case of a multi-analysis model
-                    if (analysis.get("analyses")) {
-                        analysis = analysis.get("analyses")[0];
-                    }
-                    if (this.model.get("error").enableRerun) {
-                        this.$el.find("#re-run").show();
+                    if (!this.model.get("error")) {
+                        // display results
+                        this.displayTableContent(selector);
+                        if (this.paging) {
+                            this.paginationView.render();
+                            this.$el.find("#pagination").show();
+                        }
+                        this.$el.find("#error").html("");
                     } else {
-                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                        var analysis = this.model;
+                        // in case of a multi-analysis model
+                        if (analysis.get("analyses")) {
+                            analysis = analysis.get("analyses")[0];
+                        }
+                        if (this.model.get("error").enableRerun) {
+                            this.$el.find("#re-run").show();
+                        } else {
+                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                        }
                     }
                 }
-            }
 
-            if (this.model.get("status") === "RUNNING") {
-                // computing in progress
-                this.$el.find(".sq-loading").show();
-                this.$el.find("#stale").hide();
-                this.$el.find(".sort-direction").show();
-                this.$el.find("#error").html("");
-            }
+                if (this.model.get("status") === "RUNNING") {
+                    // computing in progress
+                    this.$el.find(".sq-loading").show();
+                    this.$el.find("#stale").hide();
+                    this.$el.find(".sort-direction").show();
+                    this.$el.find("#error").html("");
+                }
 
-            if (this.model.get("status") === "PENDING") {
-                // refresh needed
-                d3.select(selector).select("tbody").selectAll("tr").remove();
-                this.$el.find("#pagination").hide();
-                this.$el.find("#total").hide();
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").show();
-                this.$el.find("#error").html("");
+                if (this.model.get("status") === "PENDING") {
+                    // refresh needed
+                    d3.select(selector).select("tbody").selectAll("tr").remove();
+                    this.$el.find("#pagination").hide();
+                    this.$el.find("#total").hide();
+                    this.$el.find(".sq-loading").hide();
+                    this.$el.find("#stale").show();
+                    this.$el.find("#error").html("");
+                }
             }
 
             return this;
         }
 
+    });
+
+    return View;
+}));
+
+(function(root, factory) {
+    root.squid_api.controller.DateAnalysisController = factory(root.Backbone,
+        root.squid_api);
+
+}(this, function(Backbone, squid_api) {
+
+    var View = squid_api.controller.AnalysisController.extend({
+        analysis : null,
+        config : null,
+
+        refreshAnalysis : function(silent) {
+            var changed = false;
+            var a = this.analysis;
+            var config = this.config;
+            if (silent !== false) {
+                silent = true;
+            }
+
+            a.set({
+                "id" : {
+                    "projectId" : config.get("project"),
+                    "analysisJobId" : a.get("id").analysisJobId
+                }
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            a.set({
+                "domains" : [ {
+                    "projectId" : config.get("project"),
+                    "domainId" : config.get("domain")
+                } ]
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            var selection = this.config.get("selection");
+            if (selection) {
+                var dateFound = false;
+                for (i=0; i<selection.facets.length; i++) {
+                    // search for date facet within chosenDimensions
+                    var facet = selection.facets[i];
+                    var chosenDimensions = config.get("chosenDimensions");
+                    var id = facet.id;
+                    if (chosenDimensions) {
+                        var existsInChosen = chosenDimensions.includes(id);
+                        if (config.get("chosenDimensions").length > 0) {
+                            if (existsInChosen && facet.dimension.valueType == "DATE") {
+                                if (facet.dimension.type == "CONTINUOUS") {
+                                    this.setFacets(a, facet.id);
+                                    dateFound = true;
+                                    break;
+                                } else {
+                                    this.status.set({"message" : "dimension " + facet.name + " is not indexed for use with this visulisation"});
+                                }
+                            }
+                        }
+                    }
+                }
+                if (! dateFound) {
+                    // if no date is found, use the first one found
+                    for (i=0; i<selection.facets.length; i++) {
+                        if (selection.facets[i].dimension.type == "CONTINUOUS" && selection.facets[i].dimension.valueType == "DATE") {
+                            this.setFacets(a, selection.facets[i].id);
+                            break;
+                        }
+                    }
+                }
+            }
+            changed = changed || a.hasChanged();
+            a.setMetrics(config.get("chosenMetrics"), silent);
+            changed = changed || a.hasChanged();
+            a.setSelection(config.get("selection"), silent);
+            changed = changed || a.hasChanged();
+            a.set({
+                "limit" : config.get("limit")
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            a.set({
+                "rollups" : config.get("rollups")
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            a.set({
+                "orderBy" : config.get("orderBy")
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+
+            if (changed === true) {
+                this.onChangeHandler(this.analysis);
+            }
+        },
+
+        setFacets: function(a, id) {
+            var toDate = false;
+            squid_api.utils.checkAPIVersion(">=4.2.1").done(function(v){
+                toDate = true;
+            });
+            if (toDate) {
+                var dimensions =  this.config.get("chosenDimensions");
+                a.setFacets(dimensions, {silent : true});
+                var facets = a.get("facets");
+                if (facets) {
+                    facets.unshift({value: "TO_DATE(" + id + ")"});
+                }
+            } else {
+                a.setFacets([id], silent);
+            }
+        }
     });
 
     return View;
@@ -3396,7 +3766,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     View = Backbone.View.extend( {
 
         template : null,
-        
+
         format : null,
 
         initialize : function(options) {
@@ -3431,25 +3801,58 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         render : function() {
             var jsonData, results, values;
             if (this.model.isDone()) {
-                jsonData = {};
+                jsonData = [];
                 jsonData.done = true;
                 results = this.model.get("results");
                 if (results) {
-                    if (results.rows.length === 1) {
-                        values = results.rows[0].v;
-                        if (values.length === 2) {
-                            jsonData.value = this.format((values[1] / values[0]) * 100);
-                            jsonData.unit = "%";
-                            jsonData.name = results.cols[1].lname;
+                    var cols = results.cols;
+
+                    // resolve compareTo columns
+                    var compareMap = {};
+                    for (var i = 0; i < cols.length; i++) {
+                        var colA = cols[i];
+                        if (colA.originType === "COMPARETO") {
+                            // key = col oid, value = compare col index
+                            compareMap[colA.id] = i;
                         }
-                    } 
+                    }
+
+                    // build display data
+                    var values = results.rows[0].v;
+                    for (var i=0; i<cols.length; i++) {
+                        var col = cols[i];
+                        if (col.originType === "USER") {
+                            var kpi = {};
+                            kpi.value = this.format(values[i]);
+                            var compareIndex = compareMap[col.id];
+                            if (compareIndex) {
+                                kpi.compareToValue = this.format(values[compareIndex]);
+                            }
+                            kpi.unit = "";
+                            kpi.name = col.name;
+                            if (typeof kpi.compareToValue != "undefined"
+                              && kpi.compareToValue != null) {
+                              var lvalue = parseFloat(kpi.value.replace(",",""));
+                              var rvalue = parseFloat(kpi.compareToValue.replace(",",""));
+                              kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
+                              if (kpi.growth > 0) {
+                                kpi.compareTextColor = 'text-success';
+                              }  else if (kpi.growth < 0) {
+                                kpi.compareTextColor = 'text-danger';
+                              } else {
+                                kpi.growth = 0;
+                                kpi.compareTextColor = 'text-info';
+                              }
+                            }
+                            jsonData.push(kpi);
+                        }
+                    }
                 }
             }
-            var tableContent = this.$el;
-            var tableHTML = this.template(jsonData);
-            tableContent.html(tableHTML);
+            this.$el.html(this.template(jsonData));
             return this;
         }
+
     });
 
     return View;
@@ -5431,6 +5834,100 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     return View;
 }));
 
+(function(root, factory) {
+    root.squid_api.controller.SingleDimensionAnalysisController = factory(root.Backbone,
+        root.squid_api);
+
+}(this, function(Backbone, squid_api) {
+
+    var View = squid_api.controller.AnalysisController.extend({
+        analysis : null,
+        config : null,
+
+        refreshAnalysis : function(silent) {
+            var changed = false;
+            var a = this.analysis;
+            var config = this.config;
+            if (silent !== false) {
+                silent = true;
+            }
+
+            a.set({
+                "id" : {
+                    "projectId" : config.get("project"),
+                    "analysisJobId" : a.get("id").analysisJobId
+                }
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            a.set({
+                "domains" : [ {
+                    "projectId" : config.get("project"),
+                    "domainId" : config.get("domain")
+                } ]
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            var selection = this.config.get("selection");
+            if (selection) {
+                var facetFound = false;
+                for (i=0; i<selection.facets.length; i++) {
+                    var facet = selection.facets[i];
+                    var chosenDimensions = config.get("chosenDimensions");
+                    var id = facet.id;
+                    if (chosenDimensions) {
+                        if (config.get("chosenDimensions").length > 0) {
+                            this.setDimension(a, chosenDimensions[0]);
+                            break;
+                        } else {
+                            this.setDimension(a, facet.id);
+                            break;
+                        }
+                    } else {
+                        this.setDimension(a, facet.id);
+                        break;
+                    }
+                }
+            }
+            changed = changed || a.hasChanged();
+            a.setMetrics(config.get("chosenMetrics"), silent);
+            changed = changed || a.hasChanged();
+            a.setSelection(config.get("selection"), silent);
+            changed = changed || a.hasChanged();
+            a.set({
+                "limit" : config.get("limit")
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            a.set({
+                "rollups" : config.get("rollups")
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            a.set({
+                "orderBy" : config.get("orderBy")
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+
+            if (changed === true) {
+                this.onChangeHandler(this.analysis);
+            }
+        },
+
+        setDimension: function(a, id) {
+            a.set("facets", [{value: id}], {silent : true});
+        }
+    });
+
+    return View;
+}));
+
 (function (root, factory) {
     root.squid_api.view.TimeSeriesView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_timeseries_widget);
 }(this, function (Backbone, squid_api) {
@@ -5464,7 +5961,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 if (options.colorPalette) {
                     this.colorPalette = options.colorPalette;
                 } else {
-                    this.colorPalette = ['blue', 'rgb(255,100,43)', '#CCCCFF'];
+                    this.colorPalette = ["#067e87", "#00a0c2", "#0304b4", "#03a00b", "#0bf984", "#0ef0a2", "#068bf0", "#0c7be7", "#0540a9", "#02dafe", "#01c7b7", "#04bc68", "#061380", "#0de2b5", "#0c5e6b", "#027fa8", "#0df300", "#07f666", "#077839", "#0e7a70", "#0a947b", "#0011a3", "#00d2ab", "#03098a", "#017c8c", "#0855dd", "#0391f4", "#0c17b7", "#0d29a7", "#017a0f", "#0ec80e", "#04f4b7", "#08ec75", "#01f5e9", "#0afe29", "#09680c", "#08a459", "#03eb16", "#006116", "#01998d", "#013f2f", "#00966e", "#0d8d68", "#068b44", "#01784e", "#0de1ad", "#054010", "#0e65b6", "#04bb6d", "#02eec0", "#0875e5", "#0ac304", "#0bca4a", "#065293", "#08d7a1", "#0545eb", "#008a41", "#0572c3", "#0ceb28", "#0d9121", "#07b4a1", "#0563ac", "#046092", "#07d882", "#0d59f4", "#067bd9", "#0968b7", "#010e9f", "#0e3837", "#027d76", "#0d2478", "#00bc50", "#0b8bbc", "#028ba2", "#0a6245", "#0c5dae", "#00bbad", "#075bb4", "#03fd64", "#06fe18", "#0de939", "#0f104a", "#0c059f", "#0473ab", "#02896d", "#05fd0b", "#0d79ff", "#05a6f3", "#0c34ab", "#0486cf", "#022f39", "#09bb88", "#08a446", "#0e35d0", "#023c1b", "#0abe29", "#02b781", "#0c926f", "#02d742", "#005f34"];
                 }
                 if (options.interpolationRange) {
                     this.interpolationRange = options.interpolationRange;
@@ -5523,12 +6020,21 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
             if (this.model) {
                 this.listenTo(this.model, 'change:status', this.render);
+                this.listenTo(this.model, 'change:disabled', this.toggleDisplay);
                 this.listenTo(this.model, 'change:error', this.render);
                 this.listenTo(this.config, 'change:configDisplay', this.updateHeight);
             }
 
             // Resize
             $(window).on("resize", _.bind(this.resize(),this));
+        },
+
+        toggleDisplay: function() {
+            if (this.model.get("disabled") || this.config.get("currentAnalysis") !== "timeAnalysis") {
+                this.hide();
+            } else {
+                this.show();
+            }
         },
 
         resize : function() {
@@ -5610,42 +6116,102 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             // data for timeseries
             var legend = [];
             var dataset = [];
+            var nVariate = false;
 
             // sort dates
             this.results.rows = this.sortDates(this.results.rows);
+
+            // see if multiple dimensions exist
+            for (let i=1; i<this.results.cols.length; i++) {
+                if (this.results.cols[i].role == "DOMAIN") {
+                    nVariate = true;
+                    break;
+                }
+            }
 
             // get data
             for (i=1; i<this.results.cols.length; i++) {
                 if (_.contains(metrics, this.results.cols[i].id) || ! metrics) {
                     var arr = [];
+                    var metaData = [];
+                    var dimCount = this.results.cols.length - 2;
 
-                    // store legend
-                    legend.push(this.results.cols[i].name);
+                    /* Legend */
 
+                    // if just using a metric and a date
+                    if (! nVariate) {
+                        legend.push(this.results.cols[i].name);
+                    } else {
+                    // obtain legend names from results
+                        for (let dim=0; dim<dimCount; dim++) {
+                            var arr = [];
+                            for (ix1=0; ix1<this.results.rows.length; ix1++) {
+                                if ($.inArray(this.results.rows[ix1].v[dim + 1], legend) < 0) {
+                                    // store unique legend items
+                                    legend.push(this.results.rows[ix1].v[dim + 1]);
+                                    // store meta data for results
+                                    metaData.push({
+                                        name : this.results.rows[ix1].v[dim + 1],
+                                        index: dim + 1
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    /* Date Results */
                     var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
                     var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
 
-                    // make sure a value is available for every day
-                    for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
-                        var date = currentDay.format('YYYY-MM-DD');
-                        var dataExists = false;
-                        var obj = {
-                            "date" : date
-                        };
-                        for (ix=0; ix<this.results.rows.length; ix++) {
-                            if (this.results.rows[ix].v[0] == date) {
-                                dataExists = true;
-                                obj.value = this.results.rows[ix].v[i];
-                            }
-                        }
-                        if (! dataExists) {
-                            obj.value = 0;
-                        }
-                        arr.push(obj);
-                    }
+                    // make sure a value is available for every day (standard timeseries)
+                    if (! nVariate) {
+                        for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+                            var date = currentDay.format('YYYY-MM-DD');
+                            var dataExists = false;
 
-                    arr = MG.convert.date(arr, 'date');
-                    dataset.push(arr);
+                            var obj = {
+                                "date" : date
+                            };
+                            for (ix=0; ix<this.results.rows.length; ix++) {
+                                if (this.results.rows[ix].v[0] === date) {
+                                    dataExists = true;
+                                    obj.value = this.results.rows[ix].v[i];
+                                }
+                            }
+                            if (! dataExists) {
+                                obj.value = 0;
+                            }
+                            arr.push(obj);
+                        }
+
+                        arr = MG.convert.date(arr, 'date');
+                        dataset.push(arr);
+                    } else {
+                    // if more than one dimension use metaData gathered from the legend creation
+                        for (var item=0; item<metaData.length; item++) {
+                            var tmpArr = [];
+                            startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
+                            for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+                                var date = currentDay.format('YYYY-MM-DD');
+                                var dataExists = false;
+                                var obj1 = {
+                                    "date" : date
+                                };
+                                for (ix=0; ix<this.results.rows.length; ix++) {
+                                    if (this.results.rows[ix].v[0] === date && (metaData[item].name == this.results.rows[ix].v[metaData[item].index])) {
+                                        dataExists = true;
+                                        obj1.value = this.results.rows[ix].v[dimCount + 1];
+                                    }
+                                }
+                                if (! dataExists) {
+                                    obj1.value = 0;
+                                }
+                                tmpArr.push(obj1);
+                            }
+                            arr = MG.convert.date(tmpArr, 'date');
+                            dataset.push(arr);
+                        }
+                    }
                 }
             }
 
@@ -5668,10 +6234,26 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             MG.data_graphic(this.configuration);
         },
 
+        hide: function() {
+            this.$el.hide();
+        },
+
+        show: function() {
+            this.$el.show();
+        },
+
+        renderTemplate: function(done) {
+            this.$el.html(this.template({
+                reRunMessage: this.reRunMessage,
+                done: done
+            }));
+        },
+
         render : function() {
             var status = this.model.get("status");
             var me = this;
             this.YearOverYear = this.config.get("YearOverYear");
+            this.renderTemplate(false);
 
             if (status === "PENDING") {
                 this.$el.html(this.template({"staleMessage" : this.staleMessage}));
@@ -5682,9 +6264,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 this.$el.find(".sq-loading").show();
             }
             if (status === "DONE") {
-                this.$el.html(this.template({
-                    reRunMessage: this.reRunMessage
-                }));
+                this.renderTemplate(true);
                 // additional timeserie analysis views
                 if (this.yearSwitcherView){
                     this.renderAdditionalView(this.yearSwitcherView, this.$el.find("#yearswitcher"));

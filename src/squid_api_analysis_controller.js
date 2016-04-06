@@ -9,8 +9,8 @@
         config : null,
 
         initialize : function(options) {
-
             var me = this;
+            this.status = squid_api.model.status;
 
             if (this.model) {
                 this.analysis = this.model;
@@ -26,6 +26,9 @@
                 }
                 if (options.onChangeHandler) {
                     this.onChangeHandler = options.onChangeHandler;
+                }
+                if (options.onStartIndexChangeHandler) {
+                    this.onStartIndexChangeHandler = options.onStartIndexChangeHandler;
                 }
             }
 
@@ -65,6 +68,14 @@
 
             this.config.on('change:selection', function() {
                 me.refreshAnalysis();
+            });
+
+            this.config.on('change:currentAnalysis', function() {
+                me.onChangeHandler(me.analysis);
+            });
+
+            this.config.on("change:startIndex", function() {
+                me.onChangeHandler(me.analysis);
             });
         },
 

@@ -5,7 +5,7 @@
     View = Backbone.View.extend( {
 
         template : null,
-        
+
         format : null,
 
         initialize : function(options) {
@@ -40,25 +40,58 @@
         render : function() {
             var jsonData, results, values;
             if (this.model.isDone()) {
-                jsonData = {};
+                jsonData = [];
                 jsonData.done = true;
                 results = this.model.get("results");
                 if (results) {
-                    if (results.rows.length === 1) {
-                        values = results.rows[0].v;
-                        if (values.length === 2) {
-                            jsonData.value = this.format((values[1] / values[0]) * 100);
-                            jsonData.unit = "%";
-                            jsonData.name = results.cols[1].lname;
+                    var cols = results.cols;
+
+                    // resolve compareTo columns
+                    var compareMap = {};
+                    for (var i = 0; i < cols.length; i++) {
+                        var colA = cols[i];
+                        if (colA.originType === "COMPARETO") {
+                            // key = col oid, value = compare col index
+                            compareMap[colA.id] = i;
                         }
-                    } 
+                    }
+
+                    // build display data
+                    var values = results.rows[0].v;
+                    for (var i=0; i<cols.length; i++) {
+                        var col = cols[i];
+                        if (col.originType === "USER") {
+                            var kpi = {};
+                            kpi.value = this.format(values[i]);
+                            var compareIndex = compareMap[col.id];
+                            if (compareIndex) {
+                                kpi.compareToValue = this.format(values[compareIndex]);
+                            }
+                            kpi.unit = "";
+                            kpi.name = col.name;
+                            if (typeof kpi.compareToValue != "undefined"
+                              && kpi.compareToValue != null) {
+                              var lvalue = parseFloat(kpi.value.replace(",",""));
+                              var rvalue = parseFloat(kpi.compareToValue.replace(",",""));
+                              kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
+                              if (kpi.growth > 0) {
+                                kpi.compareTextColor = 'text-success';
+                              }  else if (kpi.growth < 0) {
+                                kpi.compareTextColor = 'text-danger';
+                              } else {
+                                kpi.growth = 0;
+                                kpi.compareTextColor = 'text-info';
+                              }
+                            }
+                            jsonData.push(kpi);
+                        }
+                    }
                 }
             }
-            var tableContent = this.$el;
-            var tableHTML = this.template(jsonData);
-            tableContent.html(tableHTML);
+            this.$el.html(this.template(jsonData));
             return this;
         }
+
     });
 
     return View;

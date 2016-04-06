@@ -1,10 +1,21 @@
 {{#if this}}
+	{{#each this}}
 	<div class='sq-kpi squid-api-data-widgets-kpi-widget'>
-		<span class="value" style="font-size: large;">{{value}}</span><span class="unit">{{unit}}</span>
-	    <span class="name">
+		<div class="name">
 	        {{name}}
-	    </span>
+	    </div>
+		<div>
+			<span class="value">{{value}}</span>
+			<span class="unit">{{unit}}</span>
+		</div>
+		{{#if compareToValue}}
+		<div>
+			<span class="compareToValue">{{compareToValue}}</span>
+			<span class="unit">{{unit}}</span>
+		</div>
+		{{/if}}
 	</div>
+	{{/each}}
 {{else}}
 	{{#if done}}
   		No Data
