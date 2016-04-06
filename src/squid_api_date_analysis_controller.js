@@ -105,7 +105,9 @@
                 var dimensions =  this.config.get("chosenDimensions");
                 a.setFacets(dimensions, {silent : true});
                 var facets = a.get("facets");
-                facets.unshift({value: "TO_DATE(" + id + ")"});
+                if (facets) {
+                    facets.unshift({value: "TO_DATE(" + id + ")"});
+                }
             } else {
                 a.setFacets([id], silent);
             }
