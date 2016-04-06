@@ -2239,7 +2239,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         if (config.get("chosenDimensions").length > 0) {
                             if (existsInChosen && facet.dimension.valueType == "DATE") {
                                 if (facet.dimension.type == "CONTINUOUS") {
-                                    this.setDateFacet(a, facet.id);
+                                    this.setFacets(a, facet.id);
                                     dateFound = true;
                                     break;
                                 } else {
@@ -2253,7 +2253,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     // if no date is found, use the first one found
                     for (i=0; i<selection.facets.length; i++) {
                         if (selection.facets[i].dimension.type == "CONTINUOUS" && selection.facets[i].dimension.valueType == "DATE") {
-                            this.setDateFacet(a, selection.facets[i].id);
+                            this.setFacets(a, selection.facets[i].id);
                             break;
                         }
                     }
@@ -2288,14 +2288,16 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
         },
 
-        setDateFacet: function(a, id) {
+        setFacets: function(a, id) {
             var toDate = false;
             squid_api.utils.checkAPIVersion(">=4.2.1").done(function(v){
                 toDate = true;
             });
             if (toDate) {
-                // a.setFacets([id], silent);
-                a.set("facets", [{value: "TO_DATE(" + id + ")"}], {silent : true});
+                var dimensions =  this.config.get("chosenDimensions");
+                a.setFacets(dimensions, {silent : true});
+                var facets = a.get("facets");
+                facets.unshift({value: "TO_DATE(" + id + ")"});
             } else {
                 a.setFacets([id], silent);
             }
@@ -5957,7 +5959,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 if (options.colorPalette) {
                     this.colorPalette = options.colorPalette;
                 } else {
-                    this.colorPalette = ['blue', 'rgb(255,100,43)', '#CCCCFF'];
+                    // this.colorPalette = ['blue', 'rgb(255,100,43)', '#CCCCFF'];
                 }
                 if (options.interpolationRange) {
                     this.interpolationRange = options.interpolationRange;
@@ -6112,42 +6114,102 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             // data for timeseries
             var legend = [];
             var dataset = [];
+            var nVariate = false;
 
             // sort dates
             this.results.rows = this.sortDates(this.results.rows);
+
+            // see if multiple dimensions exist
+            for (let i=1; i<this.results.cols.length; i++) {
+                if (this.results.cols[i].role == "DOMAIN") {
+                    nVariate = true;
+                    break;
+                }
+            }
 
             // get data
             for (i=1; i<this.results.cols.length; i++) {
                 if (_.contains(metrics, this.results.cols[i].id) || ! metrics) {
                     var arr = [];
+                    var metaData = [];
+                    var dimCount = this.results.cols.length - 2;
 
-                    // store legend
-                    legend.push(this.results.cols[i].name);
+                    /* Legend */
 
+                    // if just using a metric and a date
+                    if (! nVariate) {
+                        legend.push(this.results.cols[i].name);
+                    } else {
+                    // obtain legend names from results
+                        for (let dim=0; dim<dimCount; dim++) {
+                            var arr = [];
+                            for (ix1=0; ix1<this.results.rows.length; ix1++) {
+                                if ($.inArray(this.results.rows[ix1].v[dim + 1], legend) < 0) {
+                                    // store unique legend items
+                                    legend.push(this.results.rows[ix1].v[dim + 1]);
+                                    // store meta data for results
+                                    metaData.push({
+                                        name : this.results.rows[ix1].v[dim + 1],
+                                        index: dim + 1
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    /* Date Results */
                     var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
                     var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
 
-                    // make sure a value is available for every day
-                    for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
-                        var date = currentDay.format('YYYY-MM-DD');
-                        var dataExists = false;
-                        var obj = {
-                            "date" : date
-                        };
-                        for (ix=0; ix<this.results.rows.length; ix++) {
-                            if (this.results.rows[ix].v[0] == date) {
-                                dataExists = true;
-                                obj.value = this.results.rows[ix].v[i];
-                            }
-                        }
-                        if (! dataExists) {
-                            obj.value = 0;
-                        }
-                        arr.push(obj);
-                    }
+                    // make sure a value is available for every day (standard timeseries)
+                    if (! nVariate) {
+                        for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+                            var date = currentDay.format('YYYY-MM-DD');
+                            var dataExists = false;
 
-                    arr = MG.convert.date(arr, 'date');
-                    dataset.push(arr);
+                            var obj = {
+                                "date" : date
+                            };
+                            for (ix=0; ix<this.results.rows.length; ix++) {
+                                if (this.results.rows[ix].v[0] === date) {
+                                    dataExists = true;
+                                    obj.value = this.results.rows[ix].v[i];
+                                }
+                            }
+                            if (! dataExists) {
+                                obj.value = 0;
+                            }
+                            arr.push(obj);
+                        }
+
+                        arr = MG.convert.date(arr, 'date');
+                        dataset.push(arr);
+                    } else {
+                    // if more than one dimension use metaData gathered from the legend creation
+                        for (var item=0; item<metaData.length; item++) {
+                            var tmpArr = [];
+                            startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
+                            for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+                                var date = currentDay.format('YYYY-MM-DD');
+                                var dataExists = false;
+                                var obj1 = {
+                                    "date" : date
+                                };
+                                for (ix=0; ix<this.results.rows.length; ix++) {
+                                    if (this.results.rows[ix].v[0] === date && (metaData[item].name == this.results.rows[ix].v[metaData[item].index])) {
+                                        dataExists = true;
+                                        obj1.value = this.results.rows[ix].v[dimCount + 1];
+                                    }
+                                }
+                                if (! dataExists) {
+                                    obj1.value = 0;
+                                }
+                                tmpArr.push(obj1);
+                            }
+                            arr = MG.convert.date(tmpArr, 'date');
+                            dataset.push(arr);
+                        }
+                    }
                 }
             }
 
