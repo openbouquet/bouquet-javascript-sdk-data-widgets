@@ -6144,7 +6144,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         legend.push(this.results.cols[i].name);
                     } else {
                     // obtain legend names from results
-                        for (let dim=0; dim<dimCount; dim++) {
+                        for (var dim=0; dim<dimCount; dim++) {
                             var arr = [];
                             for (ix1=0; ix1<this.results.rows.length; ix1++) {
                                 if ($.inArray(this.results.rows[ix1].v[dim + 1], legend) < 0) {
