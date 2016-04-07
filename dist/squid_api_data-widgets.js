@@ -2291,8 +2291,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
         setFacets: function(a, id) {
             var toDate = false;
+            var beyondLimit = false;
             squid_api.utils.checkAPIVersion(">=4.2.1").done(function(v){
                 toDate = true;
+            });
+            squid_api.utils.checkAPIVersion(">=4.2.4").done(function(v){
+                beyondLimit = true;
             });
             if (toDate) {
                 var dimensions =  this.config.get("chosenDimensions");
@@ -2303,6 +2307,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 }
             } else {
                 a.setFacets([id], silent);
+            }
+            if (beyondLimit) {
+                a.set('beyondLimit', [{"col" : 0}]);
             }
         }
     });
