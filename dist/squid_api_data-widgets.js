@@ -6122,8 +6122,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             this.results.rows = this.sortDates(this.results.rows);
 
             // see if multiple dimensions exist
-            for (let i=1; i<this.results.cols.length; i++) {
-                if (this.results.cols[i].role == "DOMAIN") {
+            for (var col=1; col<this.results.cols.length; col++) {
+                if (this.results.cols[col].role == "DOMAIN") {
                     nVariate = true;
                     break;
                 }
@@ -6143,7 +6143,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                         legend.push(this.results.cols[i].name);
                     } else {
                     // obtain legend names from results
-                        for (let dim=0; dim<dimCount; dim++) {
+                        for (var dim=0; dim<dimCount; dim++) {
                             var arr = [];
                             for (ix1=0; ix1<this.results.rows.length; ix1++) {
                                 if ($.inArray(this.results.rows[ix1].v[dim + 1], legend) < 0) {
