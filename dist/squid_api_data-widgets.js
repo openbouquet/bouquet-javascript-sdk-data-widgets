@@ -6123,8 +6123,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             this.results.rows = this.sortDates(this.results.rows);
 
             // see if multiple dimensions exist
-            for (let i=1; i<this.results.cols.length; i++) {
-                if (this.results.cols[i].role == "DOMAIN") {
+            for (var col=1; col<this.results.cols.length; col++) {
+                if (this.results.cols[col].role == "DOMAIN") {
                     nVariate = true;
                     break;
                 }
