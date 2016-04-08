@@ -70,13 +70,15 @@
                 me.refreshAnalysis();
             });
 
-            this.config.on('change:currentAnalysis', function() {
-                me.onChangeHandler(me.analysis);
+            this.config.on("change:startIndex", function() {
+                me.refreshAnalysis();
             });
 
-            this.config.on("change:startIndex", function() {
-                me.onChangeHandler(me.analysis);
-            });
+            this.customEvents();
+        },
+
+        customEvents: function() {
+            // to be overridden
         },
 
         onChangeHandler : function(analysis) {
@@ -99,7 +101,13 @@
             }, {
                 "silent" : silent
             });
+            a.setParameter("maxResults", this.config.get("maxResults"), silent);
             changed = changed || a.hasChanged();
+            a.setParameter("startIndex", this.config.get("startIndex"), silent);
+            changed = changed || a.hasChanged();
+            if (this.onStartIndexChangeHandler && changed) {
+                this.onStartIndexChangeHandler.call(this, a);
+            }
             a.set({
                 "domains" : [ {
                     "projectId" : config.get("project"),

@@ -8,6 +8,13 @@
         analysis : null,
         config : null,
 
+        customEvents: function() {
+            var me = this;
+            this.config.on('change:timeUnit', function() {
+                me.refreshAnalysis();
+            });
+        },
+
         refreshAnalysis : function(silent) {
             var changed = false;
             var a = this.analysis;
@@ -106,11 +113,16 @@
                 beyondLimit = true;
             });
             if (toDate) {
+                var timeUnit = this.config.get("timeUnit");
                 var dimensions =  this.config.get("chosenDimensions");
                 a.setFacets(dimensions, {silent : true});
                 var facets = a.get("facets");
                 if (facets) {
-                    facets.unshift({value: "TO_DATE(" + id + ")"});
+                    var expression = "TO_DATE(" + id + ")";
+                    if (timeUnit) {
+                        expression = timeUnit + "("+ id + ")";
+                    }
+                    facets.unshift({value: expression});
                 }
             } else {
                 a.setFacets([id], silent);

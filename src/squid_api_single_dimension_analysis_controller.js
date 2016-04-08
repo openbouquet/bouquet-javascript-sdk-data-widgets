@@ -8,6 +8,10 @@
         analysis : null,
         config : null,
 
+        customEvents: function() {
+            // to be overridden
+        },
+
         refreshAnalysis : function(silent) {
             var changed = false;
             var a = this.analysis;

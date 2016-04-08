@@ -852,6 +852,10 @@ Pagination
 	overflow: visible;
 }
 
+.squid-api-data-widgets-timeseries-widget #metricselector {
+	float: left;
+}
+
 .squid-api-data-widgets-timeseries-widget #metricselector .squid-api-data-widgets-metric-selector-open ul  {
 	position: absolute;
 	top: 30px;
@@ -860,4 +864,9 @@ Pagination
 .squid-api-data-widgets-timeseries-widget button.multiselect {
 	border: none;
 	color: #5f5d5f;
+}
+
+.squid-api-data-widgets-timeseries-widget #time-unit-selector {
+	width: 100px;
+	float: right;
 }
