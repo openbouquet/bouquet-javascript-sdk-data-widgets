@@ -102,7 +102,7 @@
             squid_api.utils.checkAPIVersion(">=4.2.1").done(function(v){
                 toDate = true;
             });
-            squid_api.utils.checkAPIVersion(">=4.2.4").done(function(v){
+            squid_api.utils.checkAPIVersion(">=4.2.5").done(function(v){
                 beyondLimit = true;
             });
             if (toDate) {
