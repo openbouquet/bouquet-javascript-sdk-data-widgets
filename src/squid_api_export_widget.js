@@ -16,10 +16,11 @@
         displayScripting : true,
         displayCompression : true,
         materializeDatasetsView : false,
-        downloadButtonLabel : "Download your data",
         buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
         downloadButtonLabel : "Download",
+        dimensionSelectorEnabled : false,
+        metricSelectorEnabled : false,
 
         initialize : function(options) {
             var me = this;
@@ -47,6 +48,9 @@
                 });
             }
             // setup options
+            if (options.config) {
+                this.config = options.config;
+            }
             if (options.template) {
                 this.template = options.template;
             } else {
@@ -60,7 +64,7 @@
             }
             if (options.displayInAccordion) {
             	this.displayInAccordion = true;
-                this.viewPort = this.renderTo;
+                this.viewPort = $(this.renderTo);
             } else {
                 this.viewPort = this.$el;
             }
@@ -85,11 +89,21 @@
             if (options.displayCompression === false) {
                 this.displayCompression = false;
             }
+            if (options.dimensionSelectorEnabled === true) {
+                this.dimensionSelectorEnabled = true;
+            }
+            if (options.metricSelectorEnabled === true) {
+                this.metricSelectorEnabled = true;
+            }
             if (options.popupDialogClass) {
                 this.popupDialogClass = options.popupDialogClass;
             }
             if (options.buttonLabel) {
                 this.buttonLabel = options.buttonLabel;
+            }
+            
+            if (!this.config) {
+                this.config = squid_api.model.config;
             }
         },
 
@@ -333,10 +347,8 @@
             }
 
             if (this.displayInAccordion) {
-                this.$el.html("<button type='button' class='btn btn-open-export-panel' data-toggle='collapse' data-target=" + this.renderTo + "> "+ this.downloadButtonLabel + "<span class='glyphicon glyphicon-download-alt'></span></button>");
-                var facets = analysis.get("facets");
-                var metrics = analysis.get("metrics");
-                if ((!facets || facets.length === 0) && (!metrics || metrics.length === 0)) {
+                this.$el.html("<button type='button' class='btn btn-open-export-panel' data-toggle='collapse' aria-expanded='false' data-target='" + this.renderTo + "'> "+ this.downloadButtonLabel + "<span class='glyphicon glyphicon-download-alt'></span></button>");
+                if (analysis.get("enabled") === false) {
                     $("button.btn-open-export-panel").prop('disabled', true);
                 } else {
                     $("button.btn-open-export-panel").prop('disabled', false);
@@ -390,7 +402,9 @@
                 "redirectURI":"https://api.squidsolutions.com",
                 "apiURL":squid_api.apiURL,
                 "buttonLabel": this.buttonLabel,
-                "downloadButtonLabel" : this.downloadButtonLabel
+                "downloadButtonLabel" : this.downloadButtonLabel,
+                "metricSelectorEnabled" : this.metricSelectorEnabled,
+                "dimensionSelectorEnabled" : this.dimensionSelectorEnabled
                 })
             );
 
@@ -414,6 +428,18 @@
                 })
                 .fail(function() {
                     console.error("createAnalysisJob failed");
+                });
+            }
+            
+            // setup dimension and metric selectors
+            
+            var configClone = $.extend(true, {}, this.config);
+            
+            if (this.dimensionSelectorEnabled) {
+                new API.view.DimensionSelector({
+                    el : this.viewPort+" #dimensionSelector",
+                    singleSelect : false,
+                    available : "availableDimensions"
                 });
             }
 

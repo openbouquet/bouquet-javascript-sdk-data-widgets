@@ -1,58 +1,66 @@
 <div class="squid-api-data-widgets-export-widget">
-<div class="download-wrapper">
+	<div class="download-wrapper">
 		{{#if displayInAccordion}}
-			<div class="panel panel-default filter-panel">
-				<div class="panel-heading">
-					<button type="button" class="close" data-toggle="collapse"
-					data-target="{{data-target}}" data-clavier="true" aria-hidden="true">
-						<i class="glyphicon glyphicon-chevron-up"></i>
-					</button>
-					<h4 class="panel-title" id="myModalLabel">Export</h4>
-				</div>
+		<div class="panel panel-default filter-panel">
+			<div class="panel-heading">
+				<button type="button" class="close" data-toggle="collapse" 
+				data-target="{{data-target}}" data-clavier="true" aria-hidden="true" aria-expanded="false">
+					<i class="glyphicon glyphicon-chevron-up"></i>
+				</button>
+				<h4 class="panel-title" id="myModalLabel">Export</h4>
+			</div>
 			<div class="panel-body">
-			<button type="button" class="close" data-toggle="collapse"data-target="{{data-target}}" data-clavier="true" aria-hidden="true"></button>
+				<button type="button" class="close" data-toggle="collapse" data-target="{{data-target}}" data-clavier="true" aria-expanded="false"></button>
 		{{/if}}
 		<div class="download-formats">
 			<label>Format: </label> 
 			{{#each formats}}
-				<span class="type">
-					<input type="radio" name="format" value="{{format}}" {{#if selected}}checked{{/if}}> <span class="type-name">{{format}}</span>
-				</span>
+			<span class="type">
+				<input type="radio" name="format" value="{{format}}" {{#if selected}}checked{{/if}}> <span class="type-name">{{format}}</span>
+			</span>
 			{{/each}}
 			{{#if displayCompression}}
-				<div style="display: inline-block;">
-					<span class="type">
-						<label>Compression: </label> <input type="checkbox" name="compression" {{#if compression}}checked{{/if}}> <span class="type-name">gzip</span>
-					</span>
-				</div>
+			<div style="display: inline-block;">
+				<span class="type">
+					<label>Compression: </label> <input type="checkbox" name="compression" {{#if compression}}checked{{/if}}> <span class="type-name">gzip</span>
+				</span>
+			</div>
 			{{/if }}
 		</div>
-			<div>&nbsp;</div>
+		<div>&nbsp;</div>
+		{{#if metricSelectorEnabled}}
+		<div id="metricSelector">
+		</div>
+		{{/if}}
+		{{#if dimensionSelectorEnabled}}
+		<div id="dimensionSelector">
+		</div>
+		{{/if}}
 		<div>
 			<button id="download" class="btn btn-small btn-sm btn-success" target="_blank">{{downloadButtonLabel}}</button>
 		</div>
 		{{#if sqlView}}
-			<div>
-				<a id="view-sql" class="btn btn-default" target="_blank">View SQL</a>
-			</div>
+		<div>
+			<a id="view-sql" class="btn btn-default" target="_blank">View SQL</a>
+		</div>
 		{{/if}}
 		{{#if data}}
-			<div id="curl-view">
-	            <br><hr>
-				Need to automate exports? Use the <a id="curlbtn">shell commands</a>.
-				<div id="curl">
-					<p>Sample code to download the analysis results using curl shell command.</p>
-					<b>1 - get an authentication token</b>
-					<p>replace the 'login' and 'password' fields in the following snippet</p>
-					<pre class="curl">curl '{{apiURL}}/auth-token' -H 'Origin: {{origin}}' -H 'Accept-Encoding: gzip,deflate' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: */*' -H 'Cache-Control: no-cache' --data 'customerId={{customerId}}&client_id={{clientId}}&redirect_uri={{redirectURI}}&login=<b>[login]</b>&password=<b>[password]</b>'</pre>
-					<b>2 - download the export</b>
-					<p>replace the 'access_token' field in the following snippet by the value of the 'tokenId' field returned by the previous script</p>
-					<pre class="curl">curl '{{{curl}}}' -H 'Origin: {{origin}}' -H 'Accept-Encoding: gzip,deflate' -H 'Content-Type: application/json' -H 'Accept: application/json, text/javascript, */*; q=0.01' --data-binary $'{{data}}' --compressed -o {{curlFileName}}</pre>
-					<b>3 - view the export</b>
-					<p>your analysis results should now be downloaded as</p>
-					<pre class="curl">ls {{curlFileName}}</pre>
-				</div>
+		<div id="curl-view">
+            <br><hr>
+			Need to automate exports? Use the <a id="curlbtn">shell commands</a>.
+			<div id="curl">
+				<p>Sample code to download the analysis results using curl shell command.</p>
+				<b>1 - get an authentication token</b>
+				<p>replace the 'login' and 'password' fields in the following snippet</p>
+				<pre class="curl">curl '{{apiURL}}/auth-token' -H 'Origin: {{origin}}' -H 'Accept-Encoding: gzip,deflate' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: */*' -H 'Cache-Control: no-cache' --data 'customerId={{customerId}}&client_id={{clientId}}&redirect_uri={{redirectURI}}&login=<b>[login]</b>&password=<b>[password]</b>'</pre>
+				<b>2 - download the export</b>
+				<p>replace the 'access_token' field in the following snippet by the value of the 'tokenId' field returned by the previous script</p>
+				<pre class="curl">curl '{{{curl}}}' -H 'Origin: {{origin}}' -H 'Accept-Encoding: gzip,deflate' -H 'Content-Type: application/json' -H 'Accept: application/json, text/javascript, */*; q=0.01' --data-binary $'{{data}}' --compressed -o {{curlFileName}}</pre>
+				<b>3 - view the export</b>
+				<p>your analysis results should now be downloaded as</p>
+				<pre class="curl">ls {{curlFileName}}</pre>
 			</div>
+		</div>
 		{{/if }}
 		{{#if displayInAccordion}}
 			</div>
@@ -61,7 +69,7 @@
 		<form id="download-form" style="visibility: hidden;"></form>
 	</div>
 	{{#if displayInPopup}}
-		<button type="button" class="btn popup-trigger form-control">{{buttonLabel}} <i class="fa fa-download"></i></button>
+	<button type="button" class="btn popup-trigger form-control">{{buttonLabel}} <i class="fa fa-download"></i></button>
 	{{/if}}
 </div>
 
