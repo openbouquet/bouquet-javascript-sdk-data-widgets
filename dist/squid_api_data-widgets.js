@@ -1133,9 +1133,10 @@ function program2(depth0,data) {
             });
             a.setParameter("maxResults", this.config.get("maxResults"), silent);
             changed = changed || a.hasChanged();
+            var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
             a.setParameter("startIndex", this.config.get("startIndex"), silent);
             changed = changed || a.hasChanged();
-            if (this.onStartIndexChangeHandler && changed) {
+            if (this.onStartIndexChangeHandler && startIndexChange) {
                 this.onStartIndexChangeHandler.call(this, a);
             }
             a.set({
