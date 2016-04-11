@@ -256,22 +256,22 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n			<div class=\"panel panel-default filter-panel\">\r\n				<div class=\"panel-heading\">\r\n					<button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n					data-target=\"";
+  buffer += "\r\n		<div class=\"panel panel-default filter-panel\">\r\n			<div class=\"panel-heading\">\r\n				<button type=\"button\" class=\"close\" data-toggle=\"collapse\" \r\n				data-target=\"";
   if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\" aria-hidden=\"true\">\r\n						<i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n					</button>\r\n					<h4 class=\"panel-title\" id=\"myModalLabel\">Export</h4>\r\n				</div>\r\n			<div class=\"panel-body\">\r\n			<button type=\"button\" class=\"close\" data-toggle=\"collapse\"data-target=\"";
+    + "\" data-clavier=\"true\" aria-hidden=\"true\" aria-expanded=\"false\">\r\n					<i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n				</button>\r\n				<h4 class=\"panel-title\" id=\"myModalLabel\">Export</h4>\r\n			</div>\r\n			<div class=\"panel-body\">\r\n				<button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
   if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\" aria-hidden=\"true\"></button>\r\n		";
+    + "\" data-clavier=\"true\" aria-expanded=\"false\"></button>\r\n		";
   return buffer;
   }
 
 function program3(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n				<span class=\"type\">\r\n					<input type=\"radio\" name=\"format\" value=\"";
+  buffer += "\r\n			<span class=\"type\">\r\n				<input type=\"radio\" name=\"format\" value=\"";
   if (helper = helpers.format) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.format); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -282,7 +282,7 @@ function program3(depth0,data) {
   if (helper = helpers.format) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.format); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\r\n				</span>\r\n			";
+    + "</span>\r\n			</span>\r\n			";
   return buffer;
   }
 function program4(depth0,data) {
@@ -294,23 +294,35 @@ function program4(depth0,data) {
 function program6(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\r\n				<div style=\"display: inline-block;\">\r\n					<span class=\"type\">\r\n						<label>Compression: </label> <input type=\"checkbox\" name=\"compression\" ";
+  buffer += "\r\n			<div style=\"display: inline-block;\">\r\n				<span class=\"type\">\r\n					<label>Compression: </label> <input type=\"checkbox\" name=\"compression\" ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.compression), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "> <span class=\"type-name\">gzip</span>\r\n					</span>\r\n				</div>\r\n			";
+  buffer += "> <span class=\"type-name\">gzip</span>\r\n				</span>\r\n			</div>\r\n			";
   return buffer;
   }
 
 function program8(depth0,data) {
   
   
-  return "\r\n			<div>\r\n				<a id=\"view-sql\" class=\"btn btn-default\" target=\"_blank\">View SQL</a>\r\n			</div>\r\n		";
+  return "\r\n		<div id=\"metricSelector\">\r\n		</div>\r\n		";
   }
 
 function program10(depth0,data) {
   
+  
+  return "\r\n		<div id=\"dimensionSelector\">\r\n		</div>\r\n		<div id=\"metricSelector\">\r\n		</div>\r\n		";
+  }
+
+function program12(depth0,data) {
+  
+  
+  return "\r\n		<div>\r\n			<a id=\"view-sql\" class=\"btn btn-default\" target=\"_blank\">View SQL</a>\r\n		</div>\r\n		";
+  }
+
+function program14(depth0,data) {
+  
   var buffer = "", stack1, helper;
-  buffer += "\r\n			<div id=\"curl-view\">\r\n	            <br><hr>\r\n				Need to automate exports? Use the <a id=\"curlbtn\">shell commands</a>.\r\n				<div id=\"curl\">\r\n					<p>Sample code to download the analysis results using curl shell command.</p>\r\n					<b>1 - get an authentication token</b>\r\n					<p>replace the 'login' and 'password' fields in the following snippet</p>\r\n					<pre class=\"curl\">curl '";
+  buffer += "\r\n		<div id=\"curl-view\">\r\n            <br><hr>\r\n			Need to automate exports? Use the <a id=\"curlbtn\">shell commands</a>.\r\n			<div id=\"curl\">\r\n				<p>Sample code to download the analysis results using curl shell command.</p>\r\n				<b>1 - get an authentication token</b>\r\n				<p>replace the 'login' and 'password' fields in the following snippet</p>\r\n				<pre class=\"curl\">curl '";
   if (helper = helpers.apiURL) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.apiURL); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -330,7 +342,7 @@ function program10(depth0,data) {
   if (helper = helpers.redirectURI) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.redirectURI); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "&login=<b>[login]</b>&password=<b>[password]</b>'</pre>\r\n					<b>2 - download the export</b>\r\n					<p>replace the 'access_token' field in the following snippet by the value of the 'tokenId' field returned by the previous script</p>\r\n					<pre class=\"curl\">curl '";
+    + "&login=<b>[login]</b>&password=<b>[password]</b>'</pre>\r\n				<b>2 - download the export</b>\r\n				<p>replace the 'access_token' field in the following snippet by the value of the 'tokenId' field returned by the previous script</p>\r\n				<pre class=\"curl\">curl '";
   if (helper = helpers.curl) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.curl); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
@@ -346,24 +358,24 @@ function program10(depth0,data) {
   if (helper = helpers.curlFileName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.curlFileName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</pre>\r\n					<b>3 - view the export</b>\r\n					<p>your analysis results should now be downloaded as</p>\r\n					<pre class=\"curl\">ls ";
+    + "</pre>\r\n				<b>3 - view the export</b>\r\n				<p>your analysis results should now be downloaded as</p>\r\n				<pre class=\"curl\">ls ";
   if (helper = helpers.curlFileName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.curlFileName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</pre>\r\n				</div>\r\n			</div>\r\n		";
+    + "</pre>\r\n			</div>\r\n		</div>\r\n		";
   return buffer;
   }
 
-function program12(depth0,data) {
+function program16(depth0,data) {
   
   
   return "\r\n			</div>\r\n		</div>\r\n		";
   }
 
-function program14(depth0,data) {
+function program18(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n		<button type=\"button\" class=\"btn popup-trigger form-control\">";
+  buffer += "\r\n	<button type=\"button\" class=\"btn popup-trigger form-control\">";
   if (helper = helpers.buttonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.buttonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -371,7 +383,7 @@ function program14(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"squid-api-data-widgets-export-widget\">\r\n<div class=\"download-wrapper\">\r\n		";
+  buffer += "<div class=\"squid-api-data-widgets-export-widget\">\r\n	<div class=\"download-wrapper\">\r\n		";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n		<div class=\"download-formats\">\r\n			<label>Format: </label> \r\n			";
@@ -380,21 +392,27 @@ function program14(depth0,data) {
   buffer += "\r\n			";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayCompression), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n		</div>\r\n			<div>&nbsp;</div>\r\n		<div>\r\n			<button id=\"download\" class=\"btn btn-small btn-sm btn-success\" target=\"_blank\">";
+  buffer += "\r\n		</div>\r\n		<div>&nbsp;</div>\r\n		";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.metricSelectorEnabled), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n		";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.analysisConfigurationEnabled), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\r\n		<div>\r\n			<button id=\"download\" class=\"btn btn-small btn-sm btn-success\" target=\"_blank\">";
   if (helper = helpers.downloadButtonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.downloadButtonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "</button>\r\n		</div>\r\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.sqlView), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.sqlView), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.data), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.data), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n		<form id=\"download-form\" style=\"visibility: hidden;\"></form>\r\n	</div>\r\n	";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInPopup), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInPopup), {hash:{},inverse:self.noop,fn:self.program(18, program18, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n</div>\r\n\r\n";
   return buffer;
@@ -3199,37 +3217,22 @@ function program2(depth0,data) {
         displayScripting : true,
         displayCompression : true,
         materializeDatasetsView : false,
-        downloadButtonLabel : "Download your data",
         buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
         downloadButtonLabel : "Download",
+        analysisConfigurationEnabled : false,
+        metricSelectorEnabled : false,
+        configClone : null,
+        dimensionSelector : null,
+        metricSelector : null,
 
         initialize : function(options) {
             var me = this;
 
-            if (this.model.get("analysis")) {
-                this.listenTo(this.model.get("analysis"), 'change', function() {
-                    me.render();
-                    me.enabled();
-                });
-                this.listenTo(this.model, 'change:templateData', function() {
-                    me.refreshViewSqlUrl();
-                    me.enabled();
-                });
-                this.listenTo(this.model, 'change:templateData', function() {
-                    if(this.materializeDatasetsView === true) {
-                        me.refreshViewMaterializeDatasets();
-                        me.enabled();
-                    }
-                });
-                this.listenTo(this.model, 'change:enabled', this.enabled);
-            } else {
-                this.listenTo(this.model, 'change', function() {
-                    me.render();
-                    me.enabled();
-                });
-            }
             // setup options
+            if (options.config) {
+                this.config = options.config;
+            }
             if (options.template) {
                 this.template = options.template;
             } else {
@@ -3243,7 +3246,7 @@ function program2(depth0,data) {
             }
             if (options.displayInAccordion) {
             	this.displayInAccordion = true;
-                this.viewPort = this.renderTo;
+                this.viewPort = $(this.renderTo);
             } else {
                 this.viewPort = this.$el;
             }
@@ -3268,11 +3271,83 @@ function program2(depth0,data) {
             if (options.displayCompression === false) {
                 this.displayCompression = false;
             }
+            if (options.analysisConfigurationEnabled === true) {
+                this.analysisConfigurationEnabled = true;
+            }
+            if (options.metricSelectorEnabled === true) {
+                this.metricSelectorEnabled = true;
+            }
             if (options.popupDialogClass) {
                 this.popupDialogClass = options.popupDialogClass;
             }
             if (options.buttonLabel) {
                 this.buttonLabel = options.buttonLabel;
+            }
+
+            if (!this.config) {
+                this.config = squid_api.model.config;
+            }
+
+            if (this.analysisConfigurationEnabled) {
+                // create a config clone to be used a the model for the DimensionSelector
+                this.configClone = new Backbone.Model();
+                this.configClone.set(_.clone(this.config.attributes));
+
+                // create a dimensionSelector
+                this.dimensionSelector = new squid_api.view.DimensionSelector({
+                    model : this.configClone,
+                    singleSelect : false,
+                    available : "availableDimensions"
+                });
+                // create a metricSelector
+                this.metricSelector = new squid_api.view.MetricSelectorView({
+                    model : this.configClone,
+                    available : "availableMetrics"
+                });
+
+                this.listenTo(this.configClone, 'change:chosenDimensions', function() {
+                    // update the analysis with extra dimensions
+                    me.model.setFacets(this.configClone.get("chosenDimensions"));
+                });
+
+                this.listenTo(this.configClone, 'change:chosenMetrics', function() {
+                    // update the analysis with extra metrics
+                    me.model.setMetrics(this.configClone.get("chosenMetrics"));
+                });
+
+                this.listenTo(this.config, 'change', function() {
+                    // reflect config changes to configClone
+                    me.configClone.set(_.clone(me.config.attributes));
+                    me.dimensionSelector.render();
+                    me.metricSelector.render();
+                });
+            }
+
+            if (this.model.get("analysis")) {
+                this.listenTo(this.model.get("analysis"), 'change', function() {
+                    if (me.analysisConfigurationEnabled) {
+                        // reflect config changes to configClone
+                        me.configClone.set(_.clone(me.model.attributes));
+                    }
+                    me.render();
+                    me.enabled();
+                });
+                this.listenTo(this.model, 'change:templateData', function() {
+                    me.refreshViewSqlUrl();
+                    me.enabled();
+                });
+                this.listenTo(this.model, 'change:templateData', function() {
+                    if(this.materializeDatasetsView === true) {
+                        me.refreshViewMaterializeDatasets();
+                        me.enabled();
+                    }
+                });
+                this.listenTo(this.model, 'change:enabled', this.enabled);
+            } else {
+                this.listenTo(this.model, 'change', function() {
+                    me.render();
+                    me.enabled();
+                });
             }
         },
 
@@ -3516,10 +3591,8 @@ function program2(depth0,data) {
             }
 
             if (this.displayInAccordion) {
-                this.$el.html("<button type='button' class='btn btn-open-export-panel' data-toggle='collapse' data-target=" + this.renderTo + "> "+ this.downloadButtonLabel + "<span class='glyphicon glyphicon-download-alt'></span></button>");
-                var facets = analysis.get("facets");
-                var metrics = analysis.get("metrics");
-                if ((!facets || facets.length === 0) && (!metrics || metrics.length === 0)) {
+                this.$el.html("<button type='button' class='btn btn-open-export-panel' data-toggle='collapse' aria-expanded='false' data-target='" + this.renderTo + "'> "+ this.downloadButtonLabel + "<span class='glyphicon glyphicon-download-alt'></span></button>");
+                if (analysis.get("enabled") === false) {
                     $("button.btn-open-export-panel").prop('disabled', true);
                 } else {
                     $("button.btn-open-export-panel").prop('disabled', false);
@@ -3573,7 +3646,9 @@ function program2(depth0,data) {
                 "redirectURI":"https://api.squidsolutions.com",
                 "apiURL":squid_api.apiURL,
                 "buttonLabel": this.buttonLabel,
-                "downloadButtonLabel" : this.downloadButtonLabel
+                "downloadButtonLabel" : this.downloadButtonLabel,
+                "metricSelectorEnabled" : this.metricSelectorEnabled,
+                "analysisConfigurationEnabled" : this.analysisConfigurationEnabled
                 })
             );
 
@@ -3600,6 +3675,18 @@ function program2(depth0,data) {
                 });
             }
 
+            if (this.dimensionSelector) {
+                // setup dimension selector
+                this.dimensionSelector.setElement(this.viewPort.find("#dimensionSelector"));
+                this.dimensionSelector.render();
+            }
+
+            if (this.metricSelector) {
+                // setup metric selector
+                this.metricSelector.setElement(this.viewPort.find("#metricSelector"));
+                this.metricSelector.renderBase();
+                this.metricSelector.render();
+            }
 
             // apply cURL panel state
             if (me.curlCollapsed) {
@@ -3902,21 +3989,21 @@ function program2(depth0,data) {
                             kpi.unit = "";
                             kpi.name = col.name;
                             if (typeof kpi.compareToValue != "undefined"
-                              && kpi.compareToValue != null) {
-                              var lvalue = parseFloat(kpi.value.replace(",",""));
-                              var rvalue = parseFloat(kpi.compareToValue.replace(",",""));
-                              kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
-                              if (kpi.growth > 0) {
-                                kpi.compareTextColor = 'text-success';
-                                kpi.compareClass = 'glyphicon-arrow-up';
-                              }  else if (kpi.growth < 0) {
-                                kpi.compareTextColor = 'text-danger';
-                                kpi.compareClass = 'glyphicon-arrow-down';
-                              } else {
-                                kpi.growth = 0;
-                                kpi.compareTextColor = 'text-info';
-                                kpi.compareClass = 'glyphicon-transfer';
-                              }
+                                && kpi.compareToValue != null) {
+                                var lvalue = parseFloat(kpi.value.replace(",",""));
+                                var rvalue = parseFloat(kpi.compareToValue.replace(",",""));
+                                kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
+                                if (kpi.growth > 0) {
+                                    kpi.compareTextColor = 'text-success';
+                                    kpi.compareClass = 'glyphicon-arrow-up';
+                                }  else if (kpi.growth < 0) {
+                                    kpi.compareTextColor = 'text-danger';
+                                    kpi.compareClass = 'glyphicon-arrow-down';
+                                } else {
+                                    kpi.growth = 0;
+                                    kpi.compareTextColor = 'text-info';
+                                    kpi.compareClass = 'glyphicon-transfer';
+                                }
                             }
                             jsonData.push(kpi);
                         }

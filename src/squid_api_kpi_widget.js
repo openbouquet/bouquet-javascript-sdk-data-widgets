@@ -70,21 +70,21 @@
                             kpi.unit = "";
                             kpi.name = col.name;
                             if (typeof kpi.compareToValue != "undefined"
-                              && kpi.compareToValue != null) {
-                              var lvalue = parseFloat(kpi.value.replace(",",""));
-                              var rvalue = parseFloat(kpi.compareToValue.replace(",",""));
-                              kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
-                              if (kpi.growth > 0) {
-                                kpi.compareTextColor = 'text-success';
-                                kpi.compareClass = 'glyphicon-arrow-up';
-                              }  else if (kpi.growth < 0) {
-                                kpi.compareTextColor = 'text-danger';
-                                kpi.compareClass = 'glyphicon-arrow-down';
-                              } else {
-                                kpi.growth = 0;
-                                kpi.compareTextColor = 'text-info';
-                                kpi.compareClass = 'glyphicon-transfer';
-                              }
+                                && kpi.compareToValue != null) {
+                                var lvalue = parseFloat(kpi.value.replace(",",""));
+                                var rvalue = parseFloat(kpi.compareToValue.replace(",",""));
+                                kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
+                                if (kpi.growth > 0) {
+                                    kpi.compareTextColor = 'text-success';
+                                    kpi.compareClass = 'glyphicon-arrow-up';
+                                }  else if (kpi.growth < 0) {
+                                    kpi.compareTextColor = 'text-danger';
+                                    kpi.compareClass = 'glyphicon-arrow-down';
+                                } else {
+                                    kpi.growth = 0;
+                                    kpi.compareTextColor = 'text-info';
+                                    kpi.compareClass = 'glyphicon-transfer';
+                                }
                             }
                             jsonData.push(kpi);
                         }

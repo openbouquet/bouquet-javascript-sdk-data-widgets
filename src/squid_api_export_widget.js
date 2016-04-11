@@ -16,37 +16,22 @@
         displayScripting : true,
         displayCompression : true,
         materializeDatasetsView : false,
-        downloadButtonLabel : "Download your data",
         buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
         downloadButtonLabel : "Download",
+        analysisConfigurationEnabled : false,
+        metricSelectorEnabled : false,
+        configClone : null,
+        dimensionSelector : null,
+        metricSelector : null,
 
         initialize : function(options) {
             var me = this;
 
-            if (this.model.get("analysis")) {
-                this.listenTo(this.model.get("analysis"), 'change', function() {
-                    me.render();
-                    me.enabled();
-                });
-                this.listenTo(this.model, 'change:templateData', function() {
-                    me.refreshViewSqlUrl();
-                    me.enabled();
-                });
-                this.listenTo(this.model, 'change:templateData', function() {
-                    if(this.materializeDatasetsView === true) {
-                        me.refreshViewMaterializeDatasets();
-                        me.enabled();
-                    }
-                });
-                this.listenTo(this.model, 'change:enabled', this.enabled);
-            } else {
-                this.listenTo(this.model, 'change', function() {
-                    me.render();
-                    me.enabled();
-                });
-            }
             // setup options
+            if (options.config) {
+                this.config = options.config;
+            }
             if (options.template) {
                 this.template = options.template;
             } else {
@@ -60,7 +45,7 @@
             }
             if (options.displayInAccordion) {
             	this.displayInAccordion = true;
-                this.viewPort = this.renderTo;
+                this.viewPort = $(this.renderTo);
             } else {
                 this.viewPort = this.$el;
             }
@@ -85,11 +70,83 @@
             if (options.displayCompression === false) {
                 this.displayCompression = false;
             }
+            if (options.analysisConfigurationEnabled === true) {
+                this.analysisConfigurationEnabled = true;
+            }
+            if (options.metricSelectorEnabled === true) {
+                this.metricSelectorEnabled = true;
+            }
             if (options.popupDialogClass) {
                 this.popupDialogClass = options.popupDialogClass;
             }
             if (options.buttonLabel) {
                 this.buttonLabel = options.buttonLabel;
+            }
+
+            if (!this.config) {
+                this.config = squid_api.model.config;
+            }
+
+            if (this.analysisConfigurationEnabled) {
+                // create a config clone to be used a the model for the DimensionSelector
+                this.configClone = new Backbone.Model();
+                this.configClone.set(_.clone(this.config.attributes));
+
+                // create a dimensionSelector
+                this.dimensionSelector = new squid_api.view.DimensionSelector({
+                    model : this.configClone,
+                    singleSelect : false,
+                    available : "availableDimensions"
+                });
+                // create a metricSelector
+                this.metricSelector = new squid_api.view.MetricSelectorView({
+                    model : this.configClone,
+                    available : "availableMetrics"
+                });
+
+                this.listenTo(this.configClone, 'change:chosenDimensions', function() {
+                    // update the analysis with extra dimensions
+                    me.model.setFacets(this.configClone.get("chosenDimensions"));
+                });
+
+                this.listenTo(this.configClone, 'change:chosenMetrics', function() {
+                    // update the analysis with extra metrics
+                    me.model.setMetrics(this.configClone.get("chosenMetrics"));
+                });
+
+                this.listenTo(this.config, 'change', function() {
+                    // reflect config changes to configClone
+                    me.configClone.set(_.clone(me.config.attributes));
+                    me.dimensionSelector.render();
+                    me.metricSelector.render();
+                });
+            }
+
+            if (this.model.get("analysis")) {
+                this.listenTo(this.model.get("analysis"), 'change', function() {
+                    if (me.analysisConfigurationEnabled) {
+                        // reflect config changes to configClone
+                        me.configClone.set(_.clone(me.model.attributes));
+                    }
+                    me.render();
+                    me.enabled();
+                });
+                this.listenTo(this.model, 'change:templateData', function() {
+                    me.refreshViewSqlUrl();
+                    me.enabled();
+                });
+                this.listenTo(this.model, 'change:templateData', function() {
+                    if(this.materializeDatasetsView === true) {
+                        me.refreshViewMaterializeDatasets();
+                        me.enabled();
+                    }
+                });
+                this.listenTo(this.model, 'change:enabled', this.enabled);
+            } else {
+                this.listenTo(this.model, 'change', function() {
+                    me.render();
+                    me.enabled();
+                });
             }
         },
 
@@ -333,10 +390,8 @@
             }
 
             if (this.displayInAccordion) {
-                this.$el.html("<button type='button' class='btn btn-open-export-panel' data-toggle='collapse' data-target=" + this.renderTo + "> "+ this.downloadButtonLabel + "<span class='glyphicon glyphicon-download-alt'></span></button>");
-                var facets = analysis.get("facets");
-                var metrics = analysis.get("metrics");
-                if ((!facets || facets.length === 0) && (!metrics || metrics.length === 0)) {
+                this.$el.html("<button type='button' class='btn btn-open-export-panel' data-toggle='collapse' aria-expanded='false' data-target='" + this.renderTo + "'> "+ this.downloadButtonLabel + "<span class='glyphicon glyphicon-download-alt'></span></button>");
+                if (analysis.get("enabled") === false) {
                     $("button.btn-open-export-panel").prop('disabled', true);
                 } else {
                     $("button.btn-open-export-panel").prop('disabled', false);
@@ -390,7 +445,9 @@
                 "redirectURI":"https://api.squidsolutions.com",
                 "apiURL":squid_api.apiURL,
                 "buttonLabel": this.buttonLabel,
-                "downloadButtonLabel" : this.downloadButtonLabel
+                "downloadButtonLabel" : this.downloadButtonLabel,
+                "metricSelectorEnabled" : this.metricSelectorEnabled,
+                "analysisConfigurationEnabled" : this.analysisConfigurationEnabled
                 })
             );
 
@@ -417,6 +474,18 @@
                 });
             }
 
+            if (this.dimensionSelector) {
+                // setup dimension selector
+                this.dimensionSelector.setElement(this.viewPort.find("#dimensionSelector"));
+                this.dimensionSelector.render();
+            }
+
+            if (this.metricSelector) {
+                // setup metric selector
+                this.metricSelector.setElement(this.viewPort.find("#metricSelector"));
+                this.metricSelector.renderBase();
+                this.metricSelector.render();
+            }
 
             // apply cURL panel state
             if (me.curlCollapsed) {
