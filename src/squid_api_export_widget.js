@@ -27,7 +27,7 @@
 
         initialize : function(options) {
             var me = this;
-            
+
             // setup options
             if (options.config) {
                 this.config = options.config;
@@ -82,16 +82,16 @@
             if (options.buttonLabel) {
                 this.buttonLabel = options.buttonLabel;
             }
-            
+
             if (!this.config) {
                 this.config = squid_api.model.config;
             }
-            
+
             if (this.analysisConfigurationEnabled) {
                 // create a config clone to be used a the model for the DimensionSelector
                 this.configClone = new Backbone.Model();
                 this.configClone.set(_.clone(this.config.attributes));
-                
+
                 // create a dimensionSelector
                 this.dimensionSelector = new squid_api.view.DimensionSelector({
                     model : this.configClone,
@@ -101,20 +101,19 @@
                 // create a metricSelector
                 this.metricSelector = new squid_api.view.MetricSelectorView({
                     model : this.configClone,
-                    available : "availableMetrics",
-                    customView: true
+                    available : "availableMetrics"
                 });
-                
+
                 this.listenTo(this.configClone, 'change:chosenDimensions', function() {
                     // update the analysis with extra dimensions
                     me.model.setFacets(this.configClone.get("chosenDimensions"));
                 });
-                
+
                 this.listenTo(this.configClone, 'change:chosenMetrics', function() {
                     // update the analysis with extra metrics
                     me.model.setMetrics(this.configClone.get("chosenMetrics"));
                 });
-                
+
                 this.listenTo(this.config, 'change', function() {
                     // reflect config changes to configClone
                     me.configClone.set(_.clone(me.config.attributes));
@@ -474,16 +473,17 @@
                     console.error("createAnalysisJob failed");
                 });
             }
-            
+
             if (this.dimensionSelector) {
                 // setup dimension selector
                 this.dimensionSelector.setElement(this.viewPort.find("#dimensionSelector"));
                 this.dimensionSelector.render();
             }
-            
+
             if (this.metricSelector) {
                 // setup metric selector
                 this.metricSelector.setElement(this.viewPort.find("#metricSelector"));
+                this.metricSelector.renderBase();
                 this.metricSelector.render();
             }
 
