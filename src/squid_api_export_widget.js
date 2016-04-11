@@ -19,10 +19,11 @@
         buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
         downloadButtonLabel : "Download",
-        dimensionSelectorEnabled : false,
+        analysisConfigurationEnabled : false,
         metricSelectorEnabled : false,
         configClone : null,
         dimensionSelector : null,
+        metricSelector : null,
 
         initialize : function(options) {
             var me = this;
@@ -69,8 +70,8 @@
             if (options.displayCompression === false) {
                 this.displayCompression = false;
             }
-            if (options.dimensionSelectorEnabled === true) {
-                this.dimensionSelectorEnabled = true;
+            if (options.analysisConfigurationEnabled === true) {
+                this.analysisConfigurationEnabled = true;
             }
             if (options.metricSelectorEnabled === true) {
                 this.metricSelectorEnabled = true;
@@ -86,7 +87,7 @@
                 this.config = squid_api.model.config;
             }
             
-            if (this.dimensionSelectorEnabled) {
+            if (this.analysisConfigurationEnabled) {
                 // create a config clone to be used a the model for the DimensionSelector
                 this.configClone = new Backbone.Model();
                 this.configClone.set(_.clone(this.config.attributes));
@@ -97,22 +98,34 @@
                     singleSelect : false,
                     available : "availableDimensions"
                 });
+                // create a metricSelector
+                this.metricSelector = new squid_api.view.MetricSelectorView({
+                    model : this.configClone,
+                    available : "availableMetrics",
+                    customView: true
+                });
                 
                 this.listenTo(this.configClone, 'change:chosenDimensions', function() {
                     // update the analysis with extra dimensions
                     me.model.setFacets(this.configClone.get("chosenDimensions"));
                 });
                 
+                this.listenTo(this.configClone, 'change:chosenMetrics', function() {
+                    // update the analysis with extra metrics
+                    me.model.setMetrics(this.configClone.get("chosenMetrics"));
+                });
+                
                 this.listenTo(this.config, 'change', function() {
                     // reflect config changes to configClone
                     me.configClone.set(_.clone(me.config.attributes));
                     me.dimensionSelector.render();
+                    me.metricSelector.render();
                 });
             }
 
             if (this.model.get("analysis")) {
                 this.listenTo(this.model.get("analysis"), 'change', function() {
-                    if (me.dimensionSelectorEnabled) {
+                    if (me.analysisConfigurationEnabled) {
                         // reflect config changes to configClone
                         me.configClone.set(_.clone(me.model.attributes));
                     }
@@ -435,7 +448,7 @@
                 "buttonLabel": this.buttonLabel,
                 "downloadButtonLabel" : this.downloadButtonLabel,
                 "metricSelectorEnabled" : this.metricSelectorEnabled,
-                "dimensionSelectorEnabled" : this.dimensionSelectorEnabled
+                "analysisConfigurationEnabled" : this.analysisConfigurationEnabled
                 })
             );
 
@@ -463,9 +476,15 @@
             }
             
             if (this.dimensionSelector) {
-                // setup dimension and metric selectors
+                // setup dimension selector
                 this.dimensionSelector.setElement(this.viewPort.find("#dimensionSelector"));
                 this.dimensionSelector.render();
+            }
+            
+            if (this.metricSelector) {
+                // setup metric selector
+                this.metricSelector.setElement(this.viewPort.find("#metricSelector"));
+                this.metricSelector.render();
             }
 
             // apply cURL panel state

@@ -310,7 +310,7 @@ function program8(depth0,data) {
 function program10(depth0,data) {
   
   
-  return "\r\n		<div id=\"dimensionSelector\">\r\n		</div>\r\n		";
+  return "\r\n		<div id=\"dimensionSelector\">\r\n		</div>\r\n		<div id=\"metricSelector\">\r\n		</div>\r\n		";
   }
 
 function program12(depth0,data) {
@@ -396,7 +396,7 @@ function program18(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.metricSelectorEnabled), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.dimensionSelectorEnabled), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.analysisConfigurationEnabled), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n		<div>\r\n			<button id=\"download\" class=\"btn btn-small btn-sm btn-success\" target=\"_blank\">";
   if (helper = helpers.downloadButtonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
@@ -3156,10 +3156,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
         downloadButtonLabel : "Download",
-        dimensionSelectorEnabled : false,
+        analysisConfigurationEnabled : false,
         metricSelectorEnabled : false,
         configClone : null,
         dimensionSelector : null,
+        metricSelector : null,
 
         initialize : function(options) {
             var me = this;
@@ -3206,8 +3207,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             if (options.displayCompression === false) {
                 this.displayCompression = false;
             }
-            if (options.dimensionSelectorEnabled === true) {
-                this.dimensionSelectorEnabled = true;
+            if (options.analysisConfigurationEnabled === true) {
+                this.analysisConfigurationEnabled = true;
             }
             if (options.metricSelectorEnabled === true) {
                 this.metricSelectorEnabled = true;
@@ -3223,7 +3224,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 this.config = squid_api.model.config;
             }
             
-            if (this.dimensionSelectorEnabled) {
+            if (this.analysisConfigurationEnabled) {
                 // create a config clone to be used a the model for the DimensionSelector
                 this.configClone = new Backbone.Model();
                 this.configClone.set(_.clone(this.config.attributes));
@@ -3234,22 +3235,34 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                     singleSelect : false,
                     available : "availableDimensions"
                 });
+                // create a metricSelector
+                this.metricSelector = new squid_api.view.MetricSelectorView({
+                    model : this.configClone,
+                    available : "availableMetrics",
+                    customView: true
+                });
                 
                 this.listenTo(this.configClone, 'change:chosenDimensions', function() {
                     // update the analysis with extra dimensions
                     me.model.setFacets(this.configClone.get("chosenDimensions"));
                 });
                 
+                this.listenTo(this.configClone, 'change:chosenMetrics', function() {
+                    // update the analysis with extra metrics
+                    me.model.setMetrics(this.configClone.get("chosenMetrics"));
+                });
+                
                 this.listenTo(this.config, 'change', function() {
                     // reflect config changes to configClone
                     me.configClone.set(_.clone(me.config.attributes));
                     me.dimensionSelector.render();
+                    me.metricSelector.render();
                 });
             }
 
             if (this.model.get("analysis")) {
                 this.listenTo(this.model.get("analysis"), 'change', function() {
-                    if (me.dimensionSelectorEnabled) {
+                    if (me.analysisConfigurationEnabled) {
                         // reflect config changes to configClone
                         me.configClone.set(_.clone(me.model.attributes));
                     }
@@ -3572,7 +3585,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 "buttonLabel": this.buttonLabel,
                 "downloadButtonLabel" : this.downloadButtonLabel,
                 "metricSelectorEnabled" : this.metricSelectorEnabled,
-                "dimensionSelectorEnabled" : this.dimensionSelectorEnabled
+                "analysisConfigurationEnabled" : this.analysisConfigurationEnabled
                 })
             );
 
@@ -3600,9 +3613,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             }
             
             if (this.dimensionSelector) {
-                // setup dimension and metric selectors
+                // setup dimension selector
                 this.dimensionSelector.setElement(this.viewPort.find("#dimensionSelector"));
                 this.dimensionSelector.render();
+            }
+            
+            if (this.metricSelector) {
+                // setup metric selector
+                this.metricSelector.setElement(this.viewPort.find("#metricSelector"));
+                this.metricSelector.render();
             }
 
             // apply cURL panel state
