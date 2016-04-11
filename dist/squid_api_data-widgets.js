@@ -6012,6 +6012,7 @@ function program2(depth0,data) {
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
         reRunMessage: "Please manually refresh your analysis",
         timeUnitSelector: null,
+        fillMissingDataValues: null,
         legendState: {},
 
         initialize : function(options) {
@@ -6052,6 +6053,9 @@ function program2(depth0,data) {
                 }
                 if (options.timeUnitSelector) {
                     this.timeUnitSelector = options.timeUnitSelector;
+                }
+                if (options.fillMissingDataValues) {
+                    this.fillMissingDataValues = options.fillMissingDataValues;
                 }
                 if (options.yearAnalysis) {
                     this.yearAnalysis = options.yearAnalysis;
@@ -6270,10 +6274,12 @@ function program2(depth0,data) {
                                     obj.value = this.results.rows[ix].v[i];
                                 }
                             }
-                            if (! dataExists) {
+                            if (! dataExists && this.fillMissingDataValues) {
                                 obj.value = 0;
+                                arr.push(obj);
+                            } else if (dataExists) {
+                                arr.push(obj);
                             }
-                            arr.push(obj);
                         }
 
                         arr = MG.convert.date(arr, 'date');
@@ -6295,10 +6301,12 @@ function program2(depth0,data) {
                                         obj1.value = this.results.rows[ix].v[dimCount + 1];
                                     }
                                 }
-                                if (! dataExists) {
+                                if (! dataExists && this.fillMissingDataValues) {
                                     obj1.value = 0;
+                                    tmpArr.push(obj1);
+                                } else if (dataExists) {
+                                    tmpArr.push(obj1);
                                 }
-                                tmpArr.push(obj1);
                             }
                             arr = MG.convert.date(tmpArr, 'date');
                             dataset.push(arr);
