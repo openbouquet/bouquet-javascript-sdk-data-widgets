@@ -84,9 +84,26 @@
 
             // Store these values
             for (i=0; i<data.length; i++) {
+                var item = data[i].v;
+                var yAxis = "";
+                var xAxis;
+                for (ix=0; ix<item.length; ix++) {
+                    if (typeof(item[ix]) === "string") {
+                        if (yAxis.length === 0) {
+                            yAxis += item[ix];
+                        } else {
+                            yAxis += " / " + item[ix];
+                        }
+                    } else if (typeof(item[ix]) === "number") {
+                        xAxis = item[ix];
+                        barData.xValues.push(item[ix]);
+                        break;
+                    }
+                }
+                barData.yValues.push(yAxis);
+
+                data[i].v = [yAxis, xAxis];
                 barData.values.push(data[i].v);
-                barData.xValues.push(data[i].v[1]);
-                barData.yValues.push(data[i].v[0]);
             }
 
             return barData;
