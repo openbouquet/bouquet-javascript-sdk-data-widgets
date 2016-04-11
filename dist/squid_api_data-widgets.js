@@ -3158,32 +3158,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         downloadButtonLabel : "Download",
         dimensionSelectorEnabled : false,
         metricSelectorEnabled : false,
+        configClone : null,
+        dimensionSelector : null,
 
         initialize : function(options) {
             var me = this;
-
-            if (this.model.get("analysis")) {
-                this.listenTo(this.model.get("analysis"), 'change', function() {
-                    me.render();
-                    me.enabled();
-                });
-                this.listenTo(this.model, 'change:templateData', function() {
-                    me.refreshViewSqlUrl();
-                    me.enabled();
-                });
-                this.listenTo(this.model, 'change:templateData', function() {
-                    if(this.materializeDatasetsView === true) {
-                        me.refreshViewMaterializeDatasets();
-                        me.enabled();
-                    }
-                });
-                this.listenTo(this.model, 'change:enabled', this.enabled);
-            } else {
-                this.listenTo(this.model, 'change', function() {
-                    me.render();
-                    me.enabled();
-                });
-            }
+            
             // setup options
             if (options.config) {
                 this.config = options.config;
@@ -3241,6 +3221,57 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
             
             if (!this.config) {
                 this.config = squid_api.model.config;
+            }
+            
+            if (this.dimensionSelectorEnabled) {
+                // create a config clone to be used a the model for the DimensionSelector
+                this.configClone = new Backbone.Model();
+                this.configClone.set(_.clone(this.config.attributes));
+                
+                // create a dimensionSelector
+                this.dimensionSelector = new squid_api.view.DimensionSelector({
+                    model : this.configClone,
+                    singleSelect : false,
+                    available : "availableDimensions"
+                });
+                
+                this.listenTo(this.configClone, 'change:chosenDimensions', function() {
+                    // update the analysis with extra dimensions
+                    me.model.setFacets(this.configClone.get("chosenDimensions"));
+                });
+                
+                this.listenTo(this.config, 'change', function() {
+                    // reflect config changes to configClone
+                    me.configClone.set(_.clone(me.config.attributes));
+                    me.dimensionSelector.render();
+                });
+            }
+
+            if (this.model.get("analysis")) {
+                this.listenTo(this.model.get("analysis"), 'change', function() {
+                    if (me.dimensionSelectorEnabled) {
+                        // reflect config changes to configClone
+                        me.configClone.set(_.clone(me.model.attributes));
+                    }
+                    me.render();
+                    me.enabled();
+                });
+                this.listenTo(this.model, 'change:templateData', function() {
+                    me.refreshViewSqlUrl();
+                    me.enabled();
+                });
+                this.listenTo(this.model, 'change:templateData', function() {
+                    if(this.materializeDatasetsView === true) {
+                        me.refreshViewMaterializeDatasets();
+                        me.enabled();
+                    }
+                });
+                this.listenTo(this.model, 'change:enabled', this.enabled);
+            } else {
+                this.listenTo(this.model, 'change', function() {
+                    me.render();
+                    me.enabled();
+                });
             }
         },
 
@@ -3568,18 +3599,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                 });
             }
             
-            // setup dimension and metric selectors
-            
-            var configClone = $.extend(true, {}, this.config);
-            
-            if (this.dimensionSelectorEnabled) {
-                new API.view.DimensionSelector({
-                    el : this.viewPort+" #dimensionSelector",
-                    singleSelect : false,
-                    available : "availableDimensions"
-                });
+            if (this.dimensionSelector) {
+                // setup dimension and metric selectors
+                this.dimensionSelector.setElement(this.viewPort.find("#dimensionSelector"));
+                this.dimensionSelector.render();
             }
-
 
             // apply cURL panel state
             if (me.curlCollapsed) {
@@ -3882,21 +3906,21 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
                             kpi.unit = "";
                             kpi.name = col.name;
                             if (typeof kpi.compareToValue != "undefined"
-                              && kpi.compareToValue != null) {
-                              var lvalue = parseFloat(kpi.value.replace(",",""));
-                              var rvalue = parseFloat(kpi.compareToValue.replace(",",""));
-                              kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
-                              if (kpi.growth > 0) {
-                                kpi.compareTextColor = 'text-success';
-                                kpi.compareClass = 'glyphicon-arrow-up';
-                              }  else if (kpi.growth < 0) {
-                                kpi.compareTextColor = 'text-danger';
-                                kpi.compareClass = 'glyphicon-arrow-down';
-                              } else {
-                                kpi.growth = 0;
-                                kpi.compareTextColor = 'text-info';
-                                kpi.compareClass = 'glyphicon-transfer';
-                              }
+                                && kpi.compareToValue != null) {
+                                var lvalue = parseFloat(kpi.value.replace(",",""));
+                                var rvalue = parseFloat(kpi.compareToValue.replace(",",""));
+                                kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
+                                if (kpi.growth > 0) {
+                                    kpi.compareTextColor = 'text-success';
+                                    kpi.compareClass = 'glyphicon-arrow-up';
+                                }  else if (kpi.growth < 0) {
+                                    kpi.compareTextColor = 'text-danger';
+                                    kpi.compareClass = 'glyphicon-arrow-down';
+                                } else {
+                                    kpi.growth = 0;
+                                    kpi.compareTextColor = 'text-info';
+                                    kpi.compareClass = 'glyphicon-transfer';
+                                }
                             }
                             jsonData.push(kpi);
                         }
