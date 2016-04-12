@@ -3810,7 +3810,12 @@ function program2(depth0,data) {
                 $.when(squid_api.controller.facetjob.compute(filters, this.config.get("selection")))
                 .always(function() {
                     // update global filters
-                    me.filters.set({"domains": filters.get("domains"), "id" : filters.get("id")}, {"silent" : true});
+                    me.filters.set({
+                        "domains": filters.get("domains"), 
+                        "id" : filters.get("id")
+                    }, {
+                        "silent" : true
+                    });
                     // search for time facets
                     var sel = filters.get("selection");
                     if (sel && sel.facets) {
@@ -3823,7 +3828,7 @@ function program2(depth0,data) {
                         }
                     }
                     // delegate further processing
-                    me.changed(filters.get("selection"), timeFacets);
+                    me.changed(filters, timeFacets);
                 });
             } else {
                 console.log("WARN : selection changed but project or domain are null");
@@ -3836,7 +3841,9 @@ function program2(depth0,data) {
          *   2. automatically selecting a currently active facet range
          *   3. setting the facet selection
          */
-        changed: function(selection, timeFacets) {
+        changed: function(filters, timeFacets) {
+            var selection = filters.get("selection");
+            var results = filters.get("results");
             var configPeriod = this.config.get("period");
             var domain = this.config.get("domain");
             var timeFacet = null;
@@ -3904,11 +3911,17 @@ function program2(depth0,data) {
                         // apply selection to config (will trigger new facet computation)
                         this.config.set("selection", squid_api.utils.buildCleanSelection(selection));
                     } else {
-                        this.filters.set("selection", selection);
+                        this.filters.set({
+                            "selection": selection,
+                            "results" : results}
+                        );
                     }
                 }
             } else {
-                this.filters.set("selection", selection);
+                this.filters.set({
+                    "selection": selection,
+                    "results" : results}
+                );
             }
         },
 
