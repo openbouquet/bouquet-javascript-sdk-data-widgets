@@ -1769,26 +1769,28 @@ function program2(depth0,data) {
         events : ({
             "click thead th" : function(event) {
                 if (this.ordering) {
-                    var orderBy = this.config.get("orderBy");
-                	var expressionValue = $(event.currentTarget).attr("data-content");
-                	var obj = {"expression" : {"value" : expressionValue}};
-                    if (orderBy) {
-                        if (orderBy[0]) {
-                            if (orderBy[0].expression) {
-                                if (orderBy[0].expression.value == expressionValue) {
-                                    if ($(event.currentTarget).hasClass("ASC")) {
-                                        obj.direction = "DESC";
+                    var originType = $(event.currentTarget).attr("origin-type");
+                    if (originType !== "COMPARETO") {
+                        var orderBy = this.config.get("orderBy");
+                        var expressionValue = $(event.currentTarget).attr("data-content");
+                        var obj = {"expression" : {"value" : expressionValue}};
+                        if (orderBy) {
+                            if (orderBy[0]) {
+                                if (orderBy[0].expression) {
+                                    if (orderBy[0].expression.value == expressionValue) {
+                                        if ($(event.currentTarget).hasClass("ASC")) {
+                                            obj.direction = "DESC";
+                                        } else {
+                                            obj.direction = "ASC";
+                                        }
                                     } else {
-                                        obj.direction = "ASC";
+                                        obj.direction = "DESC";
                                     }
-                                } else {
-                                    obj.direction = "DESC";
                                 }
                             }
                         }
+                        this.config.set("orderBy", [obj]);
                     }
-
-                    this.config.set("orderBy", [obj]);
                 }
             }
         }),
@@ -1980,6 +1982,9 @@ function program2(depth0,data) {
                             }
                             return str;
                         })
+                        .attr("origin-type", function(d) {
+                            return d.originType
+                        })
                         .html(function(d) {
                             var str = d.name;
                             if (d.orderDirection === "ASC") {
@@ -1993,7 +1998,7 @@ function program2(depth0,data) {
                             if (d.definition) {
                                 return d.definition;
                             } else {
-                            	return d.id;
+                                return d.id;
                             }
                         });
 
