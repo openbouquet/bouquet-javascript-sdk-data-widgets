@@ -230,7 +230,7 @@
                         return i*15;
                     })
                     .attr("x", function(d, i) {
-                        return i + 200;
+                        return 200;
                     })
                     .attr("width", function() {
                         return 0;
