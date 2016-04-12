@@ -3300,17 +3300,27 @@ function program2(depth0,data) {
                 this.configClone = new Backbone.Model();
                 this.configClone.set(_.clone(this.config.attributes));
 
-                // create a dimensionSelector
-                this.dimensionSelector = new squid_api.view.DimensionSelector({
-                    model : this.configClone,
-                    singleSelect : false,
-                    available : "availableDimensions"
-                });
-                // create a metricSelector
-                this.metricSelector = new squid_api.view.MetricSelectorView({
-                    model : this.configClone,
-                    available : "availableMetrics"
-                });
+                if (options.dimensionSelector) {
+                    this.dimensionSelector = options.dimensionSelector;
+                    this.dimensionSelector.model = this.configClone;
+                } else {
+                    // create a dimensionSelector
+                    this.dimensionSelector = new squid_api.view.DimensionSelector({
+                        model : this.configClone,
+                        singleSelect : false,
+                        available : "availableDimensions"
+                    });
+                }
+                if (options.metricSelector) {
+                    this.metricSelector = options.metricSelector;
+                    this.metricSelector.model = this.configClone;
+                } else {
+                    // create a metricSelector
+                    this.metricSelector = new squid_api.view.MetricSelectorView({
+                        model : this.configClone,
+                        available : "availableMetrics"
+                    });
+                }
 
                 this.listenTo(this.configClone, 'change:chosenDimensions', function() {
                     // update the analysis with extra dimensions
@@ -3817,7 +3827,12 @@ function program2(depth0,data) {
                 $.when(squid_api.controller.facetjob.compute(filters, this.config.get("selection")))
                 .always(function() {
                     // update global filters
-                    me.filters.set({"domains": filters.get("domains"), "id" : filters.get("id")}, {"silent" : true});
+                    me.filters.set({
+                        "domains": filters.get("domains"), 
+                        "id" : filters.get("id")
+                    }, {
+                        "silent" : true
+                    });
                     // search for time facets
                     var sel = filters.get("selection");
                     if (sel && sel.facets) {
@@ -3830,7 +3845,7 @@ function program2(depth0,data) {
                         }
                     }
                     // delegate further processing
-                    me.changed(filters.get("selection"), timeFacets);
+                    me.changed(filters, timeFacets);
                 });
             } else {
                 console.log("WARN : selection changed but project or domain are null");
@@ -3843,7 +3858,9 @@ function program2(depth0,data) {
          *   2. automatically selecting a currently active facet range
          *   3. setting the facet selection
          */
-        changed: function(selection, timeFacets) {
+        changed: function(filters, timeFacets) {
+            var selection = filters.get("selection");
+            var results = filters.get("results");
             var configPeriod = this.config.get("period");
             var domain = this.config.get("domain");
             var timeFacet = null;
@@ -3911,11 +3928,17 @@ function program2(depth0,data) {
                         // apply selection to config (will trigger new facet computation)
                         this.config.set("selection", squid_api.utils.buildCleanSelection(selection));
                     } else {
-                        this.filters.set("selection", selection);
+                        this.filters.set({
+                            "selection": selection,
+                            "results" : results}
+                        );
                     }
                 }
             } else {
-                this.filters.set("selection", selection);
+                this.filters.set({
+                    "selection": selection,
+                    "results" : results}
+                );
             }
         },
 
