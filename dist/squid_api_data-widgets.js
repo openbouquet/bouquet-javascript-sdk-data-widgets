@@ -1277,17 +1277,24 @@ function program2(depth0,data) {
 
         },
 
-        barDataValues: function(data) {
+        barDataValues: function(cols, rows) {
             // Set up base object + arrays
-            var barData = {};
-            barData.values = [];
-            barData.xValues = [];
-            barData.yValues = [];
+            var barData = {
+                values: [],
+                xValues: [],
+                yValues: []
+            };
 
             // Store these values
-            for (i=0; i<data.length; i++) {
-                var item = data[i].v;
+            if (cols.length === 1) {
+                var totalY = cols[0].name + " Total";
+            }
+            for (i=0; i<rows.length; i++) {
+                var item = rows[i].v;
                 var yAxis = "";
+                if (totalY) {
+                    yAxis = totalY;
+                }
                 var xAxis;
                 for (ix=0; ix<item.length; ix++) {
                     if (typeof(item[ix]) === "string") {
@@ -1304,8 +1311,8 @@ function program2(depth0,data) {
                 }
                 barData.yValues.push(yAxis);
 
-                data[i].v = [yAxis, xAxis];
-                barData.values.push(data[i].v);
+                rows[i].v = [yAxis, xAxis];
+                barData.values.push(rows[i].v);
             }
 
             return barData;
@@ -1358,7 +1365,7 @@ function program2(depth0,data) {
                 this.renderBase(true);
 
                 // Obtain Bar Chart Data
-                var barData = this.barDataValues(data.results.rows);
+                var barData = this.barDataValues(data.results.cols, data.results.rows);
 
                 //Calculate largest value / width of screen
                 var maxValue = Math.max.apply(Math, barData.xValues);
