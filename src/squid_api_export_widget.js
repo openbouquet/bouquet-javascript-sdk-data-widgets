@@ -92,17 +92,27 @@
                 this.configClone = new Backbone.Model();
                 this.configClone.set(_.clone(this.config.attributes));
 
-                // create a dimensionSelector
-                this.dimensionSelector = new squid_api.view.DimensionSelector({
-                    model : this.configClone,
-                    singleSelect : false,
-                    available : "availableDimensions"
-                });
-                // create a metricSelector
-                this.metricSelector = new squid_api.view.MetricSelectorView({
-                    model : this.configClone,
-                    available : "availableMetrics"
-                });
+                if (options.dimensionSelector) {
+                    this.dimensionSelector = options.dimensionSelector;
+                    this.dimensionSelector.model = this.configClone;
+                } else {
+                    // create a dimensionSelector
+                    this.dimensionSelector = new squid_api.view.DimensionSelector({
+                        model : this.configClone,
+                        singleSelect : false,
+                        available : "availableDimensions"
+                    });
+                }
+                if (options.metricSelector) {
+                    this.metricSelector = options.metricSelector;
+                    this.metricSelector.model = this.configClone;
+                } else {
+                    // create a metricSelector
+                    this.metricSelector = new squid_api.view.MetricSelectorView({
+                        model : this.configClone,
+                        available : "availableMetrics"
+                    });
+                }
 
                 this.listenTo(this.configClone, 'change:chosenDimensions', function() {
                     // update the analysis with extra dimensions
