@@ -13,11 +13,6 @@ rect text {
     color: #ffffff;
 }
 
-#bar_chart {
-    width: 75%;
-    margin-left: 10%;
-    padding: 30px;
-}
 #squid-api-data-widgets-data-table table.many-columns {
 	display: inherit;
 	table-layout: inherit;

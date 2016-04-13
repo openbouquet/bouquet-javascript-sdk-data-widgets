@@ -1447,7 +1447,7 @@ function program2(depth0,data) {
                         return i*15;
                     })
                     .attr("x", function(d, i) {
-                        return 200;
+                        return 150;
                     })
                     .attr("width", function() {
                         return 0;
@@ -1487,15 +1487,15 @@ function program2(depth0,data) {
                         .attr('class', 'axis')
                         .attr('width', width)
                         .attr('x', 400)
-                        .attr('transform', 'translate(200,' + (height - 1) + ')')
+                        .attr('transform', 'translate(150,' + (height - 1) + ')')
                         .call(xAxis);
 
-                    // yAxis (Starting 200px from right)
+                    // yAxis (Starting 150px from right)
                     var yAxisAppend = d3.select("#bar_chart svg")
                         .append("g")
                         .attr('class', 'axis')
                         .attr('height', height)
-                        .attr('transform', 'translate(200,0)')
+                        .attr('transform', 'translate(150,0)')
                         .call(yAxis)
                         .selectAll(".tick");
 
