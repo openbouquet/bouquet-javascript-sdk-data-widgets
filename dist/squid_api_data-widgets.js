@@ -1647,6 +1647,7 @@ function program2(depth0,data) {
                 var isActive = false;
                 if (view2 === currentViewName) {
                     isActive = true;
+                    data.currentIcon = icon;
                 }
                 data.options.push({"view" : view2, "icon" : icon, "isActive" : isActive});
             }
