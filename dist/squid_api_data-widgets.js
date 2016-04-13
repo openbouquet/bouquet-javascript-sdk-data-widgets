@@ -1285,34 +1285,48 @@ function program2(depth0,data) {
                 yValues: []
             };
 
-            // Store these values
-            if (cols.length === 1) {
-                var totalY = cols[0].name + " Total";
-            }
-            for (i=0; i<rows.length; i++) {
-                var item = rows[i].v;
-                var yAxis = "";
-                if (totalY) {
-                    yAxis = totalY;
+            // check to see if we only display totals
+            var onlyMetrics = true;
+            for (i=0; i<cols.length; i++) {
+                if (cols[i].role !== "DATA") {
+                    onlyMetrics = false;
                 }
-                var xAxis;
-                for (ix=0; ix<item.length; ix++) {
-                    if (typeof(item[ix]) === "string") {
-                        if (yAxis.length === 0) {
-                            yAxis += item[ix];
-                        } else {
-                            yAxis += " / " + item[ix];
-                        }
-                    } else if (typeof(item[ix]) === "number") {
-                        xAxis = item[ix];
-                        barData.xValues.push(item[ix]);
-                        break;
+            }
+
+            // store bar data
+            if (onlyMetrics) {
+                // only show metric totals
+                for (i=0; i<cols.length; i++) {
+                    var col = cols[i];
+                    var yAxis = col.name + " Total";
+                    for (ix=0; ix<rows.length; ix++) {
+                        var xAxis = rows[ix].v[i];
+                        barData.xValues.push(xAxis);
+                        barData.yValues.push(yAxis);
+                        barData.values.push([yAxis, xAxis]);
                     }
                 }
-                barData.yValues.push(yAxis);
-
-                rows[i].v = [yAxis, xAxis];
-                barData.values.push(rows[i].v);
+            } else {
+                for (i=0; i<rows.length; i++) {
+                    var item1 = rows[i].v;
+                    var yAxis1 = "";
+                    var xAxis1;
+                    for (ix=0; ix<item1.length; ix++) {
+                        if (typeof(item1[ix]) === "string") {
+                            if (yAxis1.length === 0) {
+                                yAxis1 += item1[ix];
+                            } else {
+                                yAxis1 += " / " + item1[ix];
+                            }
+                        } else if (typeof(item1[ix]) === "number") {
+                            xAxis1 = item1[ix];
+                            barData.xValues.push(item1[ix]);
+                            break;
+                        }
+                    }
+                    barData.yValues.push(yAxis1);
+                    barData.values.push([yAxis1, xAxis1]);
+                }
             }
 
             return barData;
