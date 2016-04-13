@@ -233,9 +233,17 @@
                 }
             }
 
+            // exception rule for nVariate
+            var canDisplay = true;
+            if (metrics) {
+                if (metrics.length === 0 && nVariate) {
+                    canDisplay = false;
+                }
+            }
+
             // get data
             for (i=1; i<this.results.cols.length; i++) {
-                if (_.contains(metrics, this.results.cols[i].id) || ! metrics) {
+                if ((_.contains(metrics, this.results.cols[i].id) || ! metrics) || (nVariate && canDisplay)) {
                     var arr = [];
                     var metaData = [];
 
