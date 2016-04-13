@@ -6350,6 +6350,30 @@ function program2(depth0,data) {
             MG.data_graphic(this.configuration);
         },
 
+        standardizeData: function() {
+            // standardize data
+            for (i=0; i<this.results.rows.length; i++) {
+                // store date
+                var v = [this.results.rows[i].v[0]];
+                var dim = "";
+                var metricVal;
+                for (ix=1; ix<this.results.rows[i].v.length; ix++) {
+                    if (typeof(this.results.rows[i].v[ix]) === "string") {
+                        if (dim.length === 0) {
+                            dim += this.results.rows[i].v[ix];
+                        } else {
+                            dim += " / " + this.results.rows[i].v[ix];
+                        }
+                    } else if (typeof(this.results.rows[i].v[ix]) === "number") {
+                        metricVal = this.results.rows[i].v[ix];
+                    }
+                }
+                v.push(dim);
+                v.push(metricVal);
+                this.results.rows[i].v = v;
+            }
+        },
+
         renderGraphic: function(metrics) {
             this.$el.find(".sq-loading").hide();
             this.$el.find("#re-run").hide();
@@ -6366,23 +6390,17 @@ function program2(depth0,data) {
             for (var col=1; col<this.results.cols.length; col++) {
                 if (this.results.cols[col].role == "DOMAIN") {
                     nVariate = true;
+                    this.standardizeData();
                     break;
-                }
-            }
-
-            // exception rule for nVariate
-            var canDisplay = true;
-            if (metrics) {
-                if (metrics.length === 0 && nVariate) {
-                    canDisplay = false;
                 }
             }
 
             // get data
             for (i=1; i<this.results.cols.length; i++) {
-                if ((_.contains(metrics, this.results.cols[i].id) || ! metrics) || (nVariate && canDisplay)) {
+                if (_.contains(metrics, this.results.cols[i].id) || ! metrics) {
                     var arr = [];
                     var metaData = [];
+                    var dimCount = this.results.cols.length - 2;
 
                     /* Legend */
 
@@ -6391,17 +6409,17 @@ function program2(depth0,data) {
                         legend.push(this.results.cols[i].name);
                     } else {
                     // obtain legend names from results
-                        var arr = [];
-                        for (ix1=0; ix1<this.results.rows.length; ix1++) {
-                            var tmpLegend = "";
-                            for (ix2=1; ix2<this.results.rows[ix1].v.length; ix2++) {
-                                if (typeof(this.results.rows[ix1].v[ix2]) === "string") {
-                                    if (tmpLegend.length === 0) {
-                                        tmpLegend += this.results.rows[ix1].v[ix2];
-                                    } else {
-                                        tmpLegend += " / " + this.results.rows[ix1].v[ix2];
-                                    }
-                                    legend.push(tmpLegend);
+                        for (var dim=0; dim<dimCount; dim++) {
+                            var arr = [];
+                            for (ix1=0; ix1<this.results.rows.length; ix1++) {
+                                if ($.inArray(this.results.rows[ix1].v[1], legend) < 0) {
+                                    // store unique legend items
+                                    legend.push(this.results.rows[ix1].v[1]);
+                                    // store meta data for results
+                                    metaData.push({
+                                        name : this.results.rows[ix1].v[1],
+                                        index: 1
+                                    });
                                 }
                             }
                         }
@@ -6437,34 +6455,37 @@ function program2(depth0,data) {
                         arr = MG.convert.date(arr, 'date');
                         dataset.push(arr);
                     } else {
-                        var tmpArr = [];
-                        startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
-                        for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
-                            var date = currentDay.format('YYYY-MM-DD');
-                            var dataExists = false;
-                            var obj1 = {
-                                "date" : date
-                            };
-                            for (ix=0; ix<this.results.rows.length; ix++) {
-                                if (this.results.rows[ix].v[0] === date) {
-                                    dataExists = true;
-                                    for (var metricVal in this.results.rows[ix].v) {
-                                        // obtain metric number if multiple dimensions exist
-                                        if (typeof(this.results.rows[ix].v[metricVal]) === "number") {
-                                            obj1.value = this.results.rows[ix].v[metricVal];
+                    // if more than one dimension use metaData gathered from the legend creation
+                        for (var item=0; item<metaData.length; item++) {
+                            var tmpArr = [];
+                            startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
+                            for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+                                var date = currentDay.format('YYYY-MM-DD');
+                                var dataExists = false;
+                                var obj1 = {
+                                    "date" : date
+                                };
+                                for (ix=0; ix<this.results.rows.length; ix++) {
+                                    if (this.results.rows[ix].v[0] === date && (metaData[item].name == this.results.rows[ix].v[metaData[item].index])) {
+                                        dataExists = true;
+                                        for (var metricVal in this.results.rows[ix].v) {
+                                            // obtain metric number if multiple dimensions exist
+                                            if (typeof(this.results.rows[ix].v[metricVal]) === "number") {
+                                                obj1.value = this.results.rows[ix].v[metricVal];
+                                            }
                                         }
                                     }
                                 }
+                                if (! dataExists && this.fillMissingDataValues) {
+                                    obj1.value = 0;
+                                    tmpArr.push(obj1);
+                                } else if (dataExists) {
+                                    tmpArr.push(obj1);
+                                }
                             }
-                            if (! dataExists && this.fillMissingDataValues) {
-                                obj1.value = 0;
-                                tmpArr.push(obj1);
-                            } else if (dataExists) {
-                                tmpArr.push(obj1);
-                            }
+                            arr = MG.convert.date(tmpArr, 'date');
+                            dataset.push(arr);
                         }
-                        arr = MG.convert.date(tmpArr, 'date');
-                        dataset.push(arr);
                     }
                 }
             }
