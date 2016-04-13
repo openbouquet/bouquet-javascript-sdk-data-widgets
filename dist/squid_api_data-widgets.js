@@ -1570,8 +1570,7 @@ function program2(depth0,data) {
         },
 
         events: {
-            "click li": "changeWidget",
-            "click button":"openPopOver"
+            "click li": "changeWidget"
         },
 
         changeWidget: function(item){
@@ -1652,10 +1651,7 @@ function program2(depth0,data) {
                 data.options.push({"view" : view2, "icon" : icon, "isActive" : isActive});
             }
 
-            this.$el.find("button").popover({
-                content: this.template(data),
-                html: true
-            });
+            this.$el.html(this.template(data));
 
             return this;
         }
