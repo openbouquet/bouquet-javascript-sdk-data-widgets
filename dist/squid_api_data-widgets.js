@@ -1413,7 +1413,7 @@ function program2(depth0,data) {
 
                 var xAxis = d3.svg.axis()
                     .scale(xScale)
-                    .orient('top');
+                    .orient('bottom');
 
                 // To make the chart fit (Height)
                 var yScale = d3.scale.ordinal()
@@ -1431,6 +1431,7 @@ function program2(depth0,data) {
                     .append("svg")
                     .attr("width", width)
                     .attr("height", height)
+                    .attr("style", "overflow: visible;")
                     .append("g")
                     .attr("class", "chart");
 
