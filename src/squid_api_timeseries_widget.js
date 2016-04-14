@@ -393,6 +393,7 @@
             if (timeUnit) {
                 this.$el.find("#time-unit-selector select").val(timeUnit);
             }
+            this.$el.find("#time-unit-selector select").multiselect();
         },
 
         renderTemplate: function(done) {
