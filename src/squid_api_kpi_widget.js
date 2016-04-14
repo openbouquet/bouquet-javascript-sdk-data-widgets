@@ -71,8 +71,8 @@
                             kpi.name = col.name;
                             if (typeof kpi.compareToValue != "undefined"
                                 && kpi.compareToValue != null) {
-                                var lvalue = parseFloat(kpi.value.replace(",",""));
-                                var rvalue = parseFloat(kpi.compareToValue.replace(",",""));
+								var lvalue = parseFloat(values[i]);
+								var rvalue = parseFloat(values[compareIndex]);
                                 kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
                                 if (kpi.growth > 0) {
                                     kpi.compareTextColor = 'text-success';
