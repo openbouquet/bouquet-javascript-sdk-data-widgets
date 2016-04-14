@@ -6475,12 +6475,11 @@ function program2(depth0,data) {
                             for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
                                 var date = currentDay.format('YYYY-MM-DD');
                                 var dataExists = false;
-                                var storeArray = false;
                                 var obj1 = {
                                     "date" : date
                                 };
                                 if (hashMap[metaData[item].name]) {
-                                    if (hashMap[metaData[item].name][date]) {
+                                    if (hashMap[metaData[item].name][date] || hashMap[metaData[item].name][date] === 0) {
                                         dataExists = true;
                                         obj1.value = hashMap[metaData[item].name][date]
                                     }
