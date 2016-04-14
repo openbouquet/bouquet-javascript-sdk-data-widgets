@@ -263,6 +263,7 @@
                 if (_.contains(metrics, this.results.cols[i].id) || ! metrics) {
                     var arr = [];
                     var metaData = [];
+                    var hashMap = {}
                     var dimCount = this.results.cols.length - 2;
 
                     /* Legend */
@@ -274,6 +275,7 @@
                     // obtain legend names from results
                         for (var dim=0; dim<dimCount; dim++) {
                             var arr = [];
+                            var mdObj = {};
                             for (ix1=0; ix1<this.results.rows.length; ix1++) {
                                 if ($.inArray(this.results.rows[ix1].v[1], legend) < 0) {
                                     // store unique legend items
@@ -283,6 +285,17 @@
                                         name : this.results.rows[ix1].v[1],
                                         index: 1
                                     });
+                                }
+                                // create hashMap
+                                var i1 = this.results.rows[ix1].v[0];
+                                var i2 = this.results.rows[ix1].v[1];
+                                var i3 = this.results.rows[ix1].v[2]
+                                if (hashMap[i2]) {
+                                    hashMap[i2][i1] = i3
+                                } else {
+                                    hashMap[i2] = {
+                                        i1 : i3
+                                    }
                                 }
                             }
                         }
@@ -325,18 +338,14 @@
                             for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
                                 var date = currentDay.format('YYYY-MM-DD');
                                 var dataExists = false;
+                                var storeArray = false;
                                 var obj1 = {
                                     "date" : date
                                 };
-                                for (ix=0; ix<this.results.rows.length; ix++) {
-                                    if (this.results.rows[ix].v[0] === date && (metaData[item].name == this.results.rows[ix].v[metaData[item].index])) {
+                                if (hashMap[metaData[item].name]) {
+                                    if (hashMap[metaData[item].name][date]) {
                                         dataExists = true;
-                                        for (var metricVal in this.results.rows[ix].v) {
-                                            // obtain metric number if multiple dimensions exist
-                                            if (typeof(this.results.rows[ix].v[metricVal]) === "number") {
-                                                obj1.value = this.results.rows[ix].v[metricVal];
-                                            }
-                                        }
+                                        obj1.value = hashMap[metaData[item].name][date]
                                     }
                                 }
                                 if (! dataExists && this.fillMissingDataValues) {
