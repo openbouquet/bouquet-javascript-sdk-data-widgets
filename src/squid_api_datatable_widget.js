@@ -571,6 +571,7 @@
                     this.$el.find("#stale").hide();
                     this.$el.find("#re-run").hide();
                     this.$el.find(".sort-direction").show();
+                    this.$el.find("#table-container").show();
 
                     if (!this.model.get("error")) {
                         // display results
@@ -600,6 +601,7 @@
                     this.$el.find("#stale").hide();
                     this.$el.find(".sort-direction").show();
                     this.$el.find("#error").html("");
+                    this.$el.find("#table-container").hide();
                 }
 
                 if (this.model.get("status") === "PENDING") {
