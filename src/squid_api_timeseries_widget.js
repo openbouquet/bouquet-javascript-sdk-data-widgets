@@ -213,27 +213,35 @@
             MG.data_graphic(this.configuration);
         },
 
-        standardizeData: function() {
+        standardizeData: function(currentDateIndex) {
             // standardize data
             for (i=0; i<this.results.rows.length; i++) {
                 // store date
-                var v = [this.results.rows[i].v[0]];
-                var dim = "";
-                var metricVal;
-                for (ix=1; ix<this.results.rows[i].v.length; ix++) {
-                    if (typeof(this.results.rows[i].v[ix]) === "string") {
-                        if (dim.length === 0) {
-                            dim += this.results.rows[i].v[ix];
-                        } else {
-                            dim += " / " + this.results.rows[i].v[ix];
+                if (! currentDateIndex) {
+                    var v = [this.results.rows[i].v[0]];
+                    var dim = "";
+                    var metricVal;
+                    for (ix=1; ix<this.results.rows[i].v.length; ix++) {
+                        if (typeof(this.results.rows[i].v[ix]) === "string") {
+                            if (dim.length === 0) {
+                                dim += this.results.rows[i].v[ix];
+                            } else {
+                                dim += " / " + this.results.rows[i].v[ix];
+                            }
+                        } else if (typeof(this.results.rows[i].v[ix]) === "number") {
+                            metricVal = this.results.rows[i].v[ix];
                         }
-                    } else if (typeof(this.results.rows[i].v[ix]) === "number") {
-                        metricVal = this.results.rows[i].v[ix];
                     }
+                    v.push(dim);
+                    v.push(metricVal);
+                    this.results.rows[i].v = v;
+                } else {
+                    // remove currentDateRow
+                    this.results.rows[i].v.splice(currentDateIndex, 1);
                 }
-                v.push(dim);
-                v.push(metricVal);
-                this.results.rows[i].v = v;
+            }
+            if (currentDateIndex) {
+                this.results.cols.splice(currentDateIndex, 1);
             }
         },
 
@@ -245,6 +253,7 @@
             var legend = [];
             var dataset = [];
             var nVariate = false;
+            var currentDateIndex = null;
 
             // sort dates
             this.results.rows = this.sortDates(this.results.rows);
@@ -253,9 +262,22 @@
             for (var col=1; col<this.results.cols.length; col++) {
                 if (this.results.cols[col].role == "DOMAIN") {
                     nVariate = true;
-                    this.standardizeData();
-                    break;
+                    var selection = this.config.get("selection");
+                    if (selection) {
+                        var facets = selection.facets;
+                        for (var f=0; f<facets.length; f++) {
+                            if (facets[f].id === this.results.cols[col].definition) {
+                                nVariate = false;
+                                this.standardizeData(col);
+                            }
+                        }
+                    }
                 }
+            }
+
+            if (nVariate) {
+                // make sure we only have three columns
+                this.standardizeData();
             }
 
             // get data
