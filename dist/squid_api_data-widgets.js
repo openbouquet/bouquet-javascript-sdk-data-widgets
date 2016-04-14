@@ -6468,7 +6468,7 @@ function program2(depth0,data) {
 
                     // make sure a value is available for every day (standard timeseries)
                     if (! nVariate) {
-                        for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+                        for (var currentDay = startDate; currentDay.diff(endDate) <= 0; startDate.add('days', 1)) {
                             var date = currentDay.format('YYYY-MM-DD');
                             var dataExists = false;
 
@@ -6496,7 +6496,7 @@ function program2(depth0,data) {
                         for (var item=0; item<metaData.length; item++) {
                             var tmpArr = [];
                             startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
-                            for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+                            for (var currentDay = startDate; currentDay.diff(endDate) <= 0; startDate.add('days', 1)) {
                                 var date = currentDay.format('YYYY-MM-DD');
                                 var dataExists = false;
                                 var obj1 = {
