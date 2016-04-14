@@ -446,7 +446,7 @@
                     this.renderGraphic();
                     this.renderAdditionalView(new squid_api.view.MetricSelectorView({
                         filterBy : resultMetrics,
-                        buttonText : "<i class='fa fa-cog'></i>",
+                        defaultButtonText: true,
                         onChangeHandler: function() {
                             var metrics = this.$el.find("select").val();
                             if (! metrics) {
