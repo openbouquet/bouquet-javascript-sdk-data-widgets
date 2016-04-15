@@ -470,6 +470,10 @@
                     this.renderAdditionalView(new squid_api.view.MetricSelectorView({
                         filterBy : resultMetrics,
                         defaultButtonText: true,
+                        customView: true,
+                        afterRender: function() {
+                            this.$el.find("select").multiselect();
+                        },
                         onChangeHandler: function() {
                             var metrics = this.$el.find("select").val();
                             if (! metrics) {
