@@ -1,43 +1,43 @@
 <div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 2;'>
-	<div class="spinner">
-	<div class="rect5"></div>
-	<div class="rect4"></div>
-	<div class="rect3"></div>
-	<div class="rect2"></div>
-	<div class="rect1"></div>
-	<div class="rect2"></div>
-	<div class="rect3"></div>
-	<div class="rect4"></div>
-	<div class="rect5"></div>
-	</div>
+    <div class="spinner">
+    <div class="rect5"></div>
+    <div class="rect4"></div>
+    <div class="rect3"></div>
+    <div class="rect2"></div>
+    <div class="rect1"></div>
+    <div class="rect2"></div>
+    <div class="rect3"></div>
+    <div class="rect4"></div>
+    <div class="rect5"></div>
+    </div>
 </div>
 <div id="chart_container" class="squid-api-data-widgets-timeseries-widget">
-	<div id="yearswitcher"></div>
-	<div id="metricselector"></div>
-	{{#if timeUnitSelector}}
-	  <div id="time-unit-selector">
-		<select class="form-control">
-			{{#each timeUnits}}
-			  <option value={{id}}>{{name}}</option>
-			{{/each}}
-		</select>
-	  </div>
-	{{/if}}
-	<div id="stale">
-		<div class="reactiveMessage">
-			<span><i class="fa fa-line-chart"></i>
-			<br>{{staleMessage}}</span>
-		</div>
-	</div>
-	<div id="re-run" style="display: none;">
-    		<div class="reactiveMessage">
-    			<span><i class="fa fa-refresh"></i>
-    			<br>{{reRunMessage}}</span>
-    		</div>
-    	</div>
-	<div id="widget">
+    <div id="yearswitcher"></div>
+    {{#if timeUnitSelector}}
+      <div id="time-unit-selector">
+        <select class="form-control">
+            {{#each timeUnits}}
+              <option value={{id}}>{{name}}</option>
+            {{/each}}
+        </select>
+      </div>
+    {{/if}}
+    <div id="metricselector"></div>
+    <div id="stale">
+        <div class="reactiveMessage">
+            <span><i class="fa fa-line-chart"></i>
+            <br>{{staleMessage}}</span>
+        </div>
+    </div>
+    <div id="re-run" style="display: none;">
+            <div class="reactiveMessage">
+                <span><i class="fa fa-refresh"></i>
+                <br>{{reRunMessage}}</span>
+            </div>
+        </div>
+    <div id="widget">
 
-	</div>
-	<div id="legend" />
-	<div id="error" />
+    </div>
+    <div id="legend" />
+    <div id="error" />
 </div>
