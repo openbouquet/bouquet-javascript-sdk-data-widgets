@@ -6172,7 +6172,7 @@ function program2(depth0,data) {
                 if (options.colorPalette) {
                     this.colorPalette = options.colorPalette;
                 } else {
-                    this.colorPalette = ["#067e87", "#00a0c2", "#0304b4", "#03a00b", "#0bf984", "#0ef0a2", "#068bf0", "#0c7be7", "#0540a9", "#02dafe", "#01c7b7", "#04bc68", "#061380", "#0de2b5", "#0c5e6b", "#027fa8", "#0df300", "#07f666", "#077839", "#0e7a70", "#0a947b", "#0011a3", "#00d2ab", "#03098a", "#017c8c", "#0855dd", "#0391f4", "#0c17b7", "#0d29a7", "#017a0f", "#0ec80e", "#04f4b7", "#08ec75", "#01f5e9", "#0afe29", "#09680c", "#08a459", "#03eb16", "#006116", "#01998d", "#013f2f", "#00966e", "#0d8d68", "#068b44", "#01784e", "#0de1ad", "#054010", "#0e65b6", "#04bb6d", "#02eec0", "#0875e5", "#0ac304", "#0bca4a", "#065293", "#08d7a1", "#0545eb", "#008a41", "#0572c3", "#0ceb28", "#0d9121", "#07b4a1", "#0563ac", "#046092", "#07d882", "#0d59f4", "#067bd9", "#0968b7", "#010e9f", "#0e3837", "#027d76", "#0d2478", "#00bc50", "#0b8bbc", "#028ba2", "#0a6245", "#0c5dae", "#00bbad", "#075bb4", "#03fd64", "#06fe18", "#0de939", "#0f104a", "#0c059f", "#0473ab", "#02896d", "#05fd0b", "#0d79ff", "#05a6f3", "#0c34ab", "#0486cf", "#022f39", "#09bb88", "#08a446", "#0e35d0", "#023c1b", "#0abe29", "#02b781", "#0c926f", "#02d742", "#005f34"];
+                    this.colorPalette = d3.scale.category10().range();
                 }
                 if (options.timeUnits) {
                     this.timeUnits = options.timeUnits;
@@ -6388,6 +6388,9 @@ function program2(depth0,data) {
             this.$el.find(".sq-loading").hide();
             this.$el.find("#re-run").hide();
 
+            // for manipulation time
+            var start = new Date().getTime();
+
             // data for timeseries
             var legend = [];
             var dataset = [];
@@ -6539,6 +6542,9 @@ function program2(depth0,data) {
 
             // reinitialize timeseries
             MG.data_graphic(this.configuration);
+
+            // manipulation time
+            console.log("timeseries manipulation time: " + (new Date().getTime() - start) + " ms");
         },
 
         hide: function() {
