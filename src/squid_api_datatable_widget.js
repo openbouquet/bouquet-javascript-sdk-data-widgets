@@ -340,10 +340,12 @@
                             if (d.orderDirection) {
                                 str = str + " " + d.orderDirection;
                             }
-                            if (me.compareCols.indexOf(i) > -1) {
-                                str += " compareTo";
-                            } else if (me.metricCols.indexOf(i) > -1) {
-                                str += " compare";
+                            if (me.compareCols.length > 0) {
+                                if (me.compareCols.indexOf(i) > -1) {
+                                    str += " compareTo";
+                                } else if (me.metricCols.indexOf(i) > -1) {
+                                    str += " compare";
+                                }
                             }
                             return str;
                         })
@@ -512,10 +514,12 @@
                                 me.categoryColSpan(this);
                             }
                         }
-                        if (me.compareCols.indexOf(i) > -1) {
-                            str += " compareTo";
-                        } else if (me.metricCols.indexOf(i) > -1) {
-                            str += " compare";
+                        if (me.compareCols.length > 0) {
+                            if (me.compareCols.indexOf(i) > -1) {
+                                str += " compareTo";
+                            } else if (me.metricCols.indexOf(i) > -1) {
+                                str += " compare";
+                            }
                         }
                         return str;
                     })
