@@ -6424,19 +6424,21 @@ function program2(depth0,data) {
                     if (nVariate) {
                         // obtain legend names from results
                         for (ix1=0; ix1<this.results.rows.length; ix1++) {
-                            if ($.inArray(this.results.rows[ix1].v[1], legend) < 0) {
-                                // store unique legend items
-                                legend.push(this.results.rows[ix1].v[1]);
-                            }
-                            // create hashMap
-                            var i1 = this.results.rows[ix1].v[0];
-                            var i2 = this.results.rows[ix1].v[1];
-                            var i3 = this.results.rows[ix1].v[2]
-                            if (hashMap[i2]) {
-                                hashMap[i2][i1] = i3;
-                            } else {
-                                hashMap[i2] = {};
-                                hashMap[i2][i1] = i3;
+                            if (this.results.rows[ix1].v[1] !== null) {
+                                if ($.inArray(this.results.rows[ix1].v[1], legend) < 0) {
+                                    // store unique legend items
+                                    legend.push(this.results.rows[ix1].v[1]);
+                                }
+                                // create hashMap
+                                var i1 = this.results.rows[ix1].v[0];
+                                var i2 = this.results.rows[ix1].v[1];
+                                var i3 = this.results.rows[ix1].v[2]
+                                if (hashMap[i2]) {
+                                    hashMap[i2][i1] = i3;
+                                } else {
+                                    hashMap[i2] = {};
+                                    hashMap[i2][i1] = i3;
+                                }
                             }
                         }
                     } else {
