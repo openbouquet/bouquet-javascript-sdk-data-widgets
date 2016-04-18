@@ -1,6 +1,6 @@
 (function (root, factory) {
     root.squid_api.view.DataTableView = factory(root.Backbone, root.squid_api);
-}(this, function (Backbone, squid_api, widget) {
+}(this, function (Backbone, squid_api) {
 
     View = Backbone.View.extend( {
 
@@ -479,14 +479,14 @@
                     .enter()
                     .append("td")
                     .attr("class", function(d, i) {
-                        var className = "";
+                        var str = "";
                         if (rollups) {
                             if (i === 0) {
                                 // hide grouping column
-                                className = "hide";
+                                str = "hide";
                             } else if ((rollupSummaryIndex !== null) && (i === rollupColIndex)) {
                                 // hide rollup column
-                                className = "hide";
+                                str = "hide";
                             } else if ((rollupSummaryIndex !== null) && (i === rollupSummaryIndex)) {
                                 if (parseInt(this.parentNode.__data__.v[0]) === 1) {
                                     // this is a total (grouped) line
@@ -494,15 +494,15 @@
                                 }
                                 if (parseInt(this.parentNode.__data__.v[0]) >= 1) {
                                   // this is a rollup sub level line
-                                  className = "new-category";
+                                  str = "new-category";
                                 }
                             } else if ((i === 1 && parseInt(this.parentNode.__data__.v[0]) === 1)) {
                                 // this is a total line
                                 this.parentNode.className = "group";
-                                className = "new-category";
+                                str = "new-category";
                             } else if (parseInt(this.parentNode.__data__.v[0]) > 1) {
                                 // this is a rollup sub level line
-                                className = "new-category";
+                                str = "new-category";
                             } else if ((parseInt(this.parentNode.__data__.v[0]) === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
                                 // detect total column
                                 this.parentNode.className = "total-column";
@@ -514,12 +514,12 @@
                         }
                         if (me.compare) {
                             if (me.compare.col === i) {
-                                className += " compareTo";
+                                str += " compareTo";
                             } else {
-                                className += " compare";
+                                str += " compare";
                             }
                         }
-                        return className;
+                        return str;
                     })
                     .text(function(d, i) {
                         var text = d;
