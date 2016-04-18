@@ -105,6 +105,12 @@
                     }
                 }
             } else {
+                // sort rows alphabetically
+                rows.sort(function(a, b) {
+                    if(a.v[0] < b.v[0]) return -1;
+                    if(a.v[0] > b.v[0]) return 1;
+                    return 0;
+                });
                 for (i=0; i<rows.length; i++) {
                     var item1 = rows[i].v;
                     var yAxis1 = "";
