@@ -1085,41 +1085,38 @@ function program2(depth0,data) {
             }
 
             // controller
-
-            this.config.on('change:project', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:domain', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:chosenDimensions', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:chosenMetrics', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:limit', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:rollups', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:orderBy', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:selection', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on("change:startIndex", function() {
-                me.refreshAnalysis();
+            this.listenTo(this.config, "change", function() {
+                var refreshNeeded = false;
+                if (this.config.hasChanged("project")) {
+                    refreshNeeded = true;
+                };
+                if (this.config.hasChanged("domain")) {
+                    refreshNeeded = true;
+                };
+                if (this.config.hasChanged("chosenDimensions")) {
+                    refreshNeeded = true;
+                };
+                if (this.config.hasChanged("chosenMetrics")) {
+                    refreshNeeded = true;
+                };
+                if (this.config.hasChanged("limit")) {
+                    refreshNeeded = true;
+                };
+                if (this.config.hasChanged("rollups")) {
+                    refreshNeeded = true;
+                };
+                if (this.config.hasChanged("orderBy")) {
+                    refreshNeeded = true;
+                };
+                if (this.config.hasChanged("selection")) {
+                    refreshNeeded = true;
+                };
+                if (this.config.hasChanged("startIndex")) {
+                    refreshNeeded = true;
+                };
+                if (refreshNeeded) {
+                    me.refreshAnalysis();
+                }
             });
 
             this.customEvents();
