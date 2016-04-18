@@ -309,13 +309,11 @@
                 d3.select(selector).select("thead tr").selectAll("th").remove();
 
                 // set compare col
-                this.compare = null;
+                this.compareCols = [];
                 this.metricCols = [];
                 for (i=0; i<columns.length; i++) {
                     if (columns[i].originType === "COMPARETO") {
-                        this.compare = {
-                            col: i
-                        }
+                        this.compareCols.push(i);
                     }
                     if (columns[i].role === "DATA") {
                         this.metricCols.push(i);
@@ -342,12 +340,10 @@
                             if (d.orderDirection) {
                                 str = str + " " + d.orderDirection;
                             }
-                            if (me.compare) {
-                                if (me.compare.col === i) {
-                                    str += " compareTo";
-                                } else if (me.metricCols.indexOf(i) > -1) {
-                                    str += " compare";
-                                }
+                            if (me.compareCols.indexOf(i) > -1) {
+                                str += " compareTo";
+                            } else if (me.metricCols.indexOf(i) > -1) {
+                                str += " compare";
                             }
                             return str;
                         })
@@ -516,12 +512,10 @@
                                 me.categoryColSpan(this);
                             }
                         }
-                        if (me.compare) {
-                            if (me.compare.col === i) {
-                                str += " compareTo";
-                            } else if (me.metricCols.indexOf(i) > -1) {
-                                str += " compare";
-                            }
+                        if (me.compareCols.indexOf(i) > -1) {
+                            str += " compareTo";
+                        } else if (me.metricCols.indexOf(i) > -1) {
+                            str += " compare";
                         }
                         return str;
                     })
