@@ -1971,11 +1971,15 @@ function program2(depth0,data) {
 
                 // set compare col
                 this.compare = null;
+                this.metricCols = [];
                 for (i=0; i<columns.length; i++) {
                     if (columns[i].originType === "COMPARETO") {
                         this.compare = {
                             col: i
                         }
+                    }
+                    if (columns[i].role === "DATA") {
+                        this.metricCols.push(i);
                     }
                 }
 
@@ -2002,7 +2006,7 @@ function program2(depth0,data) {
                             if (me.compare) {
                                 if (me.compare.col === i) {
                                     str += " compareTo";
-                                } else {
+                                } else if (me.metricCols.indexOf(i) > -1) {
                                     str += " compare";
                                 }
                             }
@@ -2176,7 +2180,7 @@ function program2(depth0,data) {
                         if (me.compare) {
                             if (me.compare.col === i) {
                                 str += " compareTo";
-                            } else {
+                            } else if (me.metricCols.indexOf(i) > -1) {
                                 str += " compare";
                             }
                         }
