@@ -1,6 +1,6 @@
 (function (root, factory) {
     root.squid_api.view.DataTableView = factory(root.Backbone, root.squid_api);
-}(this, function (Backbone, squid_api) {
+}(this, function (Backbone, squid_api, widget) {
 
     View = Backbone.View.extend( {
 
@@ -308,6 +308,16 @@
                 // header
                 d3.select(selector).select("thead tr").selectAll("th").remove();
 
+                // set compare col
+                this.compare = null;
+                for (i=0; i<columns.length; i++) {
+                    if (columns[i].originType === "COMPARETO") {
+                        this.compare = {
+                            col: i
+                        }
+                    }
+                }
+
                 if (!invalidSelection) {
                     d3.select(selector).select("thead tr").selectAll("th")
                         .data(columns)
@@ -328,8 +338,12 @@
                             if (d.orderDirection) {
                                 str = str + " " + d.orderDirection;
                             }
-                            if (d.originType === "COMPARETO") {
-                                str += d.originType;
+                            if (me.compare) {
+                                if (me.compare.col === i) {
+                                    str += " compareTo";
+                                } else {
+                                    str += " compare";
+                                }
                             }
                             return str;
                         })
@@ -465,13 +479,14 @@
                     .enter()
                     .append("td")
                     .attr("class", function(d, i) {
+                        var className = "";
                         if (rollups) {
                             if (i === 0) {
                                 // hide grouping column
-                                return "hide";
+                                className = "hide";
                             } else if ((rollupSummaryIndex !== null) && (i === rollupColIndex)) {
                                 // hide rollup column
-                                return "hide";
+                                className = "hide";
                             } else if ((rollupSummaryIndex !== null) && (i === rollupSummaryIndex)) {
                                 if (parseInt(this.parentNode.__data__.v[0]) === 1) {
                                     // this is a total (grouped) line
@@ -479,15 +494,15 @@
                                 }
                                 if (parseInt(this.parentNode.__data__.v[0]) >= 1) {
                                   // this is a rollup sub level line
-                                  return "new-category";
+                                  className = "new-category";
                                 }
                             } else if ((i === 1 && parseInt(this.parentNode.__data__.v[0]) === 1)) {
                                 // this is a total line
                                 this.parentNode.className = "group";
-                                return "new-category";
+                                className = "new-category";
                             } else if (parseInt(this.parentNode.__data__.v[0]) > 1) {
                                 // this is a rollup sub level line
-                                return "new-category";
+                                className = "new-category";
                             } else if ((parseInt(this.parentNode.__data__.v[0]) === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
                                 // detect total column
                                 this.parentNode.className = "total-column";
@@ -497,6 +512,14 @@
                                 me.categoryColSpan(this);
                             }
                         }
+                        if (me.compare) {
+                            if (me.compare.col === i) {
+                                className += " compareTo";
+                            } else {
+                                className += " compare";
+                            }
+                        }
+                        return className;
                     })
                     .text(function(d, i) {
                         var text = d;
