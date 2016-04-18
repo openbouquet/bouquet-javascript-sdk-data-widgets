@@ -328,6 +328,9 @@
                             if (d.orderDirection) {
                                 str = str + " " + d.orderDirection;
                             }
+                            if (d.originType === "COMPARETO") {
+                                str += d.originType;
+                            }
                             return str;
                         })
                         .attr("origin-type", function(d) {
