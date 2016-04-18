@@ -6451,19 +6451,29 @@ function program2(depth0,data) {
 
             var arr = [];
             if (nVariate) {
-                for (var result in hashMap) {
+                // sort legend alphabetically
+                legend.sort();
+                // sort hashMap alphabetically
+                var keys = [];
+                for (var key in hashMap) {
+                    if (hashMap.hasOwnProperty(key)) {
+                        keys.push(key);
+                    }
+                }
+                keys.sort();
+
+                for (i=0; i<keys.length; i++) {
                     arr = [];
-                    for (date in hashMap[result]) {
+                    for (date in hashMap[keys[i]]) {
                         var obj1 = {
                             "date" : date,
-                            "value": hashMap[result][date]
+                            "value": hashMap[keys[i]][date]
                         };
                         arr.push(obj1);
                     }
                     arr = MG.convert.date(arr, 'date');
                     dataset.push(arr);
                 }
-
             } else {
                 for (ix=0; ix<this.results.rows.length; ix++) {
                     var obj = {
