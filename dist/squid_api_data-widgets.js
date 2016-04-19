@@ -1616,7 +1616,7 @@ function program2(depth0,data) {
             this.addCompatibleView(compatibleViews, "barView");
 
             // compute the current selected view
-            var analysis = this.model.get("currentAnalysis");
+            var analysis = this.model.get(this.config.get("currentAnalysis"));
             var currentViewName;
 
             if (this.tableView) {
