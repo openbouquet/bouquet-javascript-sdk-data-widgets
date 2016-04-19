@@ -226,6 +226,7 @@
                             }
                         } else if (typeof(this.results.rows[i].v[ix]) === "number") {
                             metricVal = this.results.rows[i].v[ix];
+                            break;
                         }
                     }
                     v.push(dim);
@@ -338,15 +339,18 @@
                     dataset.push(arr);
                 }
             } else {
-                for (ix=0; ix<this.results.rows.length; ix++) {
-                    var obj = {
-                        "date" : this.results.rows[ix].v[0],
-                        "value" : this.results.rows[ix].v[1]
-                    };
-                    arr.push(obj);
+                for (i=1; i<this.results.cols.length; i++) {
+                    arr = [];
+                    for (ix=1; ix<this.results.rows.length; ix++) {
+                        var obj = {
+                            "date" : this.results.rows[ix].v[0],
+                            "value" : this.results.rows[ix].v[i]
+                        };
+                        arr.push(obj);
+                    }
+                    arr = MG.convert.date(arr, 'date');
+                    dataset.push(arr);
                 }
-                arr = MG.convert.date(arr, 'date');
-                dataset.push(arr);
             }
 
             // set width
