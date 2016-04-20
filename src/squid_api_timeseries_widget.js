@@ -272,7 +272,7 @@
                     if (selection) {
                         var facets = selection.facets;
                         for (var f=0; f<facets.length; f++) {
-                            if (facets[f].id === this.results.cols[col].definition) {
+                            if (facets[f].id === this.results.cols[col].definition && this.results.cols[col].extendedType.name === "DATE") {
                                 nVariate = false;
                                 this.standardizeData(col);
                             }
