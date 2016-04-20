@@ -6516,7 +6516,7 @@ function program2(depth0,data) {
             } else {
                 for (i=1; i<this.results.cols.length; i++) {
                     arr = [];
-                    for (ix=1; ix<this.results.rows.length; ix++) {
+                    for (ix=0; ix<this.results.rows.length; ix++) {
                         var obj = {
                             "date" : this.results.rows[ix].v[0],
                             "value" : this.results.rows[ix].v[i]
