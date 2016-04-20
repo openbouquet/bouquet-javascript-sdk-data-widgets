@@ -2007,11 +2007,13 @@ function program2(depth0,data) {
                             if (d.orderDirection) {
                                 str = str + " " + d.orderDirection;
                             }
-                            if (me.compareCols.length > 0) {
-                                if (me.compareCols.indexOf(i) > -1) {
-                                    str += " compareTo";
-                                } else if (me.metricCols.indexOf(i) > -1) {
-                                    str += " compare";
+                            if (me.compareCols) {
+                                if (me.compareCols.length > 0) {
+                                    if (me.compareCols.indexOf(i) > -1) {
+                                        str += " compareTo";
+                                    } else if (me.metricCols.indexOf(i) > -1) {
+                                        str += " compare";
+                                    }
                                 }
                             }
                             return str;
@@ -2181,11 +2183,13 @@ function program2(depth0,data) {
                                 me.categoryColSpan(this);
                             }
                         }
-                        if (me.compareCols.length > 0) {
-                            if (me.compareCols.indexOf(i) > -1) {
-                                str += " compareTo";
-                            } else if (me.metricCols.indexOf(i) > -1) {
-                                str += " compare";
+                        if (me.compareCols) {
+                            if (me.compareCols.length > 0) {
+                                if (me.compareCols.indexOf(i) > -1) {
+                                    str += " compareTo";
+                                } else if (me.metricCols.indexOf(i) > -1) {
+                                    str += " compare";
+                                }
                             }
                         }
                         return str;
