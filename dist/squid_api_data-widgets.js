@@ -6266,6 +6266,12 @@ function program2(depth0,data) {
                     animate_on_load: false,
                     legend_target: this.renderLegend,
                     colors: this.colorPalette,
+                    mouseover: function(d, i) {
+                        // custom format the rollover text
+                        d3.select(this.target + " .mg-active-datapoint")
+                            .text(this.legend[d.line_id - 1] + " - " + moment(d.date).format("L") + " - " + d.value)
+                            .style('fill', this.colors[d.line_id - 1]);
+                    }
                 };
             }
             if (options.format) {
@@ -6477,7 +6483,6 @@ function program2(depth0,data) {
                             }
                         }
                     } else {
-                        // obtain legend names from columns
                         legend.push(this.results.cols[i].name);
                     }
                 }
