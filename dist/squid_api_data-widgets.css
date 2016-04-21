@@ -739,6 +739,11 @@ Pagination
     position: relative;
 }
 
+.mg-brushing-in-progress .mg-brushing {
+    opacity: 0.3;
+
+}
+
 .squid-api-data-widgets-timeseries-widget #slider .ui-slider-range {
     background: #f8f8f8;
     top: 0;

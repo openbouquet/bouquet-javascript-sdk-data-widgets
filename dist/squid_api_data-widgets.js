@@ -6277,10 +6277,29 @@ function program2(depth0,data) {
                     legend_target: this.renderLegend,
                     colors: this.colorPalette,
                     mouseover: function(d, i) {
-                        // custom format the rollover text
-                        d3.select(this.target + " .mg-active-datapoint")
-                            .text(this.legend[d.line_id - 1] + " - " + moment(d.date).format("L") + " - " + d.value)
-                            .style('fill', this.colors[d.line_id - 1]);
+                        // remove existing active data point text el
+                        var activeDataPoint = d3.select(this.target + " .mg-active-datapoint").remove();
+                        d3.select(this.target + " .mg-active-datapoint-container text").remove();
+                        var svgWidth = parseFloat(d3.select(this.target + " svg").attr("width"));
+
+                        // target container
+                        var container = d3.select(this.target + " .mg-active-datapoint-container");
+
+                        var values = d.values;
+                        if (! values) {
+                            values = [d];
+                        }
+                        for (i=0; i<values.length; i++) {
+                            container.append("text")
+                                .text(this.legend[values[i].line_id - 1] + " - " + moment(d.date).format("L") + " - " + values[i].value)
+                                .attr("y", i*15)
+                                .attr("x", svgWidth - (svgWidth / 1.5))
+                                .style('fill', this.colors[values[i].line_id - 1])
+                                .style('font-size', "10")
+                        }
+                    },
+                    mouseout: function() {
+                        d3.select(".mg-active-datapoint-container").selectAll("*").remove();
                     }
                 };
             }
