@@ -512,7 +512,7 @@
                                 this.parentNode.className = "total-column";
                             }
                             // Detect Group & Empty Value
-                            if (this.parentNode.className === "group" && d.length === 0) {
+                            if (this.parentNode.className === "group" && d) {
                                 me.categoryColSpan(this);
                             }
                         }
