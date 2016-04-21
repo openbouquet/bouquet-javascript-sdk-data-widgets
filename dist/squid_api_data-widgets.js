@@ -6185,6 +6185,7 @@ function program2(depth0,data) {
         startDate: null,
         endDate: null,
         colorPalette: null,
+        colorPaletteCompare: null,
         interpolationRange: null,
         yearSwitcherView: null,
         multiSeries: null,
@@ -6207,6 +6208,11 @@ function program2(depth0,data) {
                     this.colorPalette = options.colorPalette;
                 } else {
                     this.colorPalette = d3.scale.category10().range();
+                }
+                if (options.colorPaletteCompare) {
+                    this.colorPaletteCompare = options.colorPaletteCompare;
+                } else {
+                    this.colorPaletteCompare = d3.scale.category20().range();
                 }
                 if (options.timeUnits) {
                     this.timeUnits = options.timeUnits;
@@ -6396,7 +6402,7 @@ function program2(depth0,data) {
                 if (! currentDateIndex) {
                     var v = [this.results.rows[i].v[0]];
                     var dim = "";
-                    var metricVal;
+                    var metricVals = [];
                     for (ix=1; ix<this.results.rows[i].v.length; ix++) {
                         if (typeof(this.results.rows[i].v[ix]) === "string") {
                             if (dim.length === 0) {
@@ -6405,12 +6411,13 @@ function program2(depth0,data) {
                                 dim += " / " + this.results.rows[i].v[ix];
                             }
                         } else if (typeof(this.results.rows[i].v[ix]) === "number") {
-                            metricVal = this.results.rows[i].v[ix];
-                            break;
+                            metricVals.push(this.results.rows[i].v[ix]);
                         }
                     }
                     v.push(dim);
-                    v.push(metricVal);
+                    for (ix1=0; ix1<metricVals.length; ix1++) {
+                        v.push(metricVals[ix1]);
+                    }
                     this.results.rows[i].v = v;
                 } else {
                     // remove currentDateRow
@@ -6433,6 +6440,7 @@ function program2(depth0,data) {
             var legend = [];
             var dataset = [];
             var nVariate = false;
+            var compare = false;
             var currentDateIndex = null;
 
             // sort dates
@@ -6477,33 +6485,59 @@ function program2(depth0,data) {
                                 // create hashMap
                                 var i1 = this.results.rows[ix1].v[0];
                                 var i2 = this.results.rows[ix1].v[1];
-                                var i3 = this.results.rows[ix1].v[2]
+                                var i3 = this.results.rows[ix1].v[2];
+                                var i4 = this.results.rows[ix1].v[3];
                                 if (hashMap[i2]) {
                                     hashMap[i2][i1] = i3;
                                 } else {
                                     hashMap[i2] = {};
                                     hashMap[i2][i1] = i3;
                                 }
+                                if (i4) {
+                                    compare = true;
+                                    // if compare exists
+                                    if (hashMap[i2 + " (compare)"]) {
+                                        hashMap[i2 + " (compare)"][i1] = i4;
+                                    } else {
+                                        hashMap[i2 + " (compare)"] = {};
+                                        hashMap[i2 + " (compare)"][i1] = i4;
+                                        // store unique compare legend items
+                                        legend.push(i2 + " (compare)");
+                                    }
+                                }
+                            } else {
+                                // handle nVariate null values here
                             }
                         }
                     } else {
+                        if (this.results.cols[i].originType === "COMPARETO") {
+                            compare = true;
+                        }
                         legend.push(this.results.cols[i].name);
                     }
                 }
             }
 
+            if (compare) {
+                this.configuration.colors = this.colorPaletteCompare;
+            } else {
+                this.configuration.colors = this.colorPalette;
+            }
+
             var arr = [];
             if (nVariate) {
-                // sort legend alphabetically
-                legend.sort();
-                // sort hashMap alphabetically
                 var keys = [];
                 for (var key in hashMap) {
                     if (hashMap.hasOwnProperty(key)) {
                         keys.push(key);
                     }
                 }
-                keys.sort();
+                if (! compare) {
+                    // sort legend alphabetically
+                    legend.sort();
+                    // sort hashMap alphabetically
+                    keys.sort();
+                }
 
                 for (i=0; i<keys.length; i++) {
                     arr = [];
