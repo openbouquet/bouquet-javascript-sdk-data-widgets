@@ -739,7 +739,7 @@ Pagination
     position: relative;
 }
 
-.mg-brushing-in-progress .mg-brushing {
+.squid-api-data-widgets-timeseries-widget .mg-brushing-in-progress .mg-brushing {
     opacity: 0.3;
 
 }
@@ -826,6 +826,9 @@ Pagination
 .squid-api-data-widgets-timeseries-widget .rickshaw_graph .detail .date {
     color: #a0a0a0
 }
+.squid-api-data-widgets-timeseries-widget .mg-line-legend {
+    display: none;
+}
 
 .squid-api-data-widgets-timeseries-widget #chart {
     min-height: 400px;
@@ -840,8 +843,12 @@ Pagination
 }
 
 .squid-api-data-widgets-timeseries-widget #legend {
-    margin-left: 50px;
-    cursor: pointer;
+    position: absolute;
+    top: 100px;
+}
+
+.squid-api-data-widgets-timeseries-widget #legend .value {
+    font-size: 16px;
 }
 
 .squid-api-data-widgets-timeseries-widget #legend .disactive {

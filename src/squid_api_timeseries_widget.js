@@ -115,17 +115,30 @@
                         if (! values) {
                             values = [d];
                         }
+                        container.append("text")
+                            .text(moment(values[0].date).format("L"))
+                            .attr("id", "date-display")
+                            .attr("y", -10)
+                            .attr("x", svgWidth / 2)
+                            .style("font-weight", "500")
+                            .style('font-size', "16")
+                            .style("fill", "#666666")
+
                         for (i=0; i<values.length; i++) {
-                            container.append("text")
-                                .text(this.legend[values[i].line_id - 1] + " - " + moment(d.date).format("L") + " - " + values[i].value)
-                                .attr("y", i*15)
-                                .attr("x", svgWidth - (svgWidth / 1.5))
-                                .style('fill', this.colors[values[i].line_id - 1])
-                                .style('font-size', "10")
+                            var line = this.legend[values[i].line_id - 1];
+                            // find legend item
+                            var legendItems = $(this.legend_target + " span");
+                            for (ix=0; ix<legendItems.length; ix++) {
+                                if ($(legendItems[ix]).text().indexOf(line) > -1) {
+                                    $(legendItems[ix]).find(".value").remove();
+                                    $(legendItems[ix]).append("<span class='value'>" + values[i].value + "</span> ")
+                                }
+                            }
                         }
                     },
                     mouseout: function() {
                         d3.select(".mg-active-datapoint-container").selectAll("*").remove();
+                        $(this.legend_target + " span .value").remove();
                     }
                 };
             }
