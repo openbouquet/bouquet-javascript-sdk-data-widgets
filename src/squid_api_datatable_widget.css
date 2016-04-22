@@ -3,113 +3,117 @@
  */
 
 #squid-api-data-widgets-data-table table.many-columns {
-	display: inherit;
-	table-layout: inherit;
+    display: inherit;
+    table-layout: inherit;
 }
 
 #squid-api-data-widgets-data-table table {
-	color: #666;
-  	background: #eaebec;
-  	-moz-border-radius: 3px;
-  	-webkit-border-radius: 3px;
-  	border-radius: 3px;
-  	-moz-box-shadow: 0 1px 2px #d1d1d1;
-  	-webkit-box-shadow: 0 1px 2px #d1d1d1;
-  	box-shadow: 0 1px 2px #d1d1d1;
-  	overflow-x: auto;
-  	width: 100%;
-  	table-layout: fixed;
+    color: #666;
+      background: #eaebec;
+      -moz-border-radius: 3px;
+      -webkit-border-radius: 3px;
+      border-radius: 3px;
+      -moz-box-shadow: 0 1px 2px #d1d1d1;
+      -webkit-box-shadow: 0 1px 2px #d1d1d1;
+      box-shadow: 0 1px 2px #d1d1d1;
+      overflow-x: auto;
+      width: 100%;
+      table-layout: fixed;
+}
+
+#squid-api-data-widgets-data-table .clickable {
+    cursor: pointer;
 }
 
 #squid-api-data-widgets-data-table table td {
-	border-top: 1px solid #ffffff;
-  	border-bottom: 1px solid #e0e0e0;
-  	border-left: 1px solid #e0e0e0;
-  	padding: 2px 3px;
-  	font-size: 12px;
-  	text-align: center;
+    border-top: 1px solid #ffffff;
+      border-bottom: 1px solid #e0e0e0;
+      border-left: 1px solid #e0e0e0;
+      padding: 2px 3px;
+      font-size: 12px;
+      text-align: center;
 }
 
 #squid-api-data-widgets-data-table table tr {
-	background: #fff;
-	height: 45px;
+    background: #fff;
+    height: 45px;
 }
 
 #squid-api-data-widgets-data-table table tr.total-column {
-	background: #4d4d4d;
-	color: #fff;
-	font-size: 16px;
+    background: #4d4d4d;
+    color: #fff;
+    font-size: 16px;
 }
 
 #squid-api-data-widgets-data-table table tr.total-column td {
-	border: 0px;
-	font-size: 18px;
+    border: 0px;
+    font-size: 18px;
 }
 
 #squid-api-data-widgets-data-table table tr.group {
-	background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#f6f6f6));
-	background: -moz-linear-gradient(top,  #f8f8f8,  #f6f6f6);
+    background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#f6f6f6));
+    background: -moz-linear-gradient(top,  #f8f8f8,  #f6f6f6);
 }
 
 #squid-api-data-widgets-data-table table tr .new-category {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 #squid-api-data-widgets-data-table table thead th {
-	border-left: 1px solid #e0e0e0;
-	padding: 0px 20px 0px 10px;
-	border-top: 1px solid #e0e0e0;
-  	border-bottom: 1px solid #e0e0e0;
-  	text-align: center;
-	font-weight: normal;
-	position: relative;
+    border-left: 1px solid #e0e0e0;
+    padding: 0px 20px 0px 10px;
+    border-top: 1px solid #e0e0e0;
+      border-bottom: 1px solid #e0e0e0;
+      text-align: center;
+    font-weight: normal;
+    position: relative;
 }
 
 #squid-api-data-widgets-data-table table thead th.ASC span, #squid-api-data-widgets-data-table table thead th.DESC span {
-	font-size: 18px;
-	position: absolute;
-	background-color: #4d4d4d;
-	height: 13px;
-	width: 13px;
-	line-height: 9px;
-	right: 5px;
-	top: 40%;
-	border-radius: 4px;
-	color: #fff;
+    font-size: 18px;
+    position: absolute;
+    background-color: #4d4d4d;
+    height: 13px;
+    width: 13px;
+    line-height: 9px;
+    right: 5px;
+    top: 40%;
+    border-radius: 4px;
+    color: #fff;
 }
 
 #squid-api-data-widgets-data-table .reactiveMessage {
-	width: 100%;
-	background: #f8f8f8;
-	padding: 50px 0px;
-	border: 1px solid #d1d1d1;
-	font-size: 18px;
-	text-align: center;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	-moz-box-shadow: 0 1px 2px #d1d1d1;
-	-webkit-box-shadow: 0 1px 2px #d1d1d1;
-	box-shadow: 0 1px 2px #d1d1d1;
+    width: 100%;
+    background: #f8f8f8;
+    padding: 50px 0px;
+    border: 1px solid #d1d1d1;
+    font-size: 18px;
+    text-align: center;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -moz-box-shadow: 0 1px 2px #d1d1d1;
+    -webkit-box-shadow: 0 1px 2px #d1d1d1;
+    box-shadow: 0 1px 2px #d1d1d1;
 }
 
 #squid-api-data-widgets-data-table .reactiveMessage i {
-	font-size: 60px;
-	color: #f8f8f8;
+    font-size: 60px;
+    color: #f8f8f8;
 }
 
 #squid-api-data-widgets-data-table #error {
-	font-size: medium;
-	color: red;
+    font-size: medium;
+    color: red;
 }
 
 #squid-api-data-widgets-data-table .reactiveMessage span {
-	display: inline-block;
-	background: #fff;
-	min-width: 250px;
-	padding: 30px;
-	border-radius: 20px;
-	box-shadow: 4px 12px 18px -14px;
+    display: inline-block;
+    background: #fff;
+    min-width: 250px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 4px 12px 18px -14px;
 }
 
 /*
@@ -117,8 +121,8 @@ Footer
 */
 
 #squid-api-data-widgets-data-table .footer {
-	top: 20px;
-	position: relative;
+    top: 20px;
+    position: relative;
 }
 
 /*
@@ -126,109 +130,109 @@ Pagination
 */
 
 #squid-api-data-widgets-data-table .pagination ul {
-	display: inline-block;
-	padding: 0;
-	margin: 0;
-	color: #fff;
-	word-spacing: -.5px;
-	background: #d6dbdf;
-	border-radius: 4px;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    color: #fff;
+    word-spacing: -.5px;
+    background: #d6dbdf;
+    border-radius: 4px;
 }
 
 #squid-api-data-widgets-data-table .pagination li {
-	display: inline-block;
-	margin-right: -3px;
-	word-spacing: normal;
-	vertical-align: middle;
+    display: inline-block;
+    margin-right: -3px;
+    word-spacing: normal;
+    vertical-align: middle;
 }
 
 #squid-api-data-widgets-data-table .pagination li.active a, #squid-api-data-widgets-data-table .pagination li.active span {
-	color: #fff;
-	background-color: #3498db;
-	border-color: #dfe2e5;
+    color: #fff;
+    background-color: #3498db;
+    border-color: #dfe2e5;
 }
 
 #squid-api-data-widgets-data-table .pagination li.active.previous a, #squid-api-data-widgets-data-table .pagination li.active.previous span {
-	margin: 0;
+    margin: 0;
 }
 
 #squid-api-data-widgets-data-table .pagination li.active.previous a, #squid-api-data-widgets-data-table .pagination li.active.previous span, #squid-api-data-widgets-data-table .pagination li.active.previous a:hover, #squid-api-data-widgets-data-table .pagination li.active.previous span:hover, #squid-api-data-widgets-data-table .pagination li.active.previous a:focus, #squid-api-data-widgets-data-table .pagination li.active.previous span:focus, #squid-api-data-widgets-data-table .pagination li.active.next a, #squid-api-data-widgets-data-table .pagination li.active.next span, #squid-api-data-widgets-data-table .pagination li.active.next a:hover, #squid-api-data-widgets-data-table .pagination li.active.next span:hover, #squid-api-data-widgets-data-table .pagination li.active.next a:focus, #squid-api-data-widgets-data-table .pagination li.active.next span:focus {
-	color: #fff;
-	background-color: #3498db;
+    color: #fff;
+    background-color: #3498db;
 }
 
 #squid-api-data-widgets-data-table .pagination li:first-child a, #squid-api-data-widgets-data-table .pagination li:first-child span {
-	border-left: none;
-	border-radius: 4px 0 0 4px;
+    border-left: none;
+    border-radius: 4px 0 0 4px;
 }
 
 #squid-api-data-widgets-data-table .pagination li:first-child.previous+li a, #squid-api-data-widgets-data-table .pagination li:first-child.previous+li span {
-	border-left-width: 0;
+    border-left-width: 0;
 }
 
 #squid-api-data-widgets-data-table .pagination li:last-child
-	{
-	margin-right: 0;
+    {
+    margin-right: 0;
 }
 
 #squid-api-data-widgets-data-table .pagination li:last-child a, #squid-api-data-widgets-data-table .pagination li:last-child span, #squid-api-data-widgets-data-table .pagination li:last-child a:hover, #squid-api-data-widgets-data-table .pagination li:last-child span:hover, #squid-api-data-widgets-data-table .pagination li:last-child a:focus, #squid-api-data-widgets-data-table .pagination li:last-child span:focus {
-	border-radius: 0 4px 4px 0;
+    border-radius: 0 4px 4px 0;
 }
 
 #squid-api-data-widgets-data-table .pagination li.previous a, #squid-api-data-widgets-data-table .pagination li.previous span, #squid-api-data-widgets-data-table .pagination li.next a, #squid-api-data-widgets-data-table .pagination li.next span {
-	min-width: auto;
-	font-size: 16px;
-	background-color: transparent;
-	border-right: 2px solid #e4e7ea;
+    min-width: auto;
+    font-size: 16px;
+    background-color: transparent;
+    border-right: 2px solid #e4e7ea;
 }
 
 #squid-api-data-widgets-data-table .pagination li.next a, #squid-api-data-widgets-data-table .pagination li.next span {
-	border-right: none;
+    border-right: none;
 }
 
 #squid-api-data-widgets-data-table .pagination li.disabled a, #squid-api-data-widgets-data-table .pagination li.disabled span {
-	color: #fff;
-	cursor: not-allowed;
-	background-color: rgba(255, 255, 255, 0.3);
-	border-right-color: #dfe2e5;
+    color: #fff;
+    cursor: not-allowed;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-right-color: #dfe2e5;
 }
 
 #squid-api-data-widgets-data-table .pagination li.disabled a:hover, #squid-api-data-widgets-data-table .pagination li.disabled span:hover, #squid-api-data-widgets-data-table .pagination li.disabled span:focus, #squid-api-data-widgets-data-table .pagination li.disabled a:active, #squid-api-data-widgets-data-table .pagination li.disabled span:active {
-	color: #fff;
-	background-color: rgba(255, 255, 255, 0.4);
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.4);
 }
 
 #squid-api-data-widgets-data-table .pagination li a, #squid-api-data-widgets-data-table .pagination li span {
-	display: inline-block;
-	min-width: 30px;
-	height: 30px;
-	padding: 6px 5px;
-	font-size: 14px;
-	line-height: 16px;
-	color: #fff;
-	text-align: center;
-	background: transparent;
-	border: none;
-	border-left: 2px solid #e4e7ea;
-	outline: none;
-	-webkit-transition: .25s ease-out;
-	transition: .25s ease-out;
+    display: inline-block;
+    min-width: 30px;
+    height: 30px;
+    padding: 6px 5px;
+    font-size: 14px;
+    line-height: 16px;
+    color: #fff;
+    text-align: center;
+    background: transparent;
+    border: none;
+    border-left: 2px solid #e4e7ea;
+    outline: none;
+    -webkit-transition: .25s ease-out;
+    transition: .25s ease-out;
 }
 
 #squid-api-data-widgets-data-table .pagination li a:hover, #squid-api-data-widgets-data-table .pagination li a:focus,#squid-api-data-widgets-data-table .pagination li a:active, #squid-api-data-widgets-data-table .pagination li span:hover, #squid-api-data-widgets-data-table .pagination li span:focus, #squid-api-data-widgets-data-table .pagination li span:active {
-	color: #fff;
-	background-color: #3498db;
+    color: #fff;
+    background-color: #3498db;
 }
 
 #squid-api-data-widgets-data-table .pagination .btn-previous, #squid-api-data-widgets-data-table .pagination .btn-next {
-	padding-right: 23px;
-	padding-left: 23px;
-	margin-right: 8px;
-	font-size: 14px;
-	line-height: 1.429;
+    padding-right: 23px;
+    padding-left: 23px;
+    margin-right: 8px;
+    font-size: 14px;
+    line-height: 1.429;
 }
 
 #squid-api-data-widgets-data-table .pagination .btn-next {
-	margin-right: 0;
-	margin-left: 8px;
+    margin-right: 0;
+    margin-left: 8px;
 }

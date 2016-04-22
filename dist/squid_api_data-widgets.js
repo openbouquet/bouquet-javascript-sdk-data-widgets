@@ -1701,6 +1701,8 @@ function program2(depth0,data) {
 
         currentDomain : null,
 
+        addFacetValueFromResults: false,
+
         initialize : function(options) {
             var me = this;
 
@@ -1756,6 +1758,9 @@ function program2(depth0,data) {
             if (options.reRunMessage) {
                 this.reRunMessage = options.reRunMessage;
             }
+            if (options.addFacetValueFromResults) {
+                this.addFacetValueFromResults = options.addFacetValueFromResults;
+            }
             if (d3) {
                 this.d3Formatter = d3.format(",");
             }
@@ -1805,6 +1810,39 @@ function program2(depth0,data) {
                             }
                         }
                         this.config.set("orderBy", [obj]);
+                    }
+                }
+            },
+            "dblclick td" : function(event) {
+                if (this.addFacetValueFromResults) {
+
+                    var value = $(event.currentTarget).text();
+                    var facetId = $(event.currentTarget).parents('tbody').siblings('thead').find('> tr > th:eq(' + $(event.currentTarget).index() + ')').attr("data-content");
+
+                    var selectionClone = $.extend(true, {}, this.filters.get("selection"));
+                    var facets = selectionClone.facets;
+                    if (facets) {
+                        for (i=0; i<facets.length; i++) {
+                            if (facets[i].id === facetId) {
+                                var selectedItems = facets[i].selectedItems;
+                                var add = true;
+                                for (ix=0; ix<selectedItems.length; ix++) {
+                                    if (selectedItems[ix].value === value) {
+                                        add = false;
+                                        delete facets[i].selectedItems[ix];
+                                    }
+                                }
+                                if (add) {
+                                    facets[i].selectedItems.push({
+                                        id    : value,
+                                        type  : "v",
+                                        value : value
+                                    });
+                                }
+                            }
+                        }
+                        // Set the updated filters model
+                        this.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
                     }
                 }
             }
@@ -2220,6 +2258,10 @@ function program2(depth0,data) {
                 // display total
                 this.$el.find("#count-entries").html(""+ (results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length));
                 this.$el.find("#total-entries").html(""+results.totalSize);
+
+                if (this.addFacetValueFromResults) {
+                    this.$el.find("td").attr("style", "cursor: pointer;");
+                }
             }
         },
 
