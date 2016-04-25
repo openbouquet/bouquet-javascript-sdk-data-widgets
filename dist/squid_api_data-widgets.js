@@ -6515,10 +6515,8 @@ function program2(depth0,data) {
             var dataset = [];
             var nVariate = false;
             var compare = false;
+            var toRemove = [];
             var currentDateIndex = null;
-
-            // sort dates
-            this.results.rows = this.sortDates(this.results.rows);
 
             // see if multiple dimensions exist
             for (var col=1; col<this.results.cols.length; col++) {
@@ -6535,7 +6533,16 @@ function program2(depth0,data) {
                         }
                     }
                 }
+                // if metrics are present, filter the display data
+                if (metrics) {
+                    if (! metrics.includes(this.results.cols[col].id)) {
+                        toRemove.push(col);
+                    }
+                }
             }
+
+            // sort dates
+            this.results.rows = this.sortDates(this.results.rows);
 
             if (nVariate) {
                 // make sure we only have three columns
@@ -6544,7 +6551,7 @@ function program2(depth0,data) {
 
             // get data
             for (i=1; i<this.results.cols.length; i++) {
-                if (_.contains(metrics, this.results.cols[i].id) || ! metrics) {
+                if (! toRemove.includes(i)) {
                     var metaData = [];
                     var hashMap = {}
 
@@ -6627,16 +6634,18 @@ function program2(depth0,data) {
                 }
             } else {
                 for (i=1; i<this.results.cols.length; i++) {
-                    arr = [];
-                    for (ix=0; ix<this.results.rows.length; ix++) {
-                        var obj = {
-                            "date" : this.results.rows[ix].v[0],
-                            "value" : this.results.rows[ix].v[i]
-                        };
-                        arr.push(obj);
+                    if (! toRemove.includes(i)) {
+                        arr = [];
+                        for (ix=0; ix<this.results.rows.length; ix++) {
+                            var obj = {
+                                "date" : this.results.rows[ix].v[0],
+                                "value" : this.results.rows[ix].v[i]
+                            };
+                            arr.push(obj);
+                        }
+                        arr = MG.convert.date(arr, 'date');
+                        dataset.push(arr);
                     }
-                    arr = MG.convert.date(arr, 'date');
-                    dataset.push(arr);
                 }
             }
 
