@@ -1296,6 +1296,9 @@ function program2(depth0,data) {
                 for (i=0; i<cols.length; i++) {
                     var col = cols[i];
                     var yAxis = col.name + " Total";
+                    if (col.originType === "COMPARETO") {
+                        yAxis += " (compare)";
+                    }
                     for (ix=0; ix<rows.length; ix++) {
                         var xAxis = rows[ix].v[i];
                         barData.xValues.push(xAxis);
@@ -1455,7 +1458,15 @@ function program2(depth0,data) {
                     .attr("width", function() {
                         return 0;
                     })
-                    .attr('fill', '#026E87')
+                    .attr('fill', function(d, i) {
+                        var color = "#1f77b4";
+                        if (d[0].includes("(compare)")) {
+                            /* BRIGHTEN */
+                            var parentColor = this.parentElement.previousSibling.firstChild.getAttributeNode("fill").value;
+                            color = d3.hsl(parentColor).brighter().toString();
+                        }
+                        return color;
+                    })
                     .attr("height", barHeight)
                     .on('mouseover', function(d) {
                         tooltip.transition()
