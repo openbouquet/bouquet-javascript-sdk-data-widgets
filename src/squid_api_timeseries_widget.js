@@ -472,10 +472,22 @@
         },
 
         renderTemplate: function(done) {
+            // render metrics used for analysis
+            var metricColumns = [];
+            if (done) {
+                var cols = this.model.get("results").cols;
+                for (i=0; i<cols.length; i++) {
+                    if (cols[i].role === "DATA") {
+                        metricColumns.push(cols[i].name);
+                    }
+                }
+            }
+            metricColumns = metricColumns.join(", ");
             this.$el.html(this.template({
                 reRunMessage: this.reRunMessage,
                 timeUnitSelector: this.timeUnitSelector,
                 timeUnits: this.timeUnits,
+                metricColumns: metricColumns,
                 done: done
             }));
             if (this.timeUnitSelector) {
@@ -510,31 +522,8 @@
                 var data = this.getData();
                 this.results = data.results;
 
-                // render metric selector view
-                var resultMetrics = [];
-                if (this.results) {
-                    for (i=0; i<this.results.cols.length; i++) {
-                        resultMetrics.push(this.results.cols[i].id);
-                    }
-                }
-
                 if (data.done && this.results && ! this.model.get("error")) {
                     this.renderGraphic();
-                    this.renderAdditionalView(new squid_api.view.MetricSelectorView({
-                        filterBy : resultMetrics,
-                        defaultButtonText: true,
-                        customView: true,
-                        afterRender: function() {
-                            this.$el.find("select").multiselect();
-                        },
-                        onChangeHandler: function() {
-                            var metrics = this.$el.find("select").val();
-                            if (! metrics) {
-                                metrics = [];
-                            }
-                            me.renderGraphic(metrics);
-                        }
-                    }), this.$el.find("#metricselector"));
                 } else {
                     if (this.model.get("error")) {
                         if (this.model.get("error").enableRerun) {

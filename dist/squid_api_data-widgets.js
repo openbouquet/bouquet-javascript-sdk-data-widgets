@@ -1035,7 +1035,11 @@ function program2(depth0,data) {
   buffer += "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 2;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"chart_container\" class=\"squid-api-data-widgets-timeseries-widget\">\n    <div id=\"yearswitcher\"></div>\n    ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.timeUnitSelector), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    <div id=\"metricselector\"></div>\n    <div id=\"stale\">\n        <div class=\"reactiveMessage\">\n            <span><i class=\"fa fa-line-chart\"></i>\n            <br>";
+  buffer += "\n    <div id=\"metrics\">\n        ";
+  if (helper = helpers.metricColumns) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.metricColumns); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\n    </div>\n    <div id=\"stale\">\n        <div class=\"reactiveMessage\">\n            <span><i class=\"fa fa-line-chart\"></i>\n            <br>";
   if (helper = helpers.staleMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.staleMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -6699,10 +6703,22 @@ function program2(depth0,data) {
         },
 
         renderTemplate: function(done) {
+            // render metrics used for analysis
+            var metricColumns = [];
+            if (done) {
+                var cols = this.model.get("results").cols;
+                for (i=0; i<cols.length; i++) {
+                    if (cols[i].role === "DATA") {
+                        metricColumns.push(cols[i].name);
+                    }
+                }
+            }
+            metricColumns = metricColumns.join(", ");
             this.$el.html(this.template({
                 reRunMessage: this.reRunMessage,
                 timeUnitSelector: this.timeUnitSelector,
                 timeUnits: this.timeUnits,
+                metricColumns: metricColumns,
                 done: done
             }));
             if (this.timeUnitSelector) {
@@ -6737,31 +6753,8 @@ function program2(depth0,data) {
                 var data = this.getData();
                 this.results = data.results;
 
-                // render metric selector view
-                var resultMetrics = [];
-                if (this.results) {
-                    for (i=0; i<this.results.cols.length; i++) {
-                        resultMetrics.push(this.results.cols[i].id);
-                    }
-                }
-
                 if (data.done && this.results && ! this.model.get("error")) {
                     this.renderGraphic();
-                    this.renderAdditionalView(new squid_api.view.MetricSelectorView({
-                        filterBy : resultMetrics,
-                        defaultButtonText: true,
-                        customView: true,
-                        afterRender: function() {
-                            this.$el.find("select").multiselect();
-                        },
-                        onChangeHandler: function() {
-                            var metrics = this.$el.find("select").val();
-                            if (! metrics) {
-                                metrics = [];
-                            }
-                            me.renderGraphic(metrics);
-                        }
-                    }), this.$el.find("#metricselector"));
                 } else {
                     if (this.model.get("error")) {
                         if (this.model.get("error").enableRerun) {
