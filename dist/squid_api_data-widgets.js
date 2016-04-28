@@ -3336,6 +3336,7 @@ function program2(depth0,data) {
         selectedFormatIndex : 0,
         templateData : null,
         displayScripting : true,
+        disableCurl: false,
         displayCompression : true,
         materializeDatasetsView : false,
         buttonLabel: "Export",
@@ -3373,6 +3374,9 @@ function program2(depth0,data) {
             }
             if (options.displayInPopup) {
                 this.displayInPopup = true;
+            }
+            if (options.disableCurl) {
+                this.disableCurl = options.disableCurl;
             }
             if (options.sqlView) {
                 this.sqlView = true;
@@ -3754,30 +3758,45 @@ function program2(depth0,data) {
                 curl = exportAnalysis.url().replace(/\[access_token\]/g, '<b>[access_token]</b>');
             }
 
-            $(this.viewPort).html(this.template({
-                "displayInAccordion" : this.displayInAccordion,
-                "downloadButtonLabel" : this.downloadButtonLabel,
-                "displayInPopup" : this.displayInPopup,
-                "sqlView" : this.sqlView,
-                "materializeDatasetsView" : this.materializeDatasetsView,
-                "data-target" : this.renderTo,
-                "formats": formatsDisplay,
-                "displayCompression" : this.displayCompression,
-                "compression": (this.compression),
-                "curl": curl,
-                "curlFileName" : curlFileName,
-                "origin": "https://api.squidsolutions.com",
-                "data": data,
-                "customerId" : squid_api.customerId,
-                "clientId" : squid_api.clientId,
-                "redirectURI":"https://api.squidsolutions.com",
-                "apiURL":squid_api.apiURL,
-                "buttonLabel": this.buttonLabel,
-                "downloadButtonLabel" : this.downloadButtonLabel,
-                "metricSelectorEnabled" : this.metricSelectorEnabled,
-                "analysisConfigurationEnabled" : this.analysisConfigurationEnabled
-                })
-            );
+            if (! this.disableCurl || this.viewPort.is(":empty")) {
+                $(this.viewPort).html(this.template({
+                    "displayInAccordion" : this.displayInAccordion,
+                    "downloadButtonLabel" : this.downloadButtonLabel,
+                    "displayInPopup" : this.displayInPopup,
+                    "sqlView" : this.sqlView,
+                    "materializeDatasetsView" : this.materializeDatasetsView,
+                    "data-target" : this.renderTo,
+                    "formats": formatsDisplay,
+                    "displayCompression" : this.displayCompression,
+                    "compression": (this.compression),
+                    "curl": curl,
+                    "curlFileName" : curlFileName,
+                    "origin": "https://api.squidsolutions.com",
+                    "data": data,
+                    "customerId" : squid_api.customerId,
+                    "clientId" : squid_api.clientId,
+                    "redirectURI":"https://api.squidsolutions.com",
+                    "apiURL":squid_api.apiURL,
+                    "buttonLabel": this.buttonLabel,
+                    "downloadButtonLabel" : this.downloadButtonLabel,
+                    "metricSelectorEnabled" : this.metricSelectorEnabled,
+                    "analysisConfigurationEnabled" : this.analysisConfigurationEnabled
+                    })
+                );
+
+                if (this.dimensionSelector) {
+                    // setup dimension selector
+                    this.dimensionSelector.setElement(this.viewPort.find("#dimensionSelector"));
+                    this.dimensionSelector.render();
+                }
+
+                if (this.metricSelector) {
+                    // setup metric selector
+                    this.metricSelector.setElement(this.viewPort.find("#metricSelector"));
+                    this.metricSelector.renderBase();
+                    this.metricSelector.render();
+                }
+            }
 
             // prepare SQL download link
             var downloadBtn = $(me.viewPort).find("#view-sql");
@@ -3800,19 +3819,6 @@ function program2(depth0,data) {
                 .fail(function() {
                     console.error("createAnalysisJob failed");
                 });
-            }
-
-            if (this.dimensionSelector) {
-                // setup dimension selector
-                this.dimensionSelector.setElement(this.viewPort.find("#dimensionSelector"));
-                this.dimensionSelector.render();
-            }
-
-            if (this.metricSelector) {
-                // setup metric selector
-                this.metricSelector.setElement(this.viewPort.find("#metricSelector"));
-                this.metricSelector.renderBase();
-                this.metricSelector.render();
             }
 
             // apply cURL panel state
