@@ -1828,7 +1828,7 @@ function program2(depth0,data) {
                     }
                 }
             },
-            "dblclick td" : function(event) {
+            "click td.dimension" : function(event) {
                 if (this.addFacetValueFromResults) {
 
                     var value = $(event.currentTarget).text();
@@ -2280,10 +2280,6 @@ function program2(depth0,data) {
                 // display total
                 this.$el.find("#count-entries").html(""+ (results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length));
                 this.$el.find("#total-entries").html(""+results.totalSize);
-
-                if (this.addFacetValueFromResults) {
-                    this.$el.find("td").attr("style", "cursor: pointer;");
-                }
             }
         },
 
