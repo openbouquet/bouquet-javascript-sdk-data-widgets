@@ -563,6 +563,13 @@
                                 }
                             }
                         }
+                        if (me.metricCols) {
+                            if (me.metricCols.length > 0) {
+                                if (me.metricCols.indexOf(i) === -1) {
+                                    str += " dimension";
+                                }
+                            }
+                        }
                         return str;
                     })
                     .text(function(d, i) {
