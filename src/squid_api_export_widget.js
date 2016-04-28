@@ -44,16 +44,16 @@
                 this.renderTo = options.renderTo;
             }
             if (options.displayInAccordion) {
-            	this.displayInAccordion = true;
+                this.displayInAccordion = true;
                 this.viewPort = $(this.renderTo);
             } else {
                 this.viewPort = this.$el;
             }
             if (options.displayInPopup) {
-            	this.displayInPopup = true;
+                this.displayInPopup = true;
             }
             if (options.sqlView) {
-            	this.sqlView = true;
+                this.sqlView = true;
             }
             if (options.downloadButtonLabel) {
                 this.downloadButtonLabel = options.downloadButtonLabel;
@@ -62,7 +62,7 @@
                 this.materializeDatasetsView = true;
             }
             if (options.downloadButtonLabel) {
-            	this.downloadButtonLabel = options.downloadButtonLabel;
+                this.downloadButtonLabel = options.downloadButtonLabel;
             }
             if (options.displayScripting === false) {
                 this.displayScripting = false;
@@ -96,17 +96,19 @@
                 this.dimensionSelector = new squid_api.view.DimensionSelector({
                     model : this.configClone,
                     singleSelect : false,
+                    customView: true,
                     available : "availableDimensions",
                     template : options.dimensionSelectorTemplate
                 });
-                
+
                 // create a metricSelector
                 this.metricSelector = new squid_api.view.MetricSelectorView({
                     model : this.configClone,
+                    customView: true,
                     available : "availableMetrics",
                     template : options.metricSelectorTemplate
                 });
-                
+
 
                 this.listenTo(this.configClone, 'change:chosenDimensions', function() {
                     // update the analysis with extra dimensions
@@ -155,17 +157,17 @@
         },
 
         enabled: function() {
-        	var viewPort = this.viewPort;
-        	if (this.popup) {
-        		viewPort = this.popup;
-        	}
-        	if (this.model.get("enabled")) {
-        		this.$el.find("button").prop("disabled", false);
-        		viewPort.find("button#download").prop("disabled", false);
-        	} else {
-        		this.$el.find("button").prop("disabled", true);
-        		viewPort.find("button#download").prop("disabled", true);
-        	}
+            var viewPort = this.viewPort;
+            if (this.popup) {
+                viewPort = this.popup;
+            }
+            if (this.model.get("enabled")) {
+                this.$el.find("button").prop("disabled", false);
+                viewPort.find("button#download").prop("disabled", false);
+            } else {
+                this.$el.find("button").prop("disabled", true);
+                viewPort.find("button#download").prop("disabled", true);
+            }
         },
 
         setModel : function(model) {
@@ -200,7 +202,7 @@
             var me = this;
             var viewPort = $(me.viewPort);
             if (this.popup) {
-            	viewPort = this.popup;
+                viewPort = this.popup;
             }
 
             // create download link
@@ -270,7 +272,7 @@
             var me = this;
             var viewPort = $(me.viewPort);
             if (this.displayInPopup) {
-            	viewPort = this.popup;
+                viewPort = this.popup;
             }
             if (me.currentJobId) {
                 // create download link
@@ -331,7 +333,7 @@
             var me = this;
             var viewPort = $(this.viewPort);
             if (this.displayInPopup) {
-            	viewPort = this.popup;
+                viewPort = this.popup;
             }
             var analysis = this.model.get("analysis");
             var enabled = this.model.get("enabled");
@@ -500,16 +502,16 @@
 
             // Click Handlers
             $(this.viewPort).find("#curlbtn").click(function() {
-            	var viewPort = $(me.viewPort);
-            	if (me.displayInPopup) {
-            		viewPort = me.popup;
-            	}
+                var viewPort = $(me.viewPort);
+                if (me.displayInPopup) {
+                    viewPort = me.popup;
+                }
 
                 me.curlCollapsed = !me.curlCollapsed;
                 if (me.curlCollapsed) {
-                	viewPort.find('#curl').fadeOut();
+                    viewPort.find('#curl').fadeOut();
                 } else {
-                	viewPort.find('#curl').fadeIn();
+                    viewPort.find('#curl').fadeIn();
                 }
             });
 
@@ -547,9 +549,9 @@
                 // Click Event for filter panel button
                 this.$el.find("button.popup-trigger").click(function() {
                     if (me.popup.dialog("isOpen")) {
-                    	me.popup.dialog( "close" );
+                        me.popup.dialog( "close" );
                     } else {
-                    	me.popup.dialog( "open" );
+                        me.popup.dialog( "open" );
                     }
                 });
             }

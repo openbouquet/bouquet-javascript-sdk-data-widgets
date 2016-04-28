@@ -119,7 +119,7 @@
                             .text(moment(values[0].date).format("L"))
                             .attr("id", "date-display")
                             .attr("y", -10)
-                            .attr("x", svgWidth / 2)
+                            .attr("x", 80)
                             .style("font-weight", "500")
                             .style('font-size', "16")
                             .style("fill", "#666666")
@@ -331,6 +331,10 @@
             if (nVariate) {
                 // make sure we only have three columns
                 this.standardizeData();
+                // show metrics
+                this.$el.find("#metrics").show();
+            } else {
+                this.$el.find("#metrics").hide();
             }
 
             // get data
