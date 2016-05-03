@@ -133,8 +133,16 @@
 }
 
 .squid-api-data-widgets-timeseries-widget #legend {
+    position: relative;
+    top: 10px;
+    min-height: 70px;
+}
+
+.squid-api-data-widgets-timeseries-widget #legend .date {
     position: absolute;
-    top: 100px;
+    top: -29px;
+    font-size: 13px;
+    font-weight: bold;
 }
 
 .squid-api-data-widgets-timeseries-widget #legend .value {

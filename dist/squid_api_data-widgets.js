@@ -6357,14 +6357,10 @@ function program2(depth0,data) {
                         if (! values) {
                             values = [d];
                         }
-                        container.append("text")
-                            .text(moment(values[0].date).format("L"))
-                            .attr("id", "date-display")
-                            .attr("y", -10)
-                            .attr("x", 80)
-                            .style("font-weight", "500")
-                            .style('font-size', "16")
-                            .style("fill", "#666666")
+
+                        // append current hovered date
+                        $(this.target).parents().find("#legend").find(".date").remove();
+                        $(this.target).parents().find("#legend").prepend("<span class='date'>" + moment(values[0].date).format("L") + "</span>");
 
                         for (i=0; i<values.length; i++) {
                             var line = this.legend[values[i].line_id - 1];
@@ -6379,6 +6375,7 @@ function program2(depth0,data) {
                         }
                     },
                     mouseout: function() {
+                        $(this.target).parents().find("#legend").find(".date").remove();
                         d3.select(".mg-active-datapoint-container").selectAll("*").remove();
                         $(this.legend_target + " span .value").remove();
                     }
