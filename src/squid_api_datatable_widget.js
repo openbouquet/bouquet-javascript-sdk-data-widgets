@@ -349,12 +349,18 @@
                 // set compare col
                 this.compareCols = [];
                 this.metricCols = [];
+                this.dateCols = [];
                 for (i=0; i<columns.length; i++) {
                     if (columns[i].originType === "COMPARETO") {
                         this.compareCols.push(i);
                     }
                     if (columns[i].role === "DATA") {
                         this.metricCols.push(i);
+                    }
+                    if (columns[i].extendedType) {
+                        if (columns[i].extendedType.name === "DATE") {
+                            this.dateCols.push(i);
+                        }
                     }
                 }
 
@@ -554,21 +560,13 @@
                                 me.categoryColSpan(this);
                             }
                         }
-                        if (me.compareCols) {
-                            if (me.compareCols.length > 0) {
-                                if (me.compareCols.indexOf(i) > -1) {
-                                    str += " compareTo";
-                                } else if (me.metricCols.indexOf(i) > -1) {
-                                    str += " compare";
-                                }
-                            }
+                        if (me.compareCols.indexOf(i) > -1) {
+                            str += " compareTo";
+                        } else if (me.metricCols.indexOf(i) > -1) {
+                            str += " compare";
                         }
-                        if (me.metricCols) {
-                            if (me.metricCols.length > 0) {
-                                if (me.metricCols.indexOf(i) === -1) {
-                                    str += " dimension";
-                                }
-                            }
+                        if (me.metricCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
+                            str += " dimension";
                         }
                         return str;
                     })
