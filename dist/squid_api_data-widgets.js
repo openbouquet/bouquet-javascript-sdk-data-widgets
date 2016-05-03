@@ -2039,8 +2039,10 @@ function program2(depth0,data) {
                     if (columns[i].role === "DATA") {
                         this.metricCols.push(i);
                     }
-                    if (columns[i].extendedType.name === "DATE") {
-                        this.dateCols.push(i);
+                    if (columns[i].extendedType) {
+                        if (columns[i].extendedType.name === "DATE") {
+                            this.dateCols.push(i);
+                        }
                     }
                 }
 
