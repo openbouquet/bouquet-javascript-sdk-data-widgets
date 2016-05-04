@@ -1525,12 +1525,9 @@ function program2(depth0,data) {
                     // Print Template
                     this.renderBase(false);
                 }
-        }
-        if (this.model.get("error")) {
-            console.log("barchart model error");
-        }
 
-        return this;
+                return this;
+        }
 
     });
 

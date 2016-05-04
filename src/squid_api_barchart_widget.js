@@ -179,8 +179,9 @@
         render: function() {
             var me = this;
             var data = this.getData();
+            var error = this.model.get("error");
 
-            if (data.done && ! this.model.get("error")) {
+            if (data.done && ! error) {
 
                 // Print Template
                 this.renderBase(true);
@@ -321,13 +322,14 @@
                 } else {
                     // Print Template
                     this.renderBase(false);
-                }
-        }
-        if (this.model.get("error")) {
-            console.log("barchart model error");
-        }
 
-        return this;
+                    if (error) {
+                        console.log(error.reason);
+                    }
+                }
+
+                return this;
+        }
 
     });
 
