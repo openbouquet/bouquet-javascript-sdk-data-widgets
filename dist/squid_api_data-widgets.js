@@ -6715,7 +6715,7 @@ function program2(depth0,data) {
         renderTemplate: function(done) {
             // render metrics used for analysis
             var metricColumns = [];
-            if (done) {
+            if (done && ! this.model.get("error")) {
                 var cols = this.model.get("results").cols;
                 for (i=0; i<cols.length; i++) {
                     if (cols[i].role === "DATA") {
