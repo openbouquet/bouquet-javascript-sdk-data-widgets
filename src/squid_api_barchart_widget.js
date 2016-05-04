@@ -184,6 +184,7 @@
         render: function() {
             var me = this;
             var data = this.getData();
+            var status = this.model.get("status");
             var error = this.model.get("error");
 
             if (data.done && ! error) {
@@ -327,6 +328,12 @@
                 } else {
                     // Print Template
                     this.renderBase(false);
+                }
+                if (status === "RUNNING") {
+                    this.$el.find("#sq-loading").show();
+                    this.$el.find("#re-run").hide();
+                } else {
+                    this.$el.find("#sq-loading").hide();
                 }
 
                 return this;
