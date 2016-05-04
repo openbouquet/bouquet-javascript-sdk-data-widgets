@@ -180,7 +180,7 @@
             var me = this;
             var data = this.getData();
 
-            if (data.done) {
+            if (data.done && ! this.model.get("error")) {
 
                 // Print Template
                 this.renderBase(true);
@@ -322,9 +322,12 @@
                     // Print Template
                     this.renderBase(false);
                 }
-
-            return this;
         }
+        if (this.model.get("error")) {
+            console.log("barchart model error");
+        }
+
+        return this;
 
     });
 
