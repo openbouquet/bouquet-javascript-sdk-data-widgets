@@ -560,13 +560,17 @@
                                 me.categoryColSpan(this);
                             }
                         }
-                        if (me.compareCols.indexOf(i) > -1) {
-                            str += " compareTo";
-                        } else if (me.metricCols.indexOf(i) > -1) {
-                            str += " compare";
+                        if (me.compareCols) {
+                            if (me.compareCols.indexOf(i) > -1) {
+                                str += " compareTo";
+                            } else if (me.metricCols.indexOf(i) > -1) {
+                                str += " compare";
+                            }
                         }
-                        if (me.metricCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
-                            str += " dimension";
+                        if (me.metricCols) {
+                            if (me.metricCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
+                                str += " dimension";
+                            }
                         }
                         return str;
                     })

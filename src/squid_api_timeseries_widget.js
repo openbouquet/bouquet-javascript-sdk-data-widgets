@@ -526,9 +526,16 @@
                 if (data.done && this.results && ! this.model.get("error")) {
                     this.renderGraphic();
                 } else {
+                    var chartChildren = this.$el.find("#chart_container").children();
                     if (this.model.get("error")) {
                         if (this.model.get("error").enableRerun) {
-                            this.$el.find("#re-run").show();
+                            for (i=0; i<chartChildren.length; i++) {
+                                if ($(chartChildren[i]).is("#re-run")) {
+                                    $(chartChildren[i]).show();
+                                } else {
+                                    $(chartChildren[i]).hide();
+                                }
+                            }
                         } else {
                             this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                         }

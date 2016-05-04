@@ -1383,7 +1383,7 @@ function program2(depth0,data) {
             var me = this;
             var data = this.getData();
 
-            if (data.done) {
+            if (data.done && ! this.model.get("error")) {
 
                 // Print Template
                 this.renderBase(true);
@@ -1525,9 +1525,12 @@ function program2(depth0,data) {
                     // Print Template
                     this.renderBase(false);
                 }
-
-            return this;
         }
+        if (this.model.get("error")) {
+            console.log("barchart model error");
+        }
+
+        return this;
 
     });
 
@@ -2242,13 +2245,17 @@ function program2(depth0,data) {
                                 me.categoryColSpan(this);
                             }
                         }
-                        if (me.compareCols.indexOf(i) > -1) {
-                            str += " compareTo";
-                        } else if (me.metricCols.indexOf(i) > -1) {
-                            str += " compare";
+                        if (me.compareCols) {
+                            if (me.compareCols.indexOf(i) > -1) {
+                                str += " compareTo";
+                            } else if (me.metricCols.indexOf(i) > -1) {
+                                str += " compare";
+                            }
                         }
-                        if (me.metricCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
-                            str += " dimension";
+                        if (me.metricCols) {
+                            if (me.metricCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
+                                str += " dimension";
+                            }
                         }
                         return str;
                     })
@@ -6766,9 +6773,16 @@ function program2(depth0,data) {
                 if (data.done && this.results && ! this.model.get("error")) {
                     this.renderGraphic();
                 } else {
+                    var chartChildren = this.$el.find("#chart_container").children();
                     if (this.model.get("error")) {
                         if (this.model.get("error").enableRerun) {
-                            this.$el.find("#re-run").show();
+                            for (i=0; i<chartChildren.length; i++) {
+                                if ($(chartChildren[i]).is("#re-run")) {
+                                    $(chartChildren[i]).show();
+                                } else {
+                                    $(chartChildren[i]).hide();
+                                }
+                            }
                         } else {
                             this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                         }
