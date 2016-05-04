@@ -475,7 +475,8 @@
         renderTemplate: function(done) {
             // render metrics used for analysis
             var metricColumns = [];
-            if (done && ! this.model.get("error")) {
+            var results = this.model.get("results");
+            if (done && ! this.model.get("error") && results) {
                 var cols = this.model.get("results").cols;
                 for (i=0; i<cols.length; i++) {
                     if (cols[i].role === "DATA") {

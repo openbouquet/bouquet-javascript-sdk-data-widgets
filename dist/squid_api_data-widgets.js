@@ -4,10 +4,19 @@ this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 this["squid_api"]["template"]["squid_api_barchart_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, self=this;
+
+function program1(depth0,data) {
   
+  
+  return " display: none; ";
+  }
 
-
-  return "<div id=\"bar_chart\" class=\"squid-api-data-widgets-bar-chart\" />";
+  buffer += "<div id=\"bar_chart\" class=\"squid-api-data-widgets-bar-chart\">\n    <div id=\"re-run\" style=\"";
+  stack1 = helpers.unless.call(depth0, (depth0 && depth0.enableRerun), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\">\n        <div class=\"reactiveMessage\">\n            <span>\n                <i class=\"fa fa-refresh\"></i><br>\n                Please manually refresh your analysis\n            </span>\n        </div>\n    </div>\n</div>\n";
+  return buffer;
   });
 
 this["squid_api"]["template"]["squid_api_basic_displaytype_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -1374,16 +1383,22 @@ function program2(depth0,data) {
         },
 
         renderBase: function(done) {
+            var error = this.model.get("error");
+            if (error) {
+                var enableRerun = error.enableRerun;
+            }
             this.$el.html(this.template({
-                done: done
+                done: done,
+                enableRerun: enableRerun
             }));
         },
 
         render: function() {
             var me = this;
             var data = this.getData();
+            var error = this.model.get("error");
 
-            if (data.done && ! this.model.get("error")) {
+            if (data.done && ! error) {
 
                 // Print Template
                 this.renderBase(true);
@@ -6719,7 +6734,8 @@ function program2(depth0,data) {
         renderTemplate: function(done) {
             // render metrics used for analysis
             var metricColumns = [];
-            if (done && ! this.model.get("error")) {
+            var results = this.model.get("results");
+            if (done && ! this.model.get("error") && results) {
                 var cols = this.model.get("results").cols;
                 for (i=0; i<cols.length; i++) {
                     if (cols[i].role === "DATA") {

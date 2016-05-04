@@ -171,8 +171,13 @@
         },
 
         renderBase: function(done) {
+            var error = this.model.get("error");
+            if (error) {
+                var enableRerun = error.enableRerun;
+            }
             this.$el.html(this.template({
-                done: done
+                done: done,
+                enableRerun: enableRerun
             }));
         },
 
@@ -322,10 +327,6 @@
                 } else {
                     // Print Template
                     this.renderBase(false);
-
-                    if (error) {
-                        console.log(error.reason);
-                    }
                 }
 
                 return this;
