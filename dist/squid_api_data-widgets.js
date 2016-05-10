@@ -2580,6 +2580,11 @@ function program2(depth0,data) {
             this.filters.on("change:selection", function() {
                 me.render();
             });
+            
+            if (!this.model) {
+                // default model is config
+                this.model = squid_api.model.config;
+            }
 
             this.model.on("change:chosenDimensions", function() {
                 me.render();
