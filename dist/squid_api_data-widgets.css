@@ -777,6 +777,12 @@ Pagination
     height: .8em;
     position: relative;
 }
+.squid-api-data-widgets-timeseries-widget #brushing {
+    cursor: pointer;
+    position: absolute;
+    top: 180px;
+    left: 75px;
+}
 
 .squid-api-data-widgets-timeseries-widget .mg-brushing-in-progress .mg-brushing {
     opacity: 0.3;

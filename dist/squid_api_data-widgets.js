@@ -1056,7 +1056,7 @@ function program2(depth0,data) {
   if (helper = helpers.reRunMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.reRunMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\n            </div>\n        </div>\n    <div id=\"legend\" />\n    <div id=\"widget\">\n\n    </div>\n    <div id=\"error\" />\n</div>\n";
+    + "</span>\n            </div>\n        </div>\n    <div id=\"legend\" />\n    <div id=\"brushing\" style=\"display: none;\">\n        <a>Double click the visulisation to zoom out</a>\n    </div>\n    <div id=\"widget\">\n\n    </div>\n    <div id=\"error\" />\n</div>\n";
   return buffer;
   });
 (function(root, factory) {
@@ -6292,6 +6292,7 @@ function program2(depth0,data) {
         legendState: {},
 
         initialize : function(options) {
+            var me = this;
             this.config = squid_api.model.config;
 
             if (options) {
@@ -6370,6 +6371,14 @@ function program2(depth0,data) {
                     animate_on_load: false,
                     legend_target: this.renderLegend,
                     colors: this.colorPalette,
+                    after_brushing: function(brush) {
+                        var div = $(this).parent().siblings("#brushing");
+                        if (brush.min_y === 0) {
+                            div.hide();
+                        } else {
+                            div.show();
+                        }
+                    },
                     mouseover: function(d, i) {
                         // remove existing active data point text el
                         var activeDataPoint = d3.select(this.target + " .mg-active-datapoint").remove();
@@ -6453,7 +6462,8 @@ function program2(depth0,data) {
             "change #time-unit-selector select": function(event) {
                 var unit = $(event.currentTarget).val();
                 this.config.set("timeUnit", unit);
-            }
+            },
+            "click #brushing a" : "render"
         },
 
         setModel : function(model) {

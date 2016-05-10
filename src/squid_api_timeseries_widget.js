@@ -24,6 +24,7 @@
         legendState: {},
 
         initialize : function(options) {
+            var me = this;
             this.config = squid_api.model.config;
 
             if (options) {
@@ -102,6 +103,14 @@
                     animate_on_load: false,
                     legend_target: this.renderLegend,
                     colors: this.colorPalette,
+                    after_brushing: function(brush) {
+                        var div = $(this).parent().siblings("#brushing");
+                        if (brush.min_y === 0) {
+                            div.hide();
+                        } else {
+                            div.show();
+                        }
+                    },
                     mouseover: function(d, i) {
                         // remove existing active data point text el
                         var activeDataPoint = d3.select(this.target + " .mg-active-datapoint").remove();
@@ -185,7 +194,8 @@
             "change #time-unit-selector select": function(event) {
                 var unit = $(event.currentTarget).val();
                 this.config.set("timeUnit", unit);
-            }
+            },
+            "click #brushing a" : "render"
         },
 
         setModel : function(model) {
