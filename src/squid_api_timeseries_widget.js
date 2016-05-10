@@ -89,9 +89,9 @@
                 }
             }
             if (options.configuration) {
-                this.configuration = options.configuration;
+                this.defaultConfiguration = options.configuration;
             } else {
-                this.configuration = {
+                this.defaultConfiguration = {
                     interpolate: "basic",
                     right: 80,
                     height: this.height,
@@ -287,6 +287,9 @@
         renderGraphic: function(metrics) {
             this.$el.find(".sq-loading").hide();
             this.$el.find("#re-run").hide();
+
+            // reset configuration to default (if previous svg has been brushed)
+            this.configuration = _.clone(this.defaultConfiguration);
 
             // for manipulation time
             var start = new Date().getTime();
