@@ -1068,6 +1068,7 @@ function program2(depth0,data) {
     var View = Backbone.View.extend({
         analysis : null,
         config : null,
+        pagination: null,
 
         initialize : function(options) {
             var me = this;
@@ -1079,7 +1080,6 @@ function program2(depth0,data) {
                 this.analysis = new squid_api.model.AnalysisJob();
                 this.model = this.analysis;
             }
-
             if (options) {
                 // setup options
                 if (options.config) {
@@ -1088,8 +1088,8 @@ function program2(depth0,data) {
                 if (options.onChangeHandler) {
                     this.onChangeHandler = options.onChangeHandler;
                 }
-                if (options.onStartIndexChangeHandler) {
-                    this.onStartIndexChangeHandler = options.onStartIndexChangeHandler;
+                if (options.pagination) {
+                    this.pagination = options.pagination;
                 }
             }
 
@@ -1159,13 +1159,21 @@ function program2(depth0,data) {
             }, {
                 "silent" : silent
             });
-            a.setParameter("maxResults", this.config.get("maxResults"), silent);
-            changed = changed || a.hasChanged();
-            var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
-            a.setParameter("startIndex", this.config.get("startIndex"), silent);
-            changed = changed || a.hasChanged();
-            if (this.onStartIndexChangeHandler && startIndexChange) {
-                this.onStartIndexChangeHandler.call(this, a);
+            if (this.pagination) {
+                a.setParameter("maxResults", this.config.get("maxResults"), silent);
+                changed = changed || a.hasChanged();
+                var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
+                if (startIndexChange) {
+                    var startIndex = a.getParameter("startIndex");
+                    if ((startIndex || startIndex === 0)) {
+                        // update if pagination changed
+                        if (a.get("id") && (a.get("id").analysisJobId)) {
+                            squid_api.compute(a);
+                        }
+                    }
+                }
+                a.setParameter("startIndex", this.config.get("startIndex"), silent);
+                changed = changed || a.hasChanged();
             }
             a.set({
                 "domains" : [ {
@@ -6513,7 +6521,7 @@ function program2(depth0,data) {
 
         updateHeight: function() {
             var configDisplay = this.config.get("configDisplay");
-            if (configDisplay) {
+            if (configDisplay && ! this.model.get("disabled")) {
                 if (! configDisplay.visible) {
                     this.configuration.height+=configDisplay.originalHeight;
                 } else {
@@ -6524,8 +6532,10 @@ function program2(depth0,data) {
         },
 
         updateWidth: function() {
-            this.configuration.width = $(this.renderTo).width();
-            MG.data_graphic(this.configuration);
+            if (! this.model.get("disabled")) {
+                this.configuration.width = $(this.renderTo).width();
+                MG.data_graphic(this.configuration);
+            }
         },
 
         standardizeData: function(currentDateIndex) {

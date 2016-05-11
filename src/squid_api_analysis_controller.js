@@ -7,6 +7,7 @@
     var View = Backbone.View.extend({
         analysis : null,
         config : null,
+        pagination: null,
 
         initialize : function(options) {
             var me = this;
@@ -18,7 +19,6 @@
                 this.analysis = new squid_api.model.AnalysisJob();
                 this.model = this.analysis;
             }
-
             if (options) {
                 // setup options
                 if (options.config) {
@@ -27,8 +27,8 @@
                 if (options.onChangeHandler) {
                     this.onChangeHandler = options.onChangeHandler;
                 }
-                if (options.onStartIndexChangeHandler) {
-                    this.onStartIndexChangeHandler = options.onStartIndexChangeHandler;
+                if (options.pagination) {
+                    this.pagination = options.pagination;
                 }
             }
 
@@ -98,13 +98,21 @@
             }, {
                 "silent" : silent
             });
-            a.setParameter("maxResults", this.config.get("maxResults"), silent);
-            changed = changed || a.hasChanged();
-            var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
-            a.setParameter("startIndex", this.config.get("startIndex"), silent);
-            changed = changed || a.hasChanged();
-            if (this.onStartIndexChangeHandler && startIndexChange) {
-                this.onStartIndexChangeHandler.call(this, a);
+            if (this.pagination) {
+                a.setParameter("maxResults", this.config.get("maxResults"), silent);
+                changed = changed || a.hasChanged();
+                var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
+                if (startIndexChange) {
+                    var startIndex = a.getParameter("startIndex");
+                    if ((startIndex || startIndex === 0)) {
+                        // update if pagination changed
+                        if (a.get("id") && (a.get("id").analysisJobId)) {
+                            squid_api.compute(a);
+                        }
+                    }
+                }
+                a.setParameter("startIndex", this.config.get("startIndex"), silent);
+                changed = changed || a.hasChanged();
             }
             a.set({
                 "domains" : [ {

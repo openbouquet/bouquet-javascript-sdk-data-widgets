@@ -245,7 +245,7 @@
 
         updateHeight: function() {
             var configDisplay = this.config.get("configDisplay");
-            if (configDisplay) {
+            if (configDisplay && ! this.model.get("disabled")) {
                 if (! configDisplay.visible) {
                     this.configuration.height+=configDisplay.originalHeight;
                 } else {
@@ -256,8 +256,10 @@
         },
 
         updateWidth: function() {
-            this.configuration.width = $(this.renderTo).width();
-            MG.data_graphic(this.configuration);
+            if (! this.model.get("disabled")) {
+                this.configuration.width = $(this.renderTo).width();
+                MG.data_graphic(this.configuration);
+            }
         },
 
         standardizeData: function(currentDateIndex) {
