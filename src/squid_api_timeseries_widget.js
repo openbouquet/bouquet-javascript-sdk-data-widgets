@@ -245,7 +245,7 @@
 
         updateHeight: function() {
             var configDisplay = this.config.get("configDisplay");
-            if (configDisplay && ! this.model.get("disabled")) {
+            if (configDisplay && ! this.model.get("disabled") && this.configuration) {
                 if (! configDisplay.visible) {
                     this.configuration.height+=configDisplay.originalHeight;
                 } else {
@@ -256,7 +256,7 @@
         },
 
         updateWidth: function() {
-            if (! this.model.get("disabled")) {
+            if (! this.model.get("disabled") && this.configuration) {
                 this.configuration.width = $(this.renderTo).width();
                 MG.data_graphic(this.configuration);
             }
