@@ -766,10 +766,6 @@ Pagination
 .rickshaw_graph .x_ticks_d3 text {
     text-anchor: inherit !important;
 }
-.squid-api-data-widgets-timeseries-widget #metrics {
-    padding-left: 80px;
-    display: inline-block;
-}
 .squid-api-data-widgets-timeseries-widget #slider {
     border-radius: 4px;
     border: 1px solid #ddd;
@@ -895,8 +891,9 @@ Pagination
 
 .squid-api-data-widgets-timeseries-widget #legend .date {
     position: absolute;
-    top: -29px;
-    font-size: 13px;
+    top: 4px;
+    left: 0px;
+    font-size: 12px;
     font-weight: bold;
 }
 
