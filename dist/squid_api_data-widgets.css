@@ -891,10 +891,13 @@ Pagination
 
 .squid-api-data-widgets-timeseries-widget #legend .date {
     position: absolute;
-    top: 4px;
+    bottom: -50px;
     left: 0px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
+    background: #f9f9f9;
+    border-radius: 4px;
+    padding: 10px;
 }
 
 .squid-api-data-widgets-timeseries-widget #legend .value {
