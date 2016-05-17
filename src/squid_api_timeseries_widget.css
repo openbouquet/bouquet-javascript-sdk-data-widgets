@@ -27,8 +27,8 @@
 .squid-api-data-widgets-timeseries-widget #brushing {
     cursor: pointer;
     position: absolute;
-    top: 180px;
-    left: 75px;
+    top: 130px;
+    right: 20px;
 }
 
 .squid-api-data-widgets-timeseries-widget .mg-brushing-in-progress .mg-brushing {
