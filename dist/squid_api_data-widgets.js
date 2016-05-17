@@ -697,6 +697,24 @@ function program9(depth0,data) {
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_modelinfo_internal_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<table style=\"width:100%\">\n  <tr>\n    <td>Jill</td>\n    <td>Smith</td>\n    <td>50</td>\n  </tr>\n  <tr>\n    <td>Eve</td>\n    <td>Jackson</td>\n    <td>94</td>\n  </tr>\n</table>\n";
+  });
+
+this["squid_api"]["template"]["squid_api_modelinfo_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"squid-api-modelinfo-widget\">\n    <button class=\"btn form-control\" role=\"button\" data-toggle=\"popover\">\n        <i class=\"fa fa-info\" aria-hidden=\"true\"></i>\n    </button>\n</div>\n";
+  });
+
 this["squid_api"]["template"]["squid_api_orderby_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -4959,6 +4977,44 @@ function program2(depth0,data) {
             } else {
                 this.renderMetrics([]);
             }
+
+            return this;
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.ModelInfoView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_modelinfo_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+
+        template: template,
+        popoverOptions: {
+            placement: "left",
+            html: true
+        },
+        internalTemplate: null,
+
+        initialize: function() {
+            this.internalTemplate = squid_api.template.squid_api_modelinfo_internal_widget;
+            this.status = squid_api.model.status;
+            this.status.on("change:configReady", this.getContent, this);
+        },
+
+        getContent: function() {
+            this.popoverOptions.content = this.internalTemplate();
+            this.render();
+        },
+
+        render: function() {
+            // print base template
+            this.$el.html(this.template());
+            // initialize popover
+            this.$el.find("[data-toggle='popover']").popover(this.popoverOptions);
 
             return this;
         }

@@ -614,6 +614,12 @@ Pagination
 .squid-api-data-widgets-metric-widget .name, .squid-api-data-widgets-metric-widget .value {
     text-align: center;
 }
+.squid-api-modelinfo-widget a {
+    width: 100%;
+    height: 33px;
+    padding: 6px;
+}
+
 .squid-api-data-widgets-orderby-widget .onoffswitch {
     position: relative; 
     width: 90px;
