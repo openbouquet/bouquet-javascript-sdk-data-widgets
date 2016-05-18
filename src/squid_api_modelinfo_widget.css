@@ -1,5 +1,7 @@
-.squid-api-modelinfo-widget a {
-    width: 100%;
-    height: 33px;
-    padding: 6px;
+.squid-api-modelinfo-internal-view {
+    overflow-y: scroll;
+    max-height: 200px;
+}
+.squid-api-modelinfo-internal-view table {
+    font-size: 0.7em;
 }
