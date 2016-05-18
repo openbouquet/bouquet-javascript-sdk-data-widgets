@@ -697,6 +697,60 @@ function program9(depth0,data) {
   return buffer;
   });
 
+this["squid_api"]["template"]["squid_api_modelinfo_internal_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                <tr>\n                    <td>";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n                    <td>";
+  if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n                </tr>\n              ";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n                    <tr>\n                        <td>";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n                        <td>";
+  if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n                    </tr>\n                ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6\">\n        <h3>Dimensions</h3>\n        <table class=\"table table-condensed dimensions\">\n          <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n              ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.dimensions), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n        </table>\n    </div>\n    <div class=\"col-md-6\">\n        <h3>Metrics</h3>\n        <table class=\"table table-condensed metrics\">\n            <tr>\n              <th>Name</th>\n              <th>Description</th>\n            </tr>\n                ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.metrics), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n        </table>\n    </div>\n</div>\n";
+  return buffer;
+  });
+
+this["squid_api"]["template"]["squid_api_modelinfo_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"squid-api-modelinfo-widget\">\n    <button class=\"btn form-control\" role=\"button\" data-toggle=\"popover\" data-trigger=\"focus\">\n        <i class=\"fa fa-info\" aria-hidden=\"true\"></i>\n    </button>\n</div>\n";
+  });
+
 this["squid_api"]["template"]["squid_api_orderby_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -4958,6 +5012,117 @@ function program2(depth0,data) {
                 });
             } else {
                 this.renderMetrics([]);
+            }
+
+            return this;
+        }
+    });
+
+    return View;
+}));
+
+(function (root, factory) {
+    root.squid_api.view.ModelInfoView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_modelinfo_widget);
+
+}(this, function (Backbone, squid_api, template) {
+
+    var View = Backbone.View.extend({
+
+        template: template,
+        popoverOptions: {
+            placement: function (context, source) {
+                var position = $(source).position();
+
+                if (position.left > 515) {
+                    return "left";
+                }
+
+                if (position.left < 515) {
+                    return "right";
+                }
+
+                if (position.top < 110){
+                    return "bottom";
+                }
+
+                return "top";
+            },
+            html: true,
+            container: 'body'
+        },
+        internalTemplate: null,
+
+        initialize: function() {
+            this.config = squid_api.model.config;
+            this.internalTemplate = squid_api.template.squid_api_modelinfo_internal_widget;
+
+            this.config.on("change:domain", this.render, this);
+        },
+
+        getDimensions: function() {
+            var me = this;
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    return project.get("domains").load(me.config.get("domain")).then(function(domain) {
+                        return domain.get("dimensions").load();
+                    });
+                });
+            });
+        },
+
+        getMetrics: function() {
+            var me = this;
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    return project.get("domains").load(me.config.get("domain")).then(function(domain) {
+                        return domain.get("metrics").load();
+                    });
+                });
+            });
+        },
+
+        render: function() {
+            var me = this;
+            var domain = this.config.get("domain");
+
+            if (domain) {
+                // print base template
+                this.$el.html(this.template());
+
+                // get domain dimensions & metrics
+                $.when( this.getDimensions(), this.getMetrics() ).done(function ( dimensions, metrics ) {
+                    var jsonData = {
+                        "dimensions": [],
+                        "metrics": []
+                    };
+
+                    // store dimensions
+                    for (var d=0; d<dimensions.length; d++) {
+                        jsonData.dimensions.push({
+                            "name": dimensions.at(d).get("name"),
+                            "description": dimensions.at(d).get("description")
+                        });
+                    };
+
+                    // store metrics
+                    for (var m=0; m<metrics.length; m++) {
+                        jsonData.metrics.push({
+                            "name": metrics.at(m).get("name"),
+                            "description": metrics.at(m).get("description")
+                        });
+                    };
+
+                    // set popup html content
+                    me.popoverOptions.content = me.internalTemplate(jsonData);
+
+                    // initialize popover
+                    me.$el.find("[data-toggle='popover']").popover(me.popoverOptions);
+
+                    // remove max-width
+                    me.$el.find("[data-toggle='popover']").on("show.bs.popover", function(e){
+                        me.$el.find("[data-toggle='popover']").data("bs.popover").tip().css({"max-width": "inherit"});
+                    });
+                });
             }
 
             return this;
