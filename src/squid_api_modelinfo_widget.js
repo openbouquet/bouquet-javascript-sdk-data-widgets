@@ -99,6 +99,19 @@
                     me.$el.find("[data-toggle='popover']").on("show.bs.popover", function(e){
                         me.$el.find("[data-toggle='popover']").data("bs.popover").tip().css({"max-width": "inherit"});
                     });
+
+                    /*
+                        close popover when clicked outside
+                    */
+                    $('body').on('click', function (e) {
+                        me.$el.find("[data-toggle='popover']").each(function() {
+                            //the 'is' for buttons that trigger popups
+                            //the 'has' for icons within a button that triggers a popup
+                            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                                $(this).popover('hide');
+                            }
+                        });
+                    });
                 });
             }
 
