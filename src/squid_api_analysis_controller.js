@@ -107,12 +107,12 @@
                     if ((startIndex || startIndex === 0)) {
                         // update if pagination changed
                         if (a.get("id") && (a.get("id").analysisJobId)) {
+                            a.setParameter("startIndex", this.config.get("startIndex"), silent);
+                            changed = changed || a.hasChanged();
                             squid_api.compute(a);
                         }
                     }
                 }
-                a.setParameter("startIndex", this.config.get("startIndex"), silent);
-                changed = changed || a.hasChanged();
             }
             a.set({
                 "domains" : [ {

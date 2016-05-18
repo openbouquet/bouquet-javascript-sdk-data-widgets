@@ -732,7 +732,7 @@ function program3(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6\">\n        <h4>Dimensions</h4>\n        <table class=\"table table-condensed dimensions\">\n          <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n              ";
+  buffer += "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6\">\n        <h4>Dimensions</h4>\n        <table class=\"table table-condensed dimensions\" data-toggle=\"table\">\n          <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n              ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.dimensions), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        </table>\n    </div>\n    <div class=\"col-md-6\">\n        <h4>Metrics</h4>\n        <table class=\"table table-condensed metrics\">\n            <tr>\n              <th>Name</th>\n              <th>Description</th>\n            </tr>\n                ";
@@ -1222,12 +1222,12 @@ function program2(depth0,data) {
                     if ((startIndex || startIndex === 0)) {
                         // update if pagination changed
                         if (a.get("id") && (a.get("id").analysisJobId)) {
+                            a.setParameter("startIndex", this.config.get("startIndex"), silent);
+                            changed = changed || a.hasChanged();
                             squid_api.compute(a);
                         }
                     }
                 }
-                a.setParameter("startIndex", this.config.get("startIndex"), silent);
-                changed = changed || a.hasChanged();
             }
             a.set({
                 "domains" : [ {
