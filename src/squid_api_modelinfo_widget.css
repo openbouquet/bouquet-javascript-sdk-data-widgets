@@ -5,3 +5,9 @@
 .squid-api-modelinfo-internal-view table {
     font-size: 0.7em;
 }
+.squid-api-modelinfo-internal-view h4 {
+    padding: 4px;
+    margin-top: 0px;
+    border-radius: 4px;
+    text-align: center;
+}
