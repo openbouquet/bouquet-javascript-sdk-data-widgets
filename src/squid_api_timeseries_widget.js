@@ -562,7 +562,9 @@
 
         renderAdditionalView: function(view, element) {
             view.setElement(element);
-            view.renderBase();
+            if (view.renderBase) {
+                view.renderBase();
+            };
             view.render();
         }
     });

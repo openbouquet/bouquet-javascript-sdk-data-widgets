@@ -6838,7 +6838,9 @@ function program2(depth0,data) {
 
         renderAdditionalView: function(view, element) {
             view.setElement(element);
-            view.renderBase();
+            if (view.renderBase) {
+                view.renderBase();
+            };
             view.render();
         }
     });
