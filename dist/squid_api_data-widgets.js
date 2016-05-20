@@ -732,7 +732,7 @@ function program3(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6\">\n        <h4>Dimensions</h4>\n        <table class=\"table table-condensed dimensions\" data-toggle=\"table\">\n          <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n              ";
+  buffer += "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6\">\n        <h4>Dimensions</h4>\n        <table class=\"table table-condensed dimensions\">\n          <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n              ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.dimensions), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        </table>\n    </div>\n    <div class=\"col-md-6\">\n        <h4>Metrics</h4>\n        <table class=\"table table-condensed metrics\">\n            <tr>\n              <th>Name</th>\n              <th>Description</th>\n            </tr>\n                ";
@@ -2163,9 +2163,9 @@ function program2(depth0,data) {
                             .html(function(d) {
                                 var str = d.name;
                                 if (d.orderDirection === "ASC") {
-                                    str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
-                                } else if (d.orderDirection === "DESC") {
                                     str = str + " " + "<span class='sort-direction'>&#xffec;</span>";
+                                } else if (d.orderDirection === "DESC") {
+                                    str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
                                 }
                                 return str;
                             })
