@@ -2525,7 +2525,7 @@ function program2(depth0,data) {
                                     dateFound = true;
                                     break;
                                 } else {
-                                    this.status.set({"message" : "dimension " + facet.name + " is not indexed for use with this visulisation"});
+                                    this.status.set({"message" : "dimension " + facet.name + " is not indexed for use with this visualization"});
                                 }
                             }
                         }
