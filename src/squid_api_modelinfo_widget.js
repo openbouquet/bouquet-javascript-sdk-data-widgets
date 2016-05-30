@@ -79,7 +79,7 @@
                             "name": dimensions.at(d).get("name"),
                             "description": dimensions.at(d).get("description")
                         });
-                    };
+                    }
 
                     // store metrics
                     for (var m=0; m<metrics.length; m++) {
@@ -87,7 +87,7 @@
                             "name": metrics.at(m).get("name"),
                             "description": metrics.at(m).get("description")
                         });
-                    };
+                    }
 
                     // set popup html content
                     me.popoverOptions.content = me.internalTemplate(jsonData);
@@ -96,7 +96,7 @@
                     me.$el.find("[data-toggle='popover']").popover(me.popoverOptions);
 
                     // remove max-width
-                    me.$el.find("[data-toggle='popover']").on("show.bs.popover", function(e){
+                    me.$el.find("[data-toggle='popover']").on("show.bs.popover", function(){
                         me.$el.find("[data-toggle='popover']").data("bs.popover").tip().css({"max-width": "inherit"});
                     });
 

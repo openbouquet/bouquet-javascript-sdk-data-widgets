@@ -24,7 +24,6 @@
         legendState: {},
 
         initialize : function(options) {
-            var me = this;
             this.config = squid_api.model.config;
 
             if (options) {
@@ -113,12 +112,8 @@
                     },
                     mouseover: function(d, i) {
                         // remove existing active data point text el
-                        var activeDataPoint = d3.select(this.target + " .mg-active-datapoint").remove();
+                        d3.select(this.target + " .mg-active-datapoint").remove();
                         d3.select(this.target + " .mg-active-datapoint-container text").remove();
-                        var svgWidth = parseFloat(d3.select(this.target + " svg").attr("width"));
-
-                        // target container
-                        var container = d3.select(this.target + " .mg-active-datapoint-container");
 
                         var values = d.values;
                         if (! values) {
@@ -136,7 +131,7 @@
                             for (ix=0; ix<legendItems.length; ix++) {
                                 if ($(legendItems[ix]).text().indexOf(line) > -1) {
                                     $(legendItems[ix]).find(".value").remove();
-                                    $(legendItems[ix]).append("<span class='value'>" + values[i].value + "</span> ")
+                                    $(legendItems[ix]).append("<span class='value'>" + values[i].value + "</span> ");
                                 }
                             }
                         }
@@ -312,11 +307,10 @@
             var nVariate = false;
             var compare = false;
             var toRemove = [];
-            var currentDateIndex = null;
 
             // see if multiple dimensions exist
             for (var col=1; col<this.results.cols.length; col++) {
-                if (this.results.cols[col].role == "DOMAIN") {
+                if (this.results.cols[col].role === "DOMAIN") {
                     nVariate = true;
                     var selection = this.config.get("selection");
                     if (selection) {
@@ -350,11 +344,10 @@
             }
 
             // get data
+            var hashMap = {};
             for (i=1; i<this.results.cols.length; i++) {
                 if (! toRemove.includes(i)) {
-                    var metaData = [];
-                    var hashMap = {}
-
+                   
                     if (nVariate) {
                         // obtain legend names from results
                         for (ix1=0; ix1<this.results.rows.length; ix1++) {
@@ -386,8 +379,6 @@
                                         legend.push(i2 + " (compare)");
                                     }
                                 }
-                            } else {
-                                // handle nVariate null values here
                             }
                         }
                     } else {
@@ -422,7 +413,8 @@
 
                 for (i=0; i<keys.length; i++) {
                     arr = [];
-                    for (date in hashMap[keys[i]]) {
+                    for (var date in hashMap[keys[i]]) {
+                        /*jshint forin: false */
                         var obj1 = {
                             "date" : date,
                             "value": hashMap[keys[i]][date]
@@ -514,7 +506,6 @@
 
         render : function() {
             var status = this.model.get("status");
-            var me = this;
             this.YearOverYear = this.config.get("YearOverYear");
             this.renderTemplate(false);
 
@@ -564,7 +555,7 @@
             view.setElement(element);
             if (view.renderBase) {
                 view.renderBase();
-            };
+            }
             view.render();
         }
     });

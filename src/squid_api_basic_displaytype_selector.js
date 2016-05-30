@@ -84,10 +84,8 @@
         },
 
         render: function() {
-            var me = this;
 
             // compute the view types compatible with the model
-            var selectedDimension = this.model.get("selectedDimension");
             var compatibleViews = [];
 
             this.addCompatibleView(compatibleViews, "tableView");

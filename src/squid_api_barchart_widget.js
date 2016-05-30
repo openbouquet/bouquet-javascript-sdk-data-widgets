@@ -166,8 +166,9 @@
 
         renderBase: function(done) {
             var error = this.model.get("error");
+            var enableRerun;
             if (error) {
-                var enableRerun = error.enableRerun;
+                enableRerun = error.enableRerun;
             }
             this.$el.html(this.template({
                 done: done,
@@ -254,13 +255,13 @@
                     .attr("y", function(d, i) {
                         return i*15;
                     })
-                    .attr("x", function(d, i) {
+                    .attr("x", function() {
                         return 150;
                     })
                     .attr("width", function() {
                         return 0;
                     })
-                    .attr('fill', function(d, i) {
+                    .attr('fill', function(d) {
                         var color = "#1f77b4";
                         if (d[0].includes("(compare)")) {
                             /* BRIGHTEN */

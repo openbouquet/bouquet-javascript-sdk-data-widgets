@@ -130,7 +130,7 @@
                         if (orderBy) {
                             if (orderBy[0]) {
                                 if (orderBy[0].expression) {
-                                    if (orderBy[0].expression.value == expressionValue) {
+                                    if (orderBy[0].expression.value === expressionValue) {
                                         if ($(event.currentTarget).hasClass("ASC")) {
                                             obj.direction = "DESC";
                                         } else {
@@ -398,7 +398,7 @@
                                 return str;
                             })
                             .attr("origin-type", function(d) {
-                                return d.originType
+                                return d.originType;
                             })
                             .html(function(d) {
                                 var str = d.name;
@@ -473,7 +473,7 @@
                             var toRound = true;
                             for (i=0; i<words.length; i++) {
                                 // see if column header contains the text duration / time
-                                if (words[i].toLowerCase() == "duration" || words[i].toLowerCase() == "time") {
+                                if (words[i].toLowerCase() === "duration" || words[i].toLowerCase() === "time") {
                                     toRound = false;
                                     // parse value with moment
                                     var d = moment.duration(parseFloat(v), 'milliseconds');

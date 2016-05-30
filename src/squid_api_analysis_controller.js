@@ -41,31 +41,31 @@
                 var refreshNeeded = false;
                 if (this.config.hasChanged("project")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("domain")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("chosenDimensions")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("chosenMetrics")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("limit")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("rollups")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("orderBy")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("selection")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("startIndex")) {
                     refreshNeeded = true;
-                };
+                }
                 if (refreshNeeded) {
                     me.refreshAnalysis();
                 }

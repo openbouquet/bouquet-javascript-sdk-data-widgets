@@ -52,7 +52,7 @@
                     if (chosenDimensions) {
                         var existsInChosen = chosenDimensions.includes(id);
                         if (config.get("chosenDimensions").length > 0) {
-                            if (existsInChosen && facet.dimension.valueType == "DATE") {
+                            if (existsInChosen && facet.dimension.valueType === "DATE") {
                                 this.setFacets(a, facet.id);
                                 dateFound = true;
                                 break;
@@ -63,7 +63,7 @@
                 if (! dateFound) {
                     // if no date is found, use the first one found
                     for (i=0; i<selection.facets.length; i++) {
-                        if (selection.facets[i].dimension.type == "CONTINUOUS" && selection.facets[i].dimension.valueType == "DATE") {
+                        if (selection.facets[i].dimension.type === "CONTINUOUS" && selection.facets[i].dimension.valueType === "DATE") {
                             this.setFacets(a, selection.facets[i].id);
                             break;
                         }
@@ -102,10 +102,10 @@
         setFacets: function(a, id) {
             var toDate = false;
             var beyondLimit = false;
-            squid_api.utils.checkAPIVersion(">=4.2.1").done(function(v){
+            squid_api.utils.checkAPIVersion(">=4.2.1").done(function(){
                 toDate = true;
             });
-            squid_api.utils.checkAPIVersion(">=4.2.5").done(function(v){
+            squid_api.utils.checkAPIVersion(">=4.2.5").done(function(){
                 beyondLimit = true;
             });
             if (toDate) {
