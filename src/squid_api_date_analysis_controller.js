@@ -8,6 +8,13 @@
         analysis : null,
         config : null,
 
+        customEvents: function() {
+            var me = this;
+            this.config.on('change:timeUnit', function() {
+                me.refreshAnalysis();
+            });
+        },
+
         refreshAnalysis : function(silent) {
             var changed = false;
             var a = this.analysis;
@@ -45,14 +52,10 @@
                     if (chosenDimensions) {
                         var existsInChosen = chosenDimensions.includes(id);
                         if (config.get("chosenDimensions").length > 0) {
-                            if (existsInChosen && facet.dimension.valueType == "DATE") {
-                                if (facet.dimension.type == "CONTINUOUS") {
-                                    this.setFacets(a, facet.id);
-                                    dateFound = true;
-                                    break;
-                                } else {
-                                    this.status.set({"message" : "dimension " + facet.name + " is not indexed for use with this visulisation"});
-                                }
+                            if (existsInChosen && facet.dimension.valueType === "DATE") {
+                                this.setFacets(a, facet.id);
+                                dateFound = true;
+                                break;
                             }
                         }
                     }
@@ -60,7 +63,7 @@
                 if (! dateFound) {
                     // if no date is found, use the first one found
                     for (i=0; i<selection.facets.length; i++) {
-                        if (selection.facets[i].dimension.type == "CONTINUOUS" && selection.facets[i].dimension.valueType == "DATE") {
+                        if (selection.facets[i].dimension.type === "CONTINUOUS" && selection.facets[i].dimension.valueType === "DATE") {
                             this.setFacets(a, selection.facets[i].id);
                             break;
                         }
@@ -98,18 +101,30 @@
 
         setFacets: function(a, id) {
             var toDate = false;
-            squid_api.utils.checkAPIVersion(">=4.2.1").done(function(v){
+            var beyondLimit = false;
+            squid_api.utils.checkAPIVersion(">=4.2.1").done(function(){
                 toDate = true;
             });
+            squid_api.utils.checkAPIVersion(">=4.2.5").done(function(){
+                beyondLimit = true;
+            });
             if (toDate) {
+                var timeUnit = this.config.get("timeUnit");
                 var dimensions =  this.config.get("chosenDimensions");
                 a.setFacets(dimensions, {silent : true});
                 var facets = a.get("facets");
                 if (facets) {
-                    facets.unshift({value: "TO_DATE(" + id + ")"});
+                    var expression = "TO_DATE(" + id + ")";
+                    if (timeUnit) {
+                        expression = timeUnit + "("+ id + ")";
+                    }
+                    facets.unshift({value: expression});
                 }
             } else {
                 a.setFacets([id], silent);
+            }
+            if (beyondLimit) {
+                a.set('beyondLimit', [{"col" : 0}]);
             }
         }
     });

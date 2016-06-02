@@ -52,8 +52,7 @@
         },
 
         events: {
-            "click li": "changeWidget",
-            "click button":"openPopOver"
+            "click li": "changeWidget"
         },
 
         changeWidget: function(item){
@@ -85,10 +84,8 @@
         },
 
         render: function() {
-            var me = this;
 
             // compute the view types compatible with the model
-            var selectedDimension = this.model.get("selectedDimension");
             var compatibleViews = [];
 
             this.addCompatibleView(compatibleViews, "tableView");
@@ -96,7 +93,7 @@
             this.addCompatibleView(compatibleViews, "barView");
 
             // compute the current selected view
-            var analysis = this.model.get("currentAnalysis");
+            var analysis = this.model.get(this.config.get("currentAnalysis"));
             var currentViewName;
 
             if (this.tableView) {
@@ -130,14 +127,12 @@
                 var isActive = false;
                 if (view2 === currentViewName) {
                     isActive = true;
+                    data.currentIcon = icon;
                 }
                 data.options.push({"view" : view2, "icon" : icon, "isActive" : isActive});
             }
 
-            this.$el.find("button").popover({
-                content: this.template(data),
-                html: true
-            });
+            this.$el.html(this.template(data));
 
             return this;
         }

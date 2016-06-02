@@ -48,16 +48,16 @@
 
                     // resolve compareTo columns
                     var compareMap = {};
-                    for (var i = 0; i < cols.length; i++) {
-                        var colA = cols[i];
+                    for (var i1 = 0; i1 < cols.length; i1++) {
+                        var colA = cols[i1];
                         if (colA.originType === "COMPARETO") {
                             // key = col oid, value = compare col index
-                            compareMap[colA.id] = i;
+                            compareMap[colA.id] = i1;
                         }
                     }
 
                     // build display data
-                    var values = results.rows[0].v;
+                    values = results.rows[0].v;
                     for (var i=0; i<cols.length; i++) {
                         var col = cols[i];
                         if (col.originType === "USER") {
@@ -69,19 +69,21 @@
                             }
                             kpi.unit = "";
                             kpi.name = col.name;
-                            if (typeof kpi.compareToValue != "undefined"
-                              && kpi.compareToValue != null) {
-                              var lvalue = parseFloat(kpi.value.replace(",",""));
-                              var rvalue = parseFloat(kpi.compareToValue.replace(",",""));
-                              kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
-                              if (kpi.growth > 0) {
-                                kpi.compareTextColor = 'text-success';
-                              }  else if (kpi.growth < 0) {
-                                kpi.compareTextColor = 'text-danger';
-                              } else {
-                                kpi.growth = 0;
-                                kpi.compareTextColor = 'text-info';
-                              }
+                            if (typeof kpi.compareToValue !== "undefined" && kpi.compareToValue !== null) {
+                                var lvalue = parseFloat(values[i]);
+                                var rvalue = parseFloat(values[compareIndex]);
+                                kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
+                                if (kpi.growth > 0) {
+                                    kpi.compareTextColor = 'text-success';
+                                    kpi.compareClass = 'glyphicon-arrow-up';
+                                }  else if (kpi.growth < 0) {
+                                    kpi.compareTextColor = 'text-danger';
+                                    kpi.compareClass = 'glyphicon-arrow-down';
+                                } else {
+                                    kpi.growth = 0;
+                                    kpi.compareTextColor = 'text-info';
+                                    kpi.compareClass = 'glyphicon-transfer';
+                                }
                             }
                             jsonData.push(kpi);
                         }

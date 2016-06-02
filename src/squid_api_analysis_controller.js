@@ -7,6 +7,7 @@
     var View = Backbone.View.extend({
         analysis : null,
         config : null,
+        pagination: null,
 
         initialize : function(options) {
             var me = this;
@@ -18,7 +19,6 @@
                 this.analysis = new squid_api.model.AnalysisJob();
                 this.model = this.analysis;
             }
-
             if (options) {
                 // setup options
                 if (options.config) {
@@ -27,8 +27,8 @@
                 if (options.onChangeHandler) {
                     this.onChangeHandler = options.onChangeHandler;
                 }
-                if (options.onStartIndexChangeHandler) {
-                    this.onStartIndexChangeHandler = options.onStartIndexChangeHandler;
+                if (options.pagination) {
+                    this.pagination = options.pagination;
                 }
             }
 
@@ -37,46 +37,45 @@
             }
 
             // controller
-
-            this.config.on('change:project', function() {
-                me.refreshAnalysis();
+            this.listenTo(this.config, "change", function() {
+                var refreshNeeded = false;
+                if (this.config.hasChanged("project")) {
+                    refreshNeeded = true;
+                }
+                if (this.config.hasChanged("domain")) {
+                    refreshNeeded = true;
+                }
+                if (this.config.hasChanged("chosenDimensions")) {
+                    refreshNeeded = true;
+                }
+                if (this.config.hasChanged("chosenMetrics")) {
+                    refreshNeeded = true;
+                }
+                if (this.config.hasChanged("limit")) {
+                    refreshNeeded = true;
+                }
+                if (this.config.hasChanged("rollups")) {
+                    refreshNeeded = true;
+                }
+                if (this.config.hasChanged("orderBy")) {
+                    refreshNeeded = true;
+                }
+                if (this.config.hasChanged("selection")) {
+                    refreshNeeded = true;
+                }
+                if (this.config.hasChanged("startIndex")) {
+                    refreshNeeded = true;
+                }
+                if (refreshNeeded) {
+                    me.refreshAnalysis();
+                }
             });
 
-            this.config.on('change:domain', function() {
-                me.refreshAnalysis();
-            });
+            this.customEvents();
+        },
 
-            this.config.on('change:chosenDimensions', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:chosenMetrics', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:limit', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:rollups', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:orderBy', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:selection', function() {
-                me.refreshAnalysis();
-            });
-
-            this.config.on('change:currentAnalysis', function() {
-                me.onChangeHandler(me.analysis);
-            });
-
-            this.config.on("change:startIndex", function() {
-                me.onChangeHandler(me.analysis);
-            });
+        customEvents: function() {
+            // to be overridden
         },
 
         onChangeHandler : function(analysis) {
@@ -99,7 +98,22 @@
             }, {
                 "silent" : silent
             });
-            changed = changed || a.hasChanged();
+            if (this.pagination) {
+                a.setParameter("maxResults", this.config.get("maxResults"), silent);
+                changed = changed || a.hasChanged();
+                var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
+                if (startIndexChange) {
+                    var startIndex = a.getParameter("startIndex");
+                    if ((startIndex || startIndex === 0)) {
+                        // update if pagination changed
+                        if (a.get("id") && (a.get("id").analysisJobId)) {
+                            a.setParameter("startIndex", this.config.get("startIndex"), silent);
+                            changed = changed || a.hasChanged();
+                            squid_api.compute(a);
+                        }
+                    }
+                }
+            }
             a.set({
                 "domains" : [ {
                     "projectId" : config.get("project"),

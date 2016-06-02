@@ -1,0 +1,22 @@
+.squid-api-modelinfo-internal-view {
+    overflow-y: scroll;
+    max-height: 200px;
+}
+.squid-api-modelinfo-internal-view table {
+    font-size: 0.7em;
+}
+.squid-api-modelinfo-internal-view h4 {
+    padding: 4px;
+    margin-top: 0px;
+    border-radius: 4px;
+    text-align: center;
+}
+.squid-api-modelinfo-internal-view::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+}
+.squid-api-modelinfo-internal-view::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}

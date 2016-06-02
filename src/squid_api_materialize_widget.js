@@ -154,7 +154,7 @@
 
         },
 
-        infovirtualize: function (event) {
+        infovirtualize: function () {
             //if ($(this.viewPort).find('.squid-api-materialize-panel-popup')) {
             $(this.viewPort).find('[data-toggle="materialize-virtualize-tooltip"]').tooltip('enable');
             $(this.viewPort).find('[data-toggle="materialize-virtualize-tooltip"]').tooltip();
@@ -162,11 +162,11 @@
             //}
         },
 
-        deinfovirtualize: function (event) {
+        deinfovirtualize: function () {
             $(this.viewPort).find('[data-toggle="materialize-virtualize-tooltip"]').tooltip('disable');
         },
 
-        infomaterialize: function (event) {
+        infomaterialize: function () {
             //if ($(this.viewPort).find('.squid-api-materialize-panel-popup')) {
             $(this.viewPort).find('[data-toggle="materialize-materialize-tooltip"]').tooltip('enable');
             $(this.viewPort).find('[data-toggle="materialize-materialize-tooltip"]').tooltip();
@@ -174,11 +174,11 @@
             //}
         },
 
-        deinfomaterialize: function (event) {
+        deinfomaterialize: function () {
             $(this.viewPort).find('[data-toggle="materialize-materialize-tooltip"]').tooltip('disable');
         },
 
-        infodestination: function (event) {
+        infodestination: function () {
             //if ($(this.viewPort).find('.squid-api-materialize-panel-popup')) {
             this.popup.find("#materialize-destination-tooltip").tooltip('enable');
             this.popup.find("#materialize-destination-tooltip").tooltip();
@@ -186,7 +186,7 @@
             //}
         },
 
-        infodataset: function (event) {
+        infodataset: function () {
             this.popup.find('[data-toggle="materialize-tooltip"]').tooltip('enable');
             this.popup.find('[data-toggle="materialize-tooltip"]').tooltip();
 
@@ -345,7 +345,6 @@
                 analysis = this.model;
             }
 
-            var selectedFormat = this.formats[this.selectedFormatIndex];
             var formatsDisplay = [];
             for (var i = 0; i < this.formats.length; i++) {
                 formatsDisplay[i] = this.formats[i];

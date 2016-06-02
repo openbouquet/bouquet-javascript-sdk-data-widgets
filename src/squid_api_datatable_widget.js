@@ -34,6 +34,8 @@
 
         currentDomain : null,
 
+        addFacetValueFromResults: false,
+
         initialize : function(options) {
             var me = this;
 
@@ -89,6 +91,9 @@
             if (options.reRunMessage) {
                 this.reRunMessage = options.reRunMessage;
             }
+            if (options.addFacetValueFromResults) {
+                this.addFacetValueFromResults = options.addFacetValueFromResults;
+            }
             if (d3) {
                 this.d3Formatter = d3.format(",");
             }
@@ -117,26 +122,61 @@
         events : ({
             "click thead th" : function(event) {
                 if (this.ordering) {
-                    var orderBy = this.config.get("orderBy");
-                	var expressionValue = $(event.currentTarget).attr("data-content");
-                	var obj = {"expression" : {"value" : expressionValue}};
-                    if (orderBy) {
-                        if (orderBy[0]) {
-                            if (orderBy[0].expression) {
-                                if (orderBy[0].expression.value == expressionValue) {
-                                    if ($(event.currentTarget).hasClass("ASC")) {
-                                        obj.direction = "DESC";
+                    var originType = $(event.currentTarget).attr("origin-type");
+                    if (originType !== "COMPARETO") {
+                        var orderBy = this.config.get("orderBy");
+                        var expressionValue = $(event.currentTarget).attr("data-content");
+                        var obj = {"expression" : {"value" : expressionValue}};
+                        if (orderBy) {
+                            if (orderBy[0]) {
+                                if (orderBy[0].expression) {
+                                    if (orderBy[0].expression.value === expressionValue) {
+                                        if ($(event.currentTarget).hasClass("ASC")) {
+                                            obj.direction = "DESC";
+                                        } else {
+                                            obj.direction = "ASC";
+                                        }
                                     } else {
-                                        obj.direction = "ASC";
+                                        obj.direction = "DESC";
                                     }
-                                } else {
-                                    obj.direction = "DESC";
                                 }
                             }
                         }
+                        this.config.set("orderBy", [obj]);
                     }
+                }
+            },
+            "click td.dimension" : function(event) {
+                if (this.addFacetValueFromResults) {
 
-                    this.config.set("orderBy", [obj]);
+                    var value = $(event.currentTarget).text();
+                    var facetId = $(event.currentTarget).parents('tbody').siblings('thead').find('> tr > th:eq(' + $(event.currentTarget).index() + ')').attr("data-content");
+
+                    var selectionClone = $.extend(true, {}, this.filters.get("selection"));
+                    var facets = selectionClone.facets;
+                    if (facets) {
+                        for (i=0; i<facets.length; i++) {
+                            if (facets[i].id === facetId) {
+                                var selectedItems = facets[i].selectedItems;
+                                var add = true;
+                                for (ix=0; ix<selectedItems.length; ix++) {
+                                    if (selectedItems[ix].value === value) {
+                                        add = false;
+                                        delete facets[i].selectedItems[ix];
+                                    }
+                                }
+                                if (add) {
+                                    facets[i].selectedItems.push({
+                                        id    : value,
+                                        type  : "v",
+                                        value : value
+                                    });
+                                }
+                            }
+                        }
+                        // Set the updated filters model
+                        this.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
+                    }
                 }
             }
         }),
@@ -160,196 +200,229 @@
             var me = this;
             var i;
             var metrics;
+            var domain = this.config.get("domain");
 
-            if (! me.headerInformation || this.currentDomain !== this.config.get("domain")) {
-                this.currentDomain = this.config.get("domain");
-                var parentId = this.config.get("domain");
-                return squid_api.getCustomer().then(function(customer) {
-                    return customer.get("projects").load(me.config.get("project")).then(function(project) {
-                        return project.get("domains").load(parentId).then(function(domain) {
-                            return domain.get("metrics").load().then(function(metrics) {
-                                var arr = [];
-                                for(i=0; i<metrics.size(); i++) {
-                                    arr.push(metrics.models[i].toJSON());
-                                }
-                                me.domainMetrics = arr;
-                                me.headerInformation = true;
-                                me.displayTableHeader();
+            if (domain) {
+                if (! me.headerInformation || this.currentDomain !== domain) {
+                    this.currentDomain = this.config.get("domain");
+                    var parentId = this.config.get("domain");
+                    return squid_api.getCustomer().then(function(customer) {
+                        return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                            return project.get("domains").load(parentId).then(function(domain) {
+                                return domain.get("metrics").load().then(function(metrics) {
+                                    var arr = [];
+                                    for(i=0; i<metrics.size(); i++) {
+                                        arr.push(metrics.models[i].toJSON());
+                                    }
+                                    me.domainMetrics = arr;
+                                    me.headerInformation = true;
+                                    me.displayTableHeader();
+                                });
                             });
                         });
                     });
-                });
-            } else  {
-                var columns = [];
-                var originalColumns;//unaltered by rollup splice
-                var invalidSelection = false;
-                var status = this.model.get("status");
+                } else  {
+                    var columns = [];
+                    var originalColumns;//unaltered by rollup splice
+                    var invalidSelection = false;
+                    var status = this.model.get("status");
 
-                var analysis = this.model;
-                // in case of a multi-analysis model
-                if (analysis.get("analyses")) {
-                  analysis = analysis.get("analyses")[0];
-                }
-                var results = analysis.get("results");
-                var rollups;
-                if (results && status !== "PENDING" && status !== "RUNNING") {
-                    // Analysis computed : use results columns
-                    columns = results.cols;
-
-                    // init rollups
-                    rollups = analysis.get("rollups");
-                    if (rollups && (rollups.length ===0)) {
-                        rollups = this.rollups = null;
+                    var analysis = this.model;
+                    // in case of a multi-analysis model
+                    if (analysis.get("analyses")) {
+                      analysis = analysis.get("analyses")[0];
                     }
-                    originalColumns = columns;
-                } else {
-                    // Analysis not computed yet : use analysis definition
-                    if (this.filters.get("selection")) {
-                        var obj;
-                        var facets = this.model.get("facets");
-                        if (facets) {
-                            for (i=0; i<facets.length; i++) {
-                                obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value);
-                                if (obj) {
-                                    obj.dataType = "STRING";
-                                    columns.push(obj);
-                                } else {
-                                    // impossible to get column data from selection
-                                    invalidSelection = true;
-                                }
-                            }
+                    var results = analysis.get("results");
+                    var rollups;
+                    if (results && status !== "PENDING" && status !== "RUNNING") {
+                        // Analysis computed : use results columns
+                        columns = results.cols;
+
+                        // init rollups
+                        rollups = analysis.get("rollups");
+                        if (rollups && (rollups.length ===0)) {
+                            rollups = this.rollups = null;
                         }
-                        metrics = this.model.get("metricList");
-                        if (metrics) {
-                            if (metrics.length === 0) {
-                                metrics = squid_api.model.config.get("chosenMetrics");
-                            }
-                        }
-                        if (metrics) {
-                            var metric;
-                            for (i=0; i<metrics.length; i++) {
-                                metric = metrics[i];
-                                if (metrics[i].id) {
-                                    for (ix=0; ix<me.domainMetrics.length; ix++) {
-                                        if (metrics[i].id.metricId === me.domainMetrics[ix].oid) {
-                                            metrics[i].name = me.domainMetrics[ix].name;
-                                        }
-                                    }
-                                    obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
+                        originalColumns = columns;
+                    } else {
+                        // Analysis not computed yet : use analysis definition
+                        if (this.filters.get("selection")) {
+                            var obj;
+                            var facets = this.model.get("facets");
+                            if (facets) {
+                                for (i=0; i<facets.length; i++) {
+                                    obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value);
                                     if (obj) {
-                                        obj.dataType = "NUMBER";
+                                        obj.dataType = "STRING";
+                                        columns.push(obj);
                                     } else {
                                         // impossible to get column data from selection
                                         invalidSelection = true;
                                     }
-                                } else {
-                                    obj = {
-                                            "id" : null,
-                                            "name" : metrics[i].name,
-                                            "dataType" : "NUMBER"
-                                    };
                                 }
-                                columns.push(obj);
+                            }
+                            metrics = this.model.get("metricList");
+                            if (metrics) {
+                                if (metrics.length === 0) {
+                                    metrics = squid_api.model.config.get("chosenMetrics");
+                                }
+                            }
+                            if (metrics) {
+                                var metric;
+                                for (i=0; i<metrics.length; i++) {
+                                    metric = metrics[i];
+                                    if (metrics[i].id) {
+                                        for (ix=0; ix<me.domainMetrics.length; ix++) {
+                                            if (metrics[i].id.metricId === me.domainMetrics[ix].oid) {
+                                                metrics[i].name = me.domainMetrics[ix].name;
+                                            }
+                                        }
+                                        obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
+                                        if (obj) {
+                                            obj.dataType = "NUMBER";
+                                        } else {
+                                            // impossible to get column data from selection
+                                            invalidSelection = true;
+                                        }
+                                    } else {
+                                        obj = {
+                                                "id" : null,
+                                                "name" : metrics[i].name,
+                                                "dataType" : "NUMBER"
+                                        };
+                                    }
+                                    columns.push(obj);
+                                }
+                            }
+                            if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
+                                originalColumns = columns.slice();
+                                columns.splice(this.config.get("rollups")[0].col, 1);
+                            } else {
+                                originalColumns = columns;
                             }
                         }
-                        if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
-                            originalColumns = columns.slice();
-                            columns.splice(this.config.get("rollups")[0].col, 1);
-                        } else {
-                            originalColumns = columns;
-                        }
                     }
-                }
 
-                var orderBy = this.model.get("orderBy");
-                if (orderBy) {
-                    // add orderBy direction
-                    for (col=0; col<columns.length; col++) {
-                        if (columns[col]) {
-                            columns[col].orderDirection = undefined;
-                            for (ix=0; ix<orderBy.length; ix++) {
-                                if (this.ordering) {
-                                    if (columns[col].definition) {
-                                        if (orderBy[ix].expression) {
-                                            if (columns[col].definition === orderBy[ix].expression.value) {
+                    var orderBy = this.model.get("orderBy");
+                    if (orderBy) {
+                        // add orderBy direction
+                        for (col=0; col<columns.length; col++) {
+                            if (columns[col]) {
+                                columns[col].orderDirection = undefined;
+                                for (ix=0; ix<orderBy.length; ix++) {
+                                    if (this.ordering) {
+                                        if (columns[col].definition) {
+                                            if (orderBy[ix].expression) {
+                                                if (columns[col].definition === orderBy[ix].expression.value) {
+                                                    columns[col].orderDirection = orderBy[ix].direction;
+                                                    break;
+                                                }
+                                            }
+                                        } else if (orderBy[ix].expression) {
+                                            if (columns[col].id === orderBy[ix].expression.value) {
                                                 columns[col].orderDirection = orderBy[ix].direction;
                                                 break;
                                             }
-                                        }
-                                    } else if (orderBy[ix].expression) {
-                                        if (columns[col].id === orderBy[ix].expression.value) {
-                                            columns[col].orderDirection = orderBy[ix].direction;
-                                            break;
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                var rollupColIndex = null;
-                var rollupSummaryIndex = null;
-                if (rollups) {
-                    if ((rollups.length>0)) {
-                        if (rollups.length>1 && rollups[0].col === -1) {
-                            rollupColIndex = rollups[1].col + 1;
-                        } else {
-                            rollupColIndex = rollups[0].col + 1;
+                    var rollupColIndex = null;
+                    var rollupSummaryIndex = null;
+                    if (rollups) {
+                        if ((rollups.length>0)) {
+                            if (rollups.length>1 && rollups[0].col === -1) {
+                                rollupColIndex = rollups[1].col + 1;
+                            } else {
+                                rollupColIndex = rollups[0].col + 1;
+                            }
+                        }
+                        if (this.config.get("rollups") && this.rollupSummaryColumn >= 0) {
+                            rollupSummaryIndex = this.rollupSummaryColumn + 1;
                         }
                     }
-                    if (this.config.get("rollups") && this.rollupSummaryColumn >= 0) {
-                        rollupSummaryIndex = this.rollupSummaryColumn + 1;
+                    me = this;
+                    // header
+                    d3.select(selector).select("thead tr").selectAll("th").remove();
+
+                    // set compare col
+                    this.compareCols = [];
+                    this.metricCols = [];
+                    this.dateCols = [];
+                    for (i=0; i<columns.length; i++) {
+                        if (columns[i].originType === "COMPARETO") {
+                            this.compareCols.push(i);
+                        }
+                        if (columns[i].role === "DATA") {
+                            this.metricCols.push(i);
+                        }
+                        if (columns[i].extendedType) {
+                            if (columns[i].extendedType.name === "DATE") {
+                                this.dateCols.push(i);
+                            }
+                        }
                     }
-                }
-                me = this;
-                // header
-                d3.select(selector).select("thead tr").selectAll("th").remove();
 
-                if (!invalidSelection) {
-                    d3.select(selector).select("thead tr").selectAll("th")
-                        .data(columns)
-                        .enter().append("th")
-                        .attr("class", function(d, i) {
-                            var str = "";
-                            if (rollups) {
-                                if (i === 0) {
-                                    // hide grouping column
-                                    str = str + "hide " + d.dataType;
-                                } else if (( rollupSummaryIndex !== null) && (i === rollupColIndex)) {
-                                    // hide rollup column
-                                    str = str + "hide " + d.dataType;
-                                } else {
-                                    str = str + d.dataType;
+                    if (!invalidSelection) {
+                        d3.select(selector).select("thead tr").selectAll("th")
+                            .data(columns)
+                            .enter().append("th")
+                            .attr("class", function(d, i) {
+                                var str = "";
+                                if (rollups) {
+                                    if (i === 0) {
+                                        // hide grouping column
+                                        str = str + "hide " + d.dataType;
+                                    } else if (( rollupSummaryIndex !== null) && (i === rollupColIndex)) {
+                                        // hide rollup column
+                                        str = str + "hide " + d.dataType;
+                                    } else {
+                                        str = str + d.dataType;
+                                    }
                                 }
-                            }
-                            if (d.orderDirection) {
-                                str = str + " " + d.orderDirection;
-                            }
-                            return str;
-                        })
-                        .html(function(d) {
-                            var str = d.name;
-                            if (d.orderDirection === "ASC") {
-                                str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
-                            } else if (d.orderDirection === "DESC") {
-                                str = str + " " + "<span class='sort-direction'>&#xffec;</span>";
-                            }
-                            return str;
-                        })
-                        .attr("data-content", function(d) {
-                            if (d.definition) {
-                                return d.definition;
-                            } else {
-                            	return d.id;
-                            }
-                        });
+                                if (d.orderDirection) {
+                                    str = str + " " + d.orderDirection;
+                                }
+                                if (me.compareCols) {
+                                    if (me.compareCols.length > 0) {
+                                        if (me.compareCols.indexOf(i) > -1) {
+                                            str += " compareTo";
+                                        } else if (me.metricCols.indexOf(i) > -1) {
+                                            str += " compare";
+                                        }
+                                    }
+                                }
+                                return str;
+                            })
+                            .attr("origin-type", function(d) {
+                                return d.originType;
+                            })
+                            .html(function(d) {
+                                var str = d.name;
+                                if (d.orderDirection === "ASC") {
+                                    str = str + " " + "<span class='sort-direction'>&#xffec;</span>";
+                                } else if (d.orderDirection === "DESC") {
+                                    str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
+                                }
+                                return str;
+                            })
+                            .attr("data-content", function(d) {
+                                if (d.definition) {
+                                    return d.definition;
+                                } else {
+                                    return d.id;
+                                }
+                            });
 
-                    // add class if more than 10 columns
-                    if (this.$el.find("thead th").length > 10) {
-                        this.$el.find("table").addClass("many-columns");
-                    } else {
-                        this.$el.find("table").removeClass("many-columns");
+                        // add class if more than 10 columns
+                        if (this.$el.find("thead th").length > 10) {
+                            this.$el.find("table").addClass("many-columns");
+                        } else {
+                            this.$el.find("table").removeClass("many-columns");
+                        }
                     }
                 }
             }
@@ -400,7 +473,7 @@
                             var toRound = true;
                             for (i=0; i<words.length; i++) {
                                 // see if column header contains the text duration / time
-                                if (words[i].toLowerCase() == "duration" || words[i].toLowerCase() == "time") {
+                                if (words[i].toLowerCase() === "duration" || words[i].toLowerCase() === "time") {
                                     toRound = false;
                                     // parse value with moment
                                     var d = moment.duration(parseFloat(v), 'milliseconds');
@@ -457,13 +530,14 @@
                     .enter()
                     .append("td")
                     .attr("class", function(d, i) {
+                        var str = "";
                         if (rollups) {
                             if (i === 0) {
                                 // hide grouping column
-                                return "hide";
+                                str = "hide";
                             } else if ((rollupSummaryIndex !== null) && (i === rollupColIndex)) {
                                 // hide rollup column
-                                return "hide";
+                                str = "hide";
                             } else if ((rollupSummaryIndex !== null) && (i === rollupSummaryIndex)) {
                                 if (parseInt(this.parentNode.__data__.v[0]) === 1) {
                                     // this is a total (grouped) line
@@ -471,24 +545,37 @@
                                 }
                                 if (parseInt(this.parentNode.__data__.v[0]) >= 1) {
                                   // this is a rollup sub level line
-                                  return "new-category";
+                                  str = "new-category";
                                 }
                             } else if ((i === 1 && parseInt(this.parentNode.__data__.v[0]) === 1)) {
                                 // this is a total line
                                 this.parentNode.className = "group";
-                                return "new-category";
+                                str = "new-category";
                             } else if (parseInt(this.parentNode.__data__.v[0]) > 1) {
                                 // this is a rollup sub level line
-                                return "new-category";
+                                str = "new-category";
                             } else if ((parseInt(this.parentNode.__data__.v[0]) === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
                                 // detect total column
                                 this.parentNode.className = "total-column";
                             }
                             // Detect Group & Empty Value
-                            if (this.parentNode.className === "group" && d.length === 0) {
+                            if (this.parentNode.className === "group" && d) {
                                 me.categoryColSpan(this);
                             }
                         }
+                        if (me.compareCols) {
+                            if (me.compareCols.indexOf(i) > -1) {
+                                str += " compareTo";
+                            } else if (me.metricCols.indexOf(i) > -1) {
+                                str += " compare";
+                            }
+                        }
+                        if (me.metricCols) {
+                            if (me.metricCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
+                                str += " dimension";
+                            }
+                        }
+                        return str;
                     })
                     .text(function(d, i) {
                         var text = d;
@@ -514,7 +601,7 @@
                     });
 
                 // display total
-                this.$el.find("#count-entries").html(""+ results.startIndex + " - " + (results.startIndex + data.results.rows.length));
+                this.$el.find("#count-entries").html(""+ (results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length));
                 this.$el.find("#total-entries").html(""+results.totalSize);
             }
         },
@@ -566,6 +653,7 @@
                     this.$el.find("#stale").hide();
                     this.$el.find("#re-run").hide();
                     this.$el.find(".sort-direction").show();
+                    this.$el.find("#table-container").show();
 
                     if (!this.model.get("error")) {
                         // display results
@@ -595,6 +683,7 @@
                     this.$el.find("#stale").hide();
                     this.$el.find(".sort-direction").show();
                     this.$el.find("#error").html("");
+                    this.$el.find("#table-container").hide();
                 }
 
                 if (this.model.get("status") === "PENDING") {

@@ -14,18 +14,130 @@
         selectedFormatIndex : 0,
         templateData : null,
         displayScripting : true,
+        disableCurl: false,
         displayCompression : true,
         materializeDatasetsView : false,
-        downloadButtonLabel : "Download your data",
         buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
         downloadButtonLabel : "Download",
+        analysisConfigurationEnabled : false,
+        metricSelectorEnabled : false,
+        configClone : null,
+        dimensionSelector : null,
+        metricSelector : null,
 
         initialize : function(options) {
             var me = this;
 
+            // setup options
+            if (options.config) {
+                this.config = options.config;
+            }
+            if (options.template) {
+                this.template = options.template;
+            } else {
+                this.template = squid_api.template.squid_api_export_widget;
+            }
+            if (options.formats) {
+                this.formats = options.formats;
+            }
+            if (options.renderTo) {
+                this.renderTo = options.renderTo;
+            }
+            if (options.displayInAccordion) {
+                this.displayInAccordion = true;
+                this.viewPort = $(this.renderTo);
+            } else {
+                this.viewPort = this.$el;
+            }
+            if (options.displayInPopup) {
+                this.displayInPopup = true;
+            }
+            if (options.disableCurl) {
+                this.disableCurl = options.disableCurl;
+            }
+            if (options.sqlView) {
+                this.sqlView = true;
+            }
+            if (options.downloadButtonLabel) {
+                this.downloadButtonLabel = options.downloadButtonLabel;
+            }
+            if (options.materializeDatasetsView) {
+                this.materializeDatasetsView = true;
+            }
+            if (options.downloadButtonLabel) {
+                this.downloadButtonLabel = options.downloadButtonLabel;
+            }
+            if (options.displayScripting === false) {
+                this.displayScripting = false;
+            }
+            if (options.displayCompression === false) {
+                this.displayCompression = false;
+            }
+            if (options.analysisConfigurationEnabled === true) {
+                this.analysisConfigurationEnabled = true;
+            }
+            if (options.metricSelectorEnabled === true) {
+                this.metricSelectorEnabled = true;
+            }
+            if (options.popupDialogClass) {
+                this.popupDialogClass = options.popupDialogClass;
+            }
+            if (options.buttonLabel) {
+                this.buttonLabel = options.buttonLabel;
+            }
+
+            if (!this.config) {
+                this.config = squid_api.model.config;
+            }
+
+            if (this.analysisConfigurationEnabled) {
+                // create a config clone to be used a the model for the DimensionSelector
+                this.configClone = new Backbone.Model();
+                this.configClone.set(_.clone(this.config.attributes));
+
+                // create a dimensionSelector
+                this.dimensionSelector = new squid_api.view.DimensionSelector({
+                    model : this.configClone,
+                    singleSelect : false,
+                    customView: true,
+                    available : "availableDimensions",
+                    template : options.dimensionSelectorTemplate
+                });
+
+                // create a metricSelector
+                this.metricSelector = new squid_api.view.MetricSelectorView({
+                    model : this.configClone,
+                    customView: true,
+                    available : "availableMetrics",
+                    template : options.metricSelectorTemplate
+                });
+
+
+                this.listenTo(this.configClone, 'change:chosenDimensions', function() {
+                    // update the analysis with extra dimensions
+                    me.model.setFacets(this.configClone.get("chosenDimensions"));
+                });
+
+                this.listenTo(this.configClone, 'change:chosenMetrics', function() {
+                    // update the analysis with extra metrics
+                    me.model.setMetrics(this.configClone.get("chosenMetrics"));
+                });
+
+                this.listenTo(this.config, 'change', function() {
+                    // reflect config changes to configClone
+                    me.configClone.set(_.clone(me.config.attributes));
+                    me.dimensionSelector.render();
+                    me.metricSelector.render();
+                });
+            }
+
             if (this.model.get("analysis")) {
                 this.listenTo(this.model.get("analysis"), 'change', function() {
+                    if (me.analysisConfigurationEnabled) {
+                        // reflect config changes to configClone
+                        me.configClone.set(_.clone(me.model.attributes));
+                    }
                     me.render();
                     me.enabled();
                 });
@@ -46,65 +158,20 @@
                     me.enabled();
                 });
             }
-            // setup options
-            if (options.template) {
-                this.template = options.template;
-            } else {
-                this.template = squid_api.template.squid_api_export_widget;
-            }
-            if (options.formats) {
-                this.formats = options.formats;
-            }
-            if (options.renderTo) {
-                this.renderTo = options.renderTo;
-            }
-            if (options.displayInAccordion) {
-            	this.displayInAccordion = true;
-                this.viewPort = this.renderTo;
-            } else {
-                this.viewPort = this.$el;
-            }
-            if (options.displayInPopup) {
-            	this.displayInPopup = true;
-            }
-            if (options.sqlView) {
-            	this.sqlView = true;
-            }
-            if (options.downloadButtonLabel) {
-                this.downloadButtonLabel = options.downloadButtonLabel;
-            }
-            if (options.materializeDatasetsView) {
-                this.materializeDatasetsView = true;
-            }
-            if (options.downloadButtonLabel) {
-            	this.downloadButtonLabel = options.downloadButtonLabel;
-            }
-            if (options.displayScripting === false) {
-                this.displayScripting = false;
-            }
-            if (options.displayCompression === false) {
-                this.displayCompression = false;
-            }
-            if (options.popupDialogClass) {
-                this.popupDialogClass = options.popupDialogClass;
-            }
-            if (options.buttonLabel) {
-                this.buttonLabel = options.buttonLabel;
-            }
         },
 
         enabled: function() {
-        	var viewPort = this.viewPort;
-        	if (this.popup) {
-        		viewPort = this.popup;
-        	}
-        	if (this.model.get("enabled")) {
-        		this.$el.find("button").prop("disabled", false);
-        		viewPort.find("button#download").prop("disabled", false);
-        	} else {
-        		this.$el.find("button").prop("disabled", true);
-        		viewPort.find("button#download").prop("disabled", true);
-        	}
+            var viewPort = this.viewPort;
+            if (this.popup) {
+                viewPort = this.popup;
+            }
+            if (this.model.get("enabled")) {
+                this.$el.find("button").prop("disabled", false);
+                viewPort.find("button#download").prop("disabled", false);
+            } else {
+                this.$el.find("button").prop("disabled", true);
+                viewPort.find("button#download").prop("disabled", true);
+            }
         },
 
         setModel : function(model) {
@@ -139,7 +206,7 @@
             var me = this;
             var viewPort = $(me.viewPort);
             if (this.popup) {
-            	viewPort = this.popup;
+                viewPort = this.popup;
             }
 
             // create download link
@@ -209,7 +276,7 @@
             var me = this;
             var viewPort = $(me.viewPort);
             if (this.displayInPopup) {
-            	viewPort = this.popup;
+                viewPort = this.popup;
             }
             if (me.currentJobId) {
                 // create download link
@@ -270,7 +337,7 @@
             var me = this;
             var viewPort = $(this.viewPort);
             if (this.displayInPopup) {
-            	viewPort = this.popup;
+                viewPort = this.popup;
             }
             var analysis = this.model.get("analysis");
             var enabled = this.model.get("enabled");
@@ -333,10 +400,8 @@
             }
 
             if (this.displayInAccordion) {
-                this.$el.html("<button type='button' class='btn btn-open-export-panel' data-toggle='collapse' data-target=" + this.renderTo + "> "+ this.downloadButtonLabel + "<span class='glyphicon glyphicon-download-alt'></span></button>");
-                var facets = analysis.get("facets");
-                var metrics = analysis.get("metrics");
-                if ((!facets || facets.length === 0) && (!metrics || metrics.length === 0)) {
+                this.$el.html("<button type='button' class='btn btn-open-export-panel' data-toggle='collapse' aria-expanded='false' data-target='" + this.renderTo + "'> "+ this.downloadButtonLabel + "<span class='glyphicon glyphicon-download-alt'></span></button>");
+                if (analysis.get("enabled") === false) {
                     $("button.btn-open-export-panel").prop('disabled', true);
                 } else {
                     $("button.btn-open-export-panel").prop('disabled', false);
@@ -371,28 +436,44 @@
                 curl = exportAnalysis.url().replace(/\[access_token\]/g, '<b>[access_token]</b>');
             }
 
-            $(this.viewPort).html(this.template({
-                "displayInAccordion" : this.displayInAccordion,
-                "downloadButtonLabel" : this.downloadButtonLabel,
-                "displayInPopup" : this.displayInPopup,
-                "sqlView" : this.sqlView,
-                "materializeDatasetsView" : this.materializeDatasetsView,
-                "data-target" : this.renderTo,
-                "formats": formatsDisplay,
-                "displayCompression" : this.displayCompression,
-                "compression": (this.compression),
-                "curl": curl,
-                "curlFileName" : curlFileName,
-                "origin": "https://api.squidsolutions.com",
-                "data": data,
-                "customerId" : squid_api.customerId,
-                "clientId" : squid_api.clientId,
-                "redirectURI":"https://api.squidsolutions.com",
-                "apiURL":squid_api.apiURL,
-                "buttonLabel": this.buttonLabel,
-                "downloadButtonLabel" : this.downloadButtonLabel
-                })
-            );
+            if (! this.disableCurl || this.viewPort.is(":empty")) {
+                $(this.viewPort).html(this.template({
+                    "displayInAccordion" : this.displayInAccordion,
+                    "downloadButtonLabel" : this.downloadButtonLabel,
+                    "displayInPopup" : this.displayInPopup,
+                    "sqlView" : this.sqlView,
+                    "materializeDatasetsView" : this.materializeDatasetsView,
+                    "data-target" : this.renderTo,
+                    "formats": formatsDisplay,
+                    "displayCompression" : this.displayCompression,
+                    "compression": (this.compression),
+                    "curl": curl,
+                    "curlFileName" : curlFileName,
+                    "origin": "https://api.squidsolutions.com",
+                    "data": data,
+                    "customerId" : squid_api.customerId,
+                    "clientId" : squid_api.clientId,
+                    "redirectURI":"https://api.squidsolutions.com",
+                    "apiURL":squid_api.apiURL,
+                    "buttonLabel": this.buttonLabel,
+                    "metricSelectorEnabled" : this.metricSelectorEnabled,
+                    "analysisConfigurationEnabled" : this.analysisConfigurationEnabled
+                    })
+                );
+
+                if (this.dimensionSelector) {
+                    // setup dimension selector
+                    this.dimensionSelector.setElement(this.viewPort.find("#dimensionSelector"));
+                    this.dimensionSelector.render();
+                }
+
+                if (this.metricSelector) {
+                    // setup metric selector
+                    this.metricSelector.setElement(this.viewPort.find("#metricSelector"));
+                    this.metricSelector.renderBase();
+                    this.metricSelector.render();
+                }
+            }
 
             // prepare SQL download link
             var downloadBtn = $(me.viewPort).find("#view-sql");
@@ -417,7 +498,6 @@
                 });
             }
 
-
             // apply cURL panel state
             if (me.curlCollapsed) {
                 $(this.viewPort).find('#curl').hide();
@@ -427,16 +507,16 @@
 
             // Click Handlers
             $(this.viewPort).find("#curlbtn").click(function() {
-            	var viewPort = $(me.viewPort);
-            	if (me.displayInPopup) {
-            		viewPort = me.popup;
-            	}
+                var viewPort = $(me.viewPort);
+                if (me.displayInPopup) {
+                    viewPort = me.popup;
+                }
 
                 me.curlCollapsed = !me.curlCollapsed;
                 if (me.curlCollapsed) {
-                	viewPort.find('#curl').fadeOut();
+                    viewPort.find('#curl').fadeOut();
                 } else {
-                	viewPort.find('#curl').fadeIn();
+                    viewPort.find('#curl').fadeIn();
                 }
             });
 
@@ -474,9 +554,9 @@
                 // Click Event for filter panel button
                 this.$el.find("button.popup-trigger").click(function() {
                     if (me.popup.dialog("isOpen")) {
-                    	me.popup.dialog( "close" );
+                        me.popup.dialog( "close" );
                     } else {
-                    	me.popup.dialog( "open" );
+                        me.popup.dialog( "open" );
                     }
                 });
             }

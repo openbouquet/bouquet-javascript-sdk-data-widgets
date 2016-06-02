@@ -8,6 +8,10 @@
         analysis : null,
         config : null,
 
+        customEvents: function() {
+            // to be overridden
+        },
+
         refreshAnalysis : function(silent) {
             var changed = false;
             var a = this.analysis;
@@ -36,11 +40,9 @@
             changed = changed || a.hasChanged();
             var selection = this.config.get("selection");
             if (selection) {
-                var facetFound = false;
                 for (i=0; i<selection.facets.length; i++) {
                     var facet = selection.facets[i];
                     var chosenDimensions = config.get("chosenDimensions");
-                    var id = facet.id;
                     if (chosenDimensions) {
                         if (config.get("chosenDimensions").length > 0) {
                             this.setDimension(a, chosenDimensions[0]);

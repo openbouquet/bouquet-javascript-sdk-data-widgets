@@ -11,6 +11,7 @@
         startDate: null,
         endDate: null,
         colorPalette: null,
+        colorPaletteCompare: null,
         interpolationRange: null,
         yearSwitcherView: null,
         multiSeries: null,
@@ -19,6 +20,7 @@
         renderTo: ".squid-api-data-widgets-timeseries-widget #widget",
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
         reRunMessage: "Please manually refresh your analysis",
+        timeUnitSelector: null,
         legendState: {},
 
         initialize : function(options) {
@@ -31,13 +33,39 @@
                 if (options.colorPalette) {
                     this.colorPalette = options.colorPalette;
                 } else {
-                    this.colorPalette = ["#067e87", "#00a0c2", "#0304b4", "#03a00b", "#0bf984", "#0ef0a2", "#068bf0", "#0c7be7", "#0540a9", "#02dafe", "#01c7b7", "#04bc68", "#061380", "#0de2b5", "#0c5e6b", "#027fa8", "#0df300", "#07f666", "#077839", "#0e7a70", "#0a947b", "#0011a3", "#00d2ab", "#03098a", "#017c8c", "#0855dd", "#0391f4", "#0c17b7", "#0d29a7", "#017a0f", "#0ec80e", "#04f4b7", "#08ec75", "#01f5e9", "#0afe29", "#09680c", "#08a459", "#03eb16", "#006116", "#01998d", "#013f2f", "#00966e", "#0d8d68", "#068b44", "#01784e", "#0de1ad", "#054010", "#0e65b6", "#04bb6d", "#02eec0", "#0875e5", "#0ac304", "#0bca4a", "#065293", "#08d7a1", "#0545eb", "#008a41", "#0572c3", "#0ceb28", "#0d9121", "#07b4a1", "#0563ac", "#046092", "#07d882", "#0d59f4", "#067bd9", "#0968b7", "#010e9f", "#0e3837", "#027d76", "#0d2478", "#00bc50", "#0b8bbc", "#028ba2", "#0a6245", "#0c5dae", "#00bbad", "#075bb4", "#03fd64", "#06fe18", "#0de939", "#0f104a", "#0c059f", "#0473ab", "#02896d", "#05fd0b", "#0d79ff", "#05a6f3", "#0c34ab", "#0486cf", "#022f39", "#09bb88", "#08a446", "#0e35d0", "#023c1b", "#0abe29", "#02b781", "#0c926f", "#02d742", "#005f34"];
+                    this.colorPalette = d3.scale.category10().range();
+                }
+                if (options.colorPaletteCompare) {
+                    this.colorPaletteCompare = options.colorPaletteCompare;
+                } else {
+                    this.colorPaletteCompare = d3.scale.category20().range();
+                }
+                if (options.timeUnits) {
+                    this.timeUnits = options.timeUnits;
+                } else {
+                    this.timeUnits = [{
+                        id: "TO_DATE",
+                        name: "Daily"
+                    },
+                    {
+                        id: "WEEKLY",
+                        name: "Weekly"
+                    }, {
+                        id: "MONTHLY",
+                        name: "Monthly"
+                    }, {
+                        id: "YEARLY",
+                        name: "Yearly"
+                    }];
                 }
                 if (options.interpolationRange) {
                     this.interpolationRange = options.interpolationRange;
                 }
                 if (options.yearSwitcherView) {
                     this.yearSwitcherView = options.yearSwitcherView;
+                }
+                if (options.timeUnitSelector) {
+                    this.timeUnitSelector = options.timeUnitSelector;
                 }
                 if (options.yearAnalysis) {
                     this.yearAnalysis = options.yearAnalysis;
@@ -61,9 +89,9 @@
                 }
             }
             if (options.configuration) {
-                this.configuration = options.configuration;
+                this.defaultConfiguration = options.configuration;
             } else {
-                this.configuration = {
+                this.defaultConfiguration = {
                     interpolate: "basic",
                     right: 80,
                     height: this.height,
@@ -74,6 +102,45 @@
                     animate_on_load: false,
                     legend_target: this.renderLegend,
                     colors: this.colorPalette,
+                    after_brushing: function(brush) {
+                        var div = $(this).parent().siblings("#brushing");
+                        if (brush.min_y === 0) {
+                            div.hide();
+                        } else {
+                            div.show();
+                        }
+                    },
+                    mouseover: function(d, i) {
+                        // remove existing active data point text el
+                        d3.select(this.target + " .mg-active-datapoint").remove();
+                        d3.select(this.target + " .mg-active-datapoint-container text").remove();
+
+                        var values = d.values;
+                        if (! values) {
+                            values = [d];
+                        }
+
+                        // append current hovered date
+                        $(this.target).parents().find("#legend").find(".date").remove();
+                        $(this.target).parents().find("#legend").prepend("<span class='date'>" + moment(values[0].date).format("L") + "</span>");
+
+                        for (i=0; i<values.length; i++) {
+                            var line = this.legend[values[i].line_id - 1];
+                            // find legend item
+                            var legendItems = $(this.legend_target + " span");
+                            for (ix=0; ix<legendItems.length; ix++) {
+                                if ($(legendItems[ix]).text().indexOf(line) > -1) {
+                                    $(legendItems[ix]).find(".value").remove();
+                                    $(legendItems[ix]).append("<span class='value'>" + values[i].value + "</span> ");
+                                }
+                            }
+                        }
+                    },
+                    mouseout: function() {
+                        $(this.target).parents().find("#legend").find(".date").remove();
+                        d3.select(".mg-active-datapoint-container").selectAll("*").remove();
+                        $(this.legend_target + " span .value").remove();
+                    }
                 };
             }
             if (options.format) {
@@ -93,6 +160,7 @@
                 this.listenTo(this.model, 'change:disabled', this.toggleDisplay);
                 this.listenTo(this.model, 'change:error', this.render);
                 this.listenTo(this.config, 'change:configDisplay', this.updateHeight);
+                this.listenTo(this.config, 'change:timeUnit', this.updateTimeUnitSelector);
             }
 
             // Resize
@@ -115,6 +183,14 @@
                 }
                 this.resizing = window.setTimeout(_.bind(this.updateWidth,this), 100);
             };
+        },
+
+        events: {
+            "change #time-unit-selector select": function(event) {
+                var unit = $(event.currentTarget).val();
+                this.config.set("timeUnit", unit);
+            },
+            "click #brushing a" : "render"
         },
 
         setModel : function(model) {
@@ -164,7 +240,7 @@
 
         updateHeight: function() {
             var configDisplay = this.config.get("configDisplay");
-            if (configDisplay) {
+            if (configDisplay && ! this.model.get("disabled") && this.configuration) {
                 if (! configDisplay.visible) {
                     this.configuration.height+=configDisplay.originalHeight;
                 } else {
@@ -175,112 +251,192 @@
         },
 
         updateWidth: function() {
-            this.configuration.width = $(this.renderTo).width();
-            MG.data_graphic(this.configuration);
+            if (! this.model.get("disabled") && this.configuration) {
+                this.configuration.width = $(this.renderTo).width();
+                MG.data_graphic(this.configuration);
+            }
+        },
+
+        standardizeData: function(currentDateIndex) {
+            // standardize data
+            for (i=0; i<this.results.rows.length; i++) {
+                // store date
+                if (! currentDateIndex) {
+                    var v = [this.results.rows[i].v[0]];
+                    var dim = "";
+                    var metricVals = [];
+                    for (ix=1; ix<this.results.rows[i].v.length; ix++) {
+                        if (typeof(this.results.rows[i].v[ix]) === "string") {
+                            if (dim.length === 0) {
+                                dim += this.results.rows[i].v[ix];
+                            } else {
+                                dim += " / " + this.results.rows[i].v[ix];
+                            }
+                        } else if (typeof(this.results.rows[i].v[ix]) === "number") {
+                            metricVals.push(this.results.rows[i].v[ix]);
+                        }
+                    }
+                    v.push(dim);
+                    for (ix1=0; ix1<metricVals.length; ix1++) {
+                        v.push(metricVals[ix1]);
+                    }
+                    this.results.rows[i].v = v;
+                } else {
+                    // remove currentDateRow
+                    this.results.rows[i].v.splice(currentDateIndex, 1);
+                }
+            }
+            if (currentDateIndex) {
+                this.results.cols.splice(currentDateIndex, 1);
+            }
         },
 
         renderGraphic: function(metrics) {
             this.$el.find(".sq-loading").hide();
             this.$el.find("#re-run").hide();
 
+            // reset configuration to default (if previous svg has been brushed)
+            this.configuration = _.clone(this.defaultConfiguration);
+
+            // for manipulation time
+            var start = new Date().getTime();
+
             // data for timeseries
             var legend = [];
             var dataset = [];
             var nVariate = false;
+            var compare = false;
+            var toRemove = [];
+
+            // see if multiple dimensions exist
+            for (var col=1; col<this.results.cols.length; col++) {
+                if (this.results.cols[col].role === "DOMAIN") {
+                    nVariate = true;
+                    var selection = this.config.get("selection");
+                    if (selection) {
+                        var facets = selection.facets;
+                        for (var f=0; f<facets.length; f++) {
+                            if (facets[f].id === this.results.cols[col].definition && this.results.cols[col].extendedType.name === "DATE") {
+                                nVariate = false;
+                                this.standardizeData(col);
+                            }
+                        }
+                    }
+                }
+                // if metrics are present, filter the display data
+                if (metrics) {
+                    if (! metrics.includes(this.results.cols[col].id)) {
+                        toRemove.push(col);
+                    }
+                }
+            }
 
             // sort dates
             this.results.rows = this.sortDates(this.results.rows);
 
-            // see if multiple dimensions exist
-            for (var col=1; col<this.results.cols.length; col++) {
-                if (this.results.cols[col].role == "DOMAIN") {
-                    nVariate = true;
-                    break;
-                }
+            if (nVariate) {
+                // make sure we only have three columns
+                this.standardizeData();
+                // show metrics
+                this.$el.find("#metrics").show();
+            } else {
+                this.$el.find("#metrics").hide();
             }
 
             // get data
+            var hashMap = {};
             for (i=1; i<this.results.cols.length; i++) {
-                if (_.contains(metrics, this.results.cols[i].id) || ! metrics) {
-                    var arr = [];
-                    var metaData = [];
-                    var dimCount = this.results.cols.length - 2;
-
-                    /* Legend */
-
-                    // if just using a metric and a date
-                    if (! nVariate) {
-                        legend.push(this.results.cols[i].name);
-                    } else {
-                    // obtain legend names from results
-                        for (var dim=0; dim<dimCount; dim++) {
-                            var arr = [];
-                            for (ix1=0; ix1<this.results.rows.length; ix1++) {
-                                if ($.inArray(this.results.rows[ix1].v[dim + 1], legend) < 0) {
+                if (! toRemove.includes(i)) {
+                   
+                    if (nVariate) {
+                        // obtain legend names from results
+                        for (ix1=0; ix1<this.results.rows.length; ix1++) {
+                            if (this.results.rows[ix1].v[1] !== null) {
+                                if ($.inArray(this.results.rows[ix1].v[1], legend) < 0) {
                                     // store unique legend items
-                                    legend.push(this.results.rows[ix1].v[dim + 1]);
-                                    // store meta data for results
-                                    metaData.push({
-                                        name : this.results.rows[ix1].v[dim + 1],
-                                        index: dim + 1
-                                    });
+                                    legend.push(this.results.rows[ix1].v[1]);
                                 }
-                            }
-                        }
-                    }
-
-                    /* Date Results */
-                    var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
-                    var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
-
-                    // make sure a value is available for every day (standard timeseries)
-                    if (! nVariate) {
-                        for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
-                            var date = currentDay.format('YYYY-MM-DD');
-                            var dataExists = false;
-
-                            var obj = {
-                                "date" : date
-                            };
-                            for (ix=0; ix<this.results.rows.length; ix++) {
-                                if (this.results.rows[ix].v[0] === date) {
-                                    dataExists = true;
-                                    obj.value = this.results.rows[ix].v[i];
+                                // create hashMap
+                                var i1 = this.results.rows[ix1].v[0];
+                                var i2 = this.results.rows[ix1].v[1];
+                                var i3 = this.results.rows[ix1].v[2];
+                                var i4 = this.results.rows[ix1].v[3];
+                                if (hashMap[i2]) {
+                                    hashMap[i2][i1] = i3;
+                                } else {
+                                    hashMap[i2] = {};
+                                    hashMap[i2][i1] = i3;
                                 }
-                            }
-                            if (! dataExists) {
-                                obj.value = 0;
-                            }
-                            arr.push(obj);
-                        }
-
-                        arr = MG.convert.date(arr, 'date');
-                        dataset.push(arr);
-                    } else {
-                    // if more than one dimension use metaData gathered from the legend creation
-                        for (var item=0; item<metaData.length; item++) {
-                            var tmpArr = [];
-                            startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
-                            for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
-                                var date = currentDay.format('YYYY-MM-DD');
-                                var dataExists = false;
-                                var obj1 = {
-                                    "date" : date
-                                };
-                                for (ix=0; ix<this.results.rows.length; ix++) {
-                                    if (this.results.rows[ix].v[0] === date && (metaData[item].name == this.results.rows[ix].v[metaData[item].index])) {
-                                        dataExists = true;
-                                        obj1.value = this.results.rows[ix].v[dimCount + 1];
+                                if (i4) {
+                                    compare = true;
+                                    // if compare exists
+                                    if (hashMap[i2 + " (compare)"]) {
+                                        hashMap[i2 + " (compare)"][i1] = i4;
+                                    } else {
+                                        hashMap[i2 + " (compare)"] = {};
+                                        hashMap[i2 + " (compare)"][i1] = i4;
+                                        // store unique compare legend items
+                                        legend.push(i2 + " (compare)");
                                     }
                                 }
-                                if (! dataExists) {
-                                    obj1.value = 0;
-                                }
-                                tmpArr.push(obj1);
                             }
-                            arr = MG.convert.date(tmpArr, 'date');
-                            dataset.push(arr);
                         }
+                    } else {
+                        if (this.results.cols[i].originType === "COMPARETO") {
+                            compare = true;
+                        }
+                        legend.push(this.results.cols[i].name);
+                    }
+                }
+            }
+
+            if (compare) {
+                this.configuration.colors = this.colorPaletteCompare;
+            } else {
+                this.configuration.colors = this.colorPalette;
+            }
+
+            var arr = [];
+            if (nVariate) {
+                var keys = [];
+                for (var key in hashMap) {
+                    if (hashMap.hasOwnProperty(key)) {
+                        keys.push(key);
+                    }
+                }
+                if (! compare) {
+                    // sort legend alphabetically
+                    legend.sort();
+                    // sort hashMap alphabetically
+                    keys.sort();
+                }
+
+                for (i=0; i<keys.length; i++) {
+                    arr = [];
+                    for (var date in hashMap[keys[i]]) {
+                        /*jshint forin: false */
+                        var obj1 = {
+                            "date" : date,
+                            "value": hashMap[keys[i]][date]
+                        };
+                        arr.push(obj1);
+                    }
+                    arr = MG.convert.date(arr, 'date');
+                    dataset.push(arr);
+                }
+            } else {
+                for (i=1; i<this.results.cols.length; i++) {
+                    if (! toRemove.includes(i)) {
+                        arr = [];
+                        for (ix=0; ix<this.results.rows.length; ix++) {
+                            var obj = {
+                                "date" : this.results.rows[ix].v[0],
+                                "value" : this.results.rows[ix].v[i]
+                            };
+                            arr.push(obj);
+                        }
+                        arr = MG.convert.date(arr, 'date');
+                        dataset.push(arr);
                     }
                 }
             }
@@ -302,6 +458,9 @@
 
             // reinitialize timeseries
             MG.data_graphic(this.configuration);
+
+            // manipulation time
+            console.log("timeseries manipulation time: " + (new Date().getTime() - start) + " ms");
         },
 
         hide: function() {
@@ -312,16 +471,41 @@
             this.$el.show();
         },
 
+        updateTimeUnitSelector: function() {
+            var timeUnit = this.config.get("timeUnit");
+            if (timeUnit) {
+                this.$el.find("#time-unit-selector select").val(timeUnit);
+            }
+            this.$el.find("#time-unit-selector select").multiselect();
+        },
+
         renderTemplate: function(done) {
+            // render metrics used for analysis
+            var metricColumns = [];
+            var results = this.model.get("results");
+            if (done && ! this.model.get("error") && results) {
+                var cols = this.model.get("results").cols;
+                for (i=0; i<cols.length; i++) {
+                    if (cols[i].role === "DATA") {
+                        metricColumns.push(cols[i].name);
+                    }
+                }
+            }
+            metricColumns = metricColumns.join(", ");
             this.$el.html(this.template({
                 reRunMessage: this.reRunMessage,
+                timeUnitSelector: this.timeUnitSelector,
+                timeUnits: this.timeUnits,
+                metricColumns: metricColumns,
                 done: done
             }));
+            if (this.timeUnitSelector) {
+                this.updateTimeUnitSelector();
+            }
         },
 
         render : function() {
             var status = this.model.get("status");
-            var me = this;
             this.YearOverYear = this.config.get("YearOverYear");
             this.renderTemplate(false);
 
@@ -346,31 +530,19 @@
                 var data = this.getData();
                 this.results = data.results;
 
-                // render metric selector view
-                var resultMetrics = [];
-                if (this.results) {
-                    for (i=0; i<this.results.cols.length; i++) {
-                        resultMetrics.push(this.results.cols[i].id);
-                    }
-                }
-
                 if (data.done && this.results && ! this.model.get("error")) {
                     this.renderGraphic();
-                    this.renderAdditionalView(new squid_api.view.MetricSelectorView({
-                        filterBy : resultMetrics,
-                        buttonText : "<i class='fa fa-cog'></i>",
-                        onChangeHandler: function() {
-                            var metrics = this.$el.find("select").val();
-                            if (! metrics) {
-                                metrics = [];
-                            }
-                            me.renderGraphic(metrics);
-                        }
-                    }), this.$el.find("#metricselector"));
                 } else {
+                    var chartChildren = this.$el.find("#chart_container").children();
                     if (this.model.get("error")) {
                         if (this.model.get("error").enableRerun) {
-                            this.$el.find("#re-run").show();
+                            for (i=0; i<chartChildren.length; i++) {
+                                if ($(chartChildren[i]).is("#re-run")) {
+                                    $(chartChildren[i]).show();
+                                } else {
+                                    $(chartChildren[i]).hide();
+                                }
+                            }
                         } else {
                             this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                         }
@@ -381,7 +553,9 @@
 
         renderAdditionalView: function(view, element) {
             view.setElement(element);
-            view.renderBase();
+            if (view.renderBase) {
+                view.renderBase();
+            }
             view.render();
         }
     });

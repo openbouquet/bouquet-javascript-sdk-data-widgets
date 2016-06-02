@@ -75,18 +75,59 @@
 
         },
 
-        barDataValues: function(data) {
+        barDataValues: function(cols, rows) {
             // Set up base object + arrays
-            var barData = {};
-            barData.values = [];
-            barData.xValues = [];
-            barData.yValues = [];
+            var barData = {
+                values: [],
+                xValues: [],
+                yValues: []
+            };
 
-            // Store these values
-            for (i=0; i<data.length; i++) {
-                barData.values.push(data[i].v);
-                barData.xValues.push(data[i].v[1]);
-                barData.yValues.push(data[i].v[0]);
+            // check to see if we only display totals
+            var onlyMetrics = true;
+            for (i=0; i<cols.length; i++) {
+                if (cols[i].role !== "DATA") {
+                    onlyMetrics = false;
+                }
+            }
+
+            // store bar data
+            if (onlyMetrics) {
+                // only show metric totals
+                for (i=0; i<cols.length; i++) {
+                    var col = cols[i];
+                    var yAxis = col.name + " Total";
+                    if (col.originType === "COMPARETO") {
+                        yAxis += " (compare)";
+                    }
+                    for (ix=0; ix<rows.length; ix++) {
+                        var xAxis = rows[ix].v[i];
+                        barData.xValues.push(xAxis);
+                        barData.yValues.push(yAxis);
+                        barData.values.push([yAxis, xAxis]);
+                    }
+                }
+            } else {
+                for (i=0; i<rows.length; i++) {
+                    var item1 = rows[i].v;
+                    var yAxis1 = "";
+                    var xAxis1;
+                    for (ix=0; ix<item1.length; ix++) {
+                        if (typeof(item1[ix]) === "string") {
+                            if (yAxis1.length === 0) {
+                                yAxis1 += item1[ix];
+                            } else {
+                                yAxis1 += " / " + item1[ix];
+                            }
+                        } else if (typeof(item1[ix]) === "number") {
+                            xAxis1 = item1[ix];
+                            barData.xValues.push(item1[ix]);
+                            break;
+                        }
+                    }
+                    barData.yValues.push(yAxis1);
+                    barData.values.push([yAxis1, xAxis1]);
+                }
             }
 
             return barData;
@@ -124,22 +165,30 @@
         },
 
         renderBase: function(done) {
+            var error = this.model.get("error");
+            var enableRerun;
+            if (error) {
+                enableRerun = error.enableRerun;
+            }
             this.$el.html(this.template({
-                done: done
+                done: done,
+                enableRerun: enableRerun
             }));
         },
 
         render: function() {
             var me = this;
             var data = this.getData();
+            var status = this.model.get("status");
+            var error = this.model.get("error");
 
-            if (data.done) {
+            if (data.done && ! error) {
 
                 // Print Template
                 this.renderBase(true);
 
                 // Obtain Bar Chart Data
-                var barData = this.barDataValues(data.results.rows);
+                var barData = this.barDataValues(data.results.cols, data.results.rows);
 
                 //Calculate largest value / width of screen
                 var maxValue = Math.max.apply(Math, barData.xValues);
@@ -173,7 +222,7 @@
 
                 var xAxis = d3.svg.axis()
                     .scale(xScale)
-                    .orient('top');
+                    .orient('bottom');
 
                 // To make the chart fit (Height)
                 var yScale = d3.scale.ordinal()
@@ -191,6 +240,7 @@
                     .append("svg")
                     .attr("width", width)
                     .attr("height", height)
+                    .attr("style", "overflow: visible;")
                     .append("g")
                     .attr("class", "chart");
 
@@ -205,13 +255,21 @@
                     .attr("y", function(d, i) {
                         return i*15;
                     })
-                    .attr("x", function(d, i) {
-                        return i + 200;
+                    .attr("x", function() {
+                        return 150;
                     })
                     .attr("width", function() {
                         return 0;
                     })
-                    .attr('fill', '#026E87')
+                    .attr('fill', function(d) {
+                        var color = "#1f77b4";
+                        if (d[0].includes("(compare)")) {
+                            /* BRIGHTEN */
+                            var parentColor = this.parentElement.previousSibling.firstChild.getAttributeNode("fill").value;
+                            color = d3.hsl(parentColor).brighter().toString();
+                        }
+                        return color;
+                    })
                     .attr("height", barHeight)
                     .on('mouseover', function(d) {
                         tooltip.transition()
@@ -246,15 +304,15 @@
                         .attr('class', 'axis')
                         .attr('width', width)
                         .attr('x', 400)
-                        .attr('transform', 'translate(200,' + (height - 1) + ')')
+                        .attr('transform', 'translate(150,' + (height - 1) + ')')
                         .call(xAxis);
 
-                    // yAxis (Starting 200px from right)
+                    // yAxis (Starting 150px from right)
                     var yAxisAppend = d3.select("#bar_chart svg")
                         .append("g")
                         .attr('class', 'axis')
                         .attr('height', height)
-                        .attr('transform', 'translate(200,0)')
+                        .attr('transform', 'translate(150,0)')
                         .call(yAxis)
                         .selectAll(".tick");
 
@@ -266,8 +324,14 @@
                     // Print Template
                     this.renderBase(false);
                 }
+                if (status === "RUNNING") {
+                    this.$el.find("#sq-loading").show();
+                    this.$el.find("#re-run").hide();
+                } else {
+                    this.$el.find("#sq-loading").hide();
+                }
 
-            return this;
+                return this;
         }
 
     });
