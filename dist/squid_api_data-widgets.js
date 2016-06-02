@@ -748,7 +748,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"squid-api-modelinfo-widget\">\n    <button class=\"btn form-control\" role=\"button\" data-toggle=\"popover\">\n        <i class=\"fa fa-info\" aria-hidden=\"true\"></i>\n    </button>\n</div>\n";
+  return "<div class=\"squid-api-modelinfo-widget\">\n    <button class=\"btn btn-default form-control\" role=\"button\" data-toggle=\"popover\">\n        <i class=\"fa fa-info\" aria-hidden=\"true\"></i>\n    </button>\n</div>\n";
   });
 
 this["squid_api"]["template"]["squid_api_orderby_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -5023,7 +5023,7 @@ function program2(depth0,data) {
         template: template,
         popoverOptions: {
             placement: function (context, source) {
-                var position = $(source).position();
+                var position = $(source).offset();
 
                 if (position.left > 515) {
                     return "left";

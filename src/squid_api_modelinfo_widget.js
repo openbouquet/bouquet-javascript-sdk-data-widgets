@@ -8,7 +8,7 @@
         template: template,
         popoverOptions: {
             placement: function (context, source) {
-                var position = $(source).position();
+                var position = $(source).offset();
 
                 if (position.left > 515) {
                     return "left";
