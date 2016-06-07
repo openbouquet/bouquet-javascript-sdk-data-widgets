@@ -6501,6 +6501,7 @@ function program2(depth0,data) {
         legendState: {},
 
         initialize : function(options) {
+            var me = this;
             this.config = squid_api.model.config;
 
             if (options) {
@@ -6608,7 +6609,7 @@ function program2(depth0,data) {
                             for (ix=0; ix<legendItems.length; ix++) {
                                 if ($(legendItems[ix]).text().indexOf(line) > -1) {
                                     $(legendItems[ix]).find(".value").remove();
-                                    $(legendItems[ix]).append("<span class='value'>" + values[i].value + "</span> ");
+                                    $(legendItems[ix]).append("<span class='value'>" + me.format(values[i].value) + "</span> ");
                                 }
                             }
                         }
@@ -6625,7 +6626,7 @@ function program2(depth0,data) {
             } else {
                 // default number formatter
                 if (d3) {
-                    this.format = d3.format(",.1f");
+                    this.format = d3.format(",.0f");
                 } else {
                     this.format = function(f){
                         return f;
@@ -6824,7 +6825,7 @@ function program2(depth0,data) {
             var hashMap = {};
             for (i=1; i<this.results.cols.length; i++) {
                 if (! toRemove.includes(i)) {
-                   
+
                     if (nVariate) {
                         // obtain legend names from results
                         for (ix1=0; ix1<this.results.rows.length; ix1++) {
