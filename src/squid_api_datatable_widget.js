@@ -277,7 +277,7 @@
                                                 metrics[i].name = me.domainMetrics[ix].name;
                                             }
                                         }
-                                        obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId) {};
+                                        obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId) || {};
                                         if (obj) {
                                             obj.dataType = "NUMBER";
                                         } else {
