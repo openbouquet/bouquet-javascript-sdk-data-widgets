@@ -251,7 +251,7 @@
                             var facets = this.model.get("facets");
                             if (facets) {
                                 for (i=0; i<facets.length; i++) {
-                                    obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value);
+                                    obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value) || {};
                                     if (obj) {
                                         obj.dataType = "STRING";
                                         columns.push(obj);
@@ -277,7 +277,7 @@
                                                 metrics[i].name = me.domainMetrics[ix].name;
                                             }
                                         }
-                                        obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
+                                        obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId) {};
                                         if (obj) {
                                             obj.dataType = "NUMBER";
                                         } else {
