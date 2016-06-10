@@ -1213,20 +1213,6 @@ function program2(depth0,data) {
             }, {
                 "silent" : silent
             });
-            if (this.pagination) {
-                a.setParameter("maxResults", this.config.get("maxResults"), silent);
-                changed = changed || a.hasChanged();
-                var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
-                if (startIndexChange) {
-                    var startIndex = a.getParameter("startIndex");
-                    // update if pagination changed
-                    if (a.get("id") && (a.get("id").analysisJobId)) {
-                        a.setParameter("startIndex", this.config.get("startIndex"), silent);
-                        changed = changed || a.hasChanged();
-                        squid_api.compute(a);
-                    }
-                }
-            }
             a.set({
                 "domains" : [ {
                     "projectId" : config.get("project"),
@@ -1260,7 +1246,18 @@ function program2(depth0,data) {
                 "silent" : silent
             });
             changed = changed || a.hasChanged();
-
+            if (this.pagination) {
+                a.setParameter("maxResults", this.config.get("maxResults"), silent);
+                var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
+                if (startIndexChange) {
+                    var startIndex = a.getParameter("startIndex");
+                    // update if pagination changed
+                    if (a.get("id") && (a.get("id").analysisJobId)) {
+                        a.setParameter("startIndex", this.config.get("startIndex"), silent);
+                        squid_api.compute(a);
+                    }
+                }
+            }
             if (changed === true) {
                 this.onChangeHandler(this.analysis);
             }
