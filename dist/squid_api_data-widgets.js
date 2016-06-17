@@ -2121,7 +2121,7 @@ function program2(depth0,data) {
                     }
 
                     if (!invalidSelection) {
-                        d3.select(selector).select("thead tr").selectAll("th")
+                        var header = d3.select(selector).select("thead tr").selectAll("th")
                             .data(columns)
                             .enter().append("th")
                             .attr("class", function(d, i) {
@@ -2151,9 +2151,6 @@ function program2(depth0,data) {
                                 }
                                 return str;
                             })
-                            .attr("origin-type", function(d) {
-                                return d.originType;
-                            })
                             .html(function(d) {
                                 var str = d.name;
                                 if (d.orderDirection === "ASC") {
@@ -2162,6 +2159,12 @@ function program2(depth0,data) {
                                     str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
                                 }
                                 return str;
+                            })
+                            .attr("data-role", function(d) {
+                                return d.role;
+                            })
+                            .attr("origin-type", function(d) {
+                                return d.originType;
                             })
                             .attr("data-content", function(d) {
                                 if (d.definition) {
@@ -2176,6 +2179,55 @@ function program2(depth0,data) {
                             this.$el.find("table").addClass("many-columns");
                         } else {
                             this.$el.find("table").removeClass("many-columns");
+                        }
+
+                        // add tooltips on metrics / compare columns
+                        var headerCols = this.$el.find("thead th");
+                        for (var ix=0; ix<headerCols.length; ix++) {
+                            var column = $(headerCols[ix]);
+
+                            var role = column.attr("data-role");
+                            var originType = column.attr("origin-type");
+                            var id = column.attr("data-content");
+
+                            var options = {
+                                position: {
+                                    my: "center bottom",
+                                    at: "center top+5",
+                                }
+                            };
+
+                            if (role === "DATA" && originType !== "COMPARETO") {
+                                // metric
+                                squid_api.getCustomer().then(function(customer) {
+                                    return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                                        return project.get("domains").load(me.config.get("domain")).then(function(domain) {
+                                            metrics = domain.get("metrics");
+                                        });
+                                    });
+                                });
+
+                                column.attr("title", metrics.findWhere({"definition" : id}).get("description") || "");
+
+                            } else if (originType === "COMPARETO") {
+                                // compare column
+                                var results = squid_api.model.filters.get("results");
+                                var period = squid_api.model.config.get("period");
+                                if (results) {
+                                    var compareTo = results.compareTo;
+                                    if (compareTo) {
+                                        if (compareTo[0]) {
+                                            if (compareTo[0].selectedItems[0]) {
+                                                var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
+                                                var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
+                                                column.attr("title", "metric comparaison on period " + lowerBound + " to " + upperBound);
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                            }
+                            column.tooltip(options);
                         }
                     }
                 }
