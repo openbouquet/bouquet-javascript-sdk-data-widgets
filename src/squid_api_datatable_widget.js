@@ -22,6 +22,8 @@
 
         headerBadges : false,
 
+        enableFormatting : true,
+
         paginationView : null,
 
         rollupSummaryColumn : null,
@@ -60,6 +62,22 @@
                 this.template = squid_api.template.squid_api_datatable_widget;
             }
 
+            // detect analysis formatting
+            var optionKeys = this.model.get("optionKeys");
+            if (optionKeys) {
+                if (optionKeys.applyFormat === true) {
+                    squid_api.utils.checkAPIVersion(">=4.2.15").done(function(v){
+                        this.enableFormatting = false;
+                    }).fail(function(v){
+                        if (v) {
+                            console.log("API version NOT OK : "+v + " for Automatic Analysis Results Formatting");
+                        } else {
+                            console.error("WARN unable to get Bouquet Server version");
+                        }
+                    });
+                }
+            }
+
             // filters are used to get the Dimensions and Metrics names
             if (options.filters) {
                 this.filters = options.filters;
@@ -94,28 +112,30 @@
             if (options.addFacetValueFromResults) {
                 this.addFacetValueFromResults = options.addFacetValueFromResults;
             }
-            if (d3) {
-                this.d3Formatter = d3.format(",");
-            }
-            if (options.format) {
-                this.format = options.format;
-            } else {
+            if (this.enableFormatting) {
+                if (d3) {
+                    this.d3Formatter = d3.format(",");
+                }
+                if (options.format) {
+                    this.format = options.format;
+                } else {
                 // default number formatter
                 if (this.d3Formatter) {
-                    this.format = function(f){
-                        if (isNaN(f)) {
-                            return f;
-                        } else {
-                            return me.d3Formatter(f);
-                        }
-                    };
-                } else {
-                    this.format = function(f){
+                        this.format = function(f){
+                            if (isNaN(f)) {
+                                return f;
+                            } else {
+                                return me.d3Formatter(f);
+                            }
+                        };
+                    } else {
+                        this.format = function(f){
                         return f;
-                    };
+                        };
+                    }
                 }
             }
-
+            
             this.renderBaseViewPort();
         },
 
@@ -453,7 +473,12 @@
                                     });
                                 });
 
-                                column.attr("title", metrics.findWhere({"definition" : id}).get("description") || "");
+                                var metricItem = metrics.findWhere({"definition" : id});
+                                var metricItemDescription = "";
+                                if (metricItem) {
+                                    metricItemDescription = metricItem.get("description");
+                                }
+                                column.attr("title", metricItemDescription);
 
                             } else if (originType === "COMPARETO") {
                                 // compare column
@@ -513,43 +538,46 @@
                 }
                 // apply paging and number formatting
                 var data = {};
-                data.results = {"cols" : results.cols, "rows" : []};
-                rows = results.rows;
-                for (rowIdx = 0; (rowIdx<rows.length && rowIdx<this.maxRowsPerPage); rowIdx++) {
-                    row = rows[rowIdx];
-                    newRow = {v:[]};
-                    for (colIdx = 0; colIdx<results.cols.length; colIdx++) {
-                        v = row.v[colIdx];
-                        if (results.cols[colIdx].extendedType) {
-                            var words = results.cols[colIdx].name.split(" ");
-                            var toRound = true;
-                            for (i=0; i<words.length; i++) {
-                                // see if column header contains the text duration / time
-                                if (words[i].toLowerCase() === "duration" || words[i].toLowerCase() === "time") {
-                                    toRound = false;
-                                    // parse value with moment
-                                    var d = moment.duration(parseFloat(v), 'milliseconds');
-                                    // obtain hours / minutes & seconds
-                                    var hours = d.asHours();
-                                    var minutes = d.asMinutes();
-                                    var days = d.asDays();
-                                    var years = d.asYears();
-                                    var seconds = d.asSeconds();
-                                    var milliseconds = d.asMilliseconds();
-                                    var timeData = d._data;
-                                    // contruct readable time values
-                                    if (milliseconds > 1) {
-                                        v = this.d3Formatter(Math.round(timeData.milliseconds * 100) / 100);
-                                        if (seconds > 1) {
-                                            v = timeData.seconds + "s";
-                                            if (minutes > 1) {
-                                                v = timeData.minutes + "m " + v;
-                                                if (hours > 1) {
-                                                    v = timeData.hours + "h " + v;
-                                                    if (days > 1) {
-                                                        v = timeData.days + "d " + v;
-                                                        if (years > 1) {
-                                                            v = timeData.years + "y " + v;
+                data.results = {"cols" : results.cols, "rows" : results.rows};
+                if (this.enableFormatting) {
+                    data.results.rows = [];
+                    rows = results.rows;
+                    for (rowIdx = 0; (rowIdx<rows.length && rowIdx<this.maxRowsPerPage); rowIdx++) {
+                        row = rows[rowIdx];
+                        newRow = {v:[]};
+                        for (colIdx = 0; colIdx<results.cols.length; colIdx++) {
+                            v = row.v[colIdx];
+                            if (results.cols[colIdx].extendedType) {
+                                var words = results.cols[colIdx].name.split(" ");
+                                var toRound = true;
+                                for (i=0; i<words.length; i++) {
+                                    // see if column header contains the text duration / time
+                                    if (words[i].toLowerCase() === "duration" || words[i].toLowerCase() === "time") {
+                                        toRound = false;
+                                        // parse value with moment
+                                        var d = moment.duration(parseFloat(v), 'milliseconds');
+                                        // obtain hours / minutes & seconds
+                                        var hours = d.asHours();
+                                        var minutes = d.asMinutes();
+                                        var days = d.asDays();
+                                        var years = d.asYears();
+                                        var seconds = d.asSeconds();
+                                        var milliseconds = d.asMilliseconds();
+                                        var timeData = d._data;
+                                        // contruct readable time values
+                                        if (milliseconds > 1) {
+                                            v = this.d3Formatter(Math.round(timeData.milliseconds * 100) / 100);
+                                            if (seconds > 1) {
+                                                v = timeData.seconds + "s";
+                                                if (minutes > 1) {
+                                                    v = timeData.minutes + "m " + v;
+                                                    if (hours > 1) {
+                                                        v = timeData.hours + "h " + v;
+                                                        if (days > 1) {
+                                                            v = timeData.days + "d " + v;
+                                                            if (years > 1) {
+                                                                v = timeData.years + "y " + v;
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -557,14 +585,14 @@
                                         }
                                     }
                                 }
+                                if (typeof v === "number" && toRound) {
+                                    v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
+                                }
                             }
-                            if (typeof v === "number" && toRound) {
-                                v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
-                            }
+                            newRow.v.push(v);
                         }
-                        newRow.v.push(v);
+                        data.results.rows.push(newRow);
                     }
-                    data.results.rows.push(newRow);
                 }
 
                 // Rows

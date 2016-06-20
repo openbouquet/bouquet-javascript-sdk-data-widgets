@@ -30,6 +30,9 @@
                 if (options.pagination) {
                     this.pagination = options.pagination;
                 }
+                if (options.afterInitializedCallback) {
+                    this.afterInitializedCallback = options.afterInitializedCallback;
+                }
             }
 
             if (!this.config) {
@@ -70,8 +73,11 @@
                     me.refreshAnalysis();
                 }
             });
-
             this.customEvents();
+
+            if (this.afterInitializedCallback) {
+                this.afterInitializedCallback.call(this);
+            }
         },
 
         customEvents: function() {
