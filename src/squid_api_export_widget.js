@@ -456,7 +456,6 @@
                     "redirectURI":"https://api.squidsolutions.com",
                     "apiURL":squid_api.apiURL,
                     "buttonLabel": this.buttonLabel,
-                    "downloadButtonLabel" : this.downloadButtonLabel,
                     "metricSelectorEnabled" : this.metricSelectorEnabled,
                     "analysisConfigurationEnabled" : this.analysisConfigurationEnabled
                     })

@@ -172,7 +172,7 @@
             }
 
             squid_api.getSelectedProject(true).then(function(project) {
-                me.projectName = project.get("id")["projectId"];
+                me.projectName = project.get("id").projectId;
                 me.schemaName = project.get("dbSchemas")[0];
             });
 

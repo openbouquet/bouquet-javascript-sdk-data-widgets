@@ -30,6 +30,9 @@
                 if (options.pagination) {
                     this.pagination = options.pagination;
                 }
+                if (options.afterInitializedCallback) {
+                    this.afterInitializedCallback = options.afterInitializedCallback;
+                }
             }
 
             if (!this.config) {
@@ -41,37 +44,40 @@
                 var refreshNeeded = false;
                 if (this.config.hasChanged("project")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("domain")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("chosenDimensions")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("chosenMetrics")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("limit")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("rollups")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("orderBy")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("selection")) {
                     refreshNeeded = true;
-                };
+                }
                 if (this.config.hasChanged("startIndex")) {
                     refreshNeeded = true;
-                };
+                }
                 if (refreshNeeded) {
                     me.refreshAnalysis();
                 }
             });
-
             this.customEvents();
+
+            if (this.afterInitializedCallback) {
+                this.afterInitializedCallback.call(this);
+            }
         },
 
         customEvents: function() {
@@ -98,22 +104,6 @@
             }, {
                 "silent" : silent
             });
-            if (this.pagination) {
-                a.setParameter("maxResults", this.config.get("maxResults"), silent);
-                changed = changed || a.hasChanged();
-                var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
-                if (startIndexChange) {
-                    var startIndex = a.getParameter("startIndex");
-                    if ((startIndex || startIndex === 0)) {
-                        // update if pagination changed
-                        if (a.get("id") && (a.get("id").analysisJobId)) {
-                            a.setParameter("startIndex", this.config.get("startIndex"), silent);
-                            changed = changed || a.hasChanged();
-                            squid_api.compute(a);
-                        }
-                    }
-                }
-            }
             a.set({
                 "domains" : [ {
                     "projectId" : config.get("project"),
@@ -147,7 +137,18 @@
                 "silent" : silent
             });
             changed = changed || a.hasChanged();
-
+            if (this.pagination) {
+                a.setParameter("maxResults", this.config.get("maxResults"), silent);
+                var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
+                if (startIndexChange) {
+                    var startIndex = a.getParameter("startIndex");
+                    // update if pagination changed
+                    if (a.get("id") && (a.get("id").analysisJobId)) {
+                        a.setParameter("startIndex", this.config.get("startIndex"), silent);
+                        squid_api.compute(a);
+                    }
+                }
+            }
             if (changed === true) {
                 this.onChangeHandler(this.analysis);
             }

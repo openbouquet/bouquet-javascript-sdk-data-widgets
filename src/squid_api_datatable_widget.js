@@ -22,6 +22,8 @@
 
         headerBadges : false,
 
+        enableFormatting : true,
+
         paginationView : null,
 
         rollupSummaryColumn : null,
@@ -60,6 +62,22 @@
                 this.template = squid_api.template.squid_api_datatable_widget;
             }
 
+            // detect analysis formatting
+            var optionKeys = this.model.get("optionKeys");
+            if (optionKeys) {
+                if (optionKeys.applyFormat === true) {
+                    squid_api.utils.checkAPIVersion(">=4.2.15").done(function(v){
+                        this.enableFormatting = false;
+                    }).fail(function(v){
+                        if (v) {
+                            console.log("API version NOT OK : "+v + " for Automatic Analysis Results Formatting");
+                        } else {
+                            console.error("WARN unable to get Bouquet Server version");
+                        }
+                    });
+                }
+            }
+
             // filters are used to get the Dimensions and Metrics names
             if (options.filters) {
                 this.filters = options.filters;
@@ -94,28 +112,30 @@
             if (options.addFacetValueFromResults) {
                 this.addFacetValueFromResults = options.addFacetValueFromResults;
             }
-            if (d3) {
-                this.d3Formatter = d3.format(",");
-            }
-            if (options.format) {
-                this.format = options.format;
-            } else {
+            if (this.enableFormatting) {
+                if (d3) {
+                    this.d3Formatter = d3.format(",");
+                }
+                if (options.format) {
+                    this.format = options.format;
+                } else {
                 // default number formatter
                 if (this.d3Formatter) {
-                    this.format = function(f){
-                        if (isNaN(f)) {
-                            return f;
-                        } else {
-                            return me.d3Formatter(f);
-                        }
-                    };
-                } else {
-                    this.format = function(f){
+                        this.format = function(f){
+                            if (isNaN(f)) {
+                                return f;
+                            } else {
+                                return me.d3Formatter(f);
+                            }
+                        };
+                    } else {
+                        this.format = function(f){
                         return f;
-                    };
+                        };
+                    }
                 }
             }
-
+            
             this.renderBaseViewPort();
         },
 
@@ -130,7 +150,7 @@
                         if (orderBy) {
                             if (orderBy[0]) {
                                 if (orderBy[0].expression) {
-                                    if (orderBy[0].expression.value == expressionValue) {
+                                    if (orderBy[0].expression.value === expressionValue) {
                                         if ($(event.currentTarget).hasClass("ASC")) {
                                             obj.direction = "DESC";
                                         } else {
@@ -251,7 +271,7 @@
                             var facets = this.model.get("facets");
                             if (facets) {
                                 for (i=0; i<facets.length; i++) {
-                                    obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value);
+                                    obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value) || {};
                                     if (obj) {
                                         obj.dataType = "STRING";
                                         columns.push(obj);
@@ -277,7 +297,7 @@
                                                 metrics[i].name = me.domainMetrics[ix].name;
                                             }
                                         }
-                                        obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
+                                        obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId) || {};
                                         if (obj) {
                                             obj.dataType = "NUMBER";
                                         } else {
@@ -367,7 +387,7 @@
                     }
 
                     if (!invalidSelection) {
-                        d3.select(selector).select("thead tr").selectAll("th")
+                        var header = d3.select(selector).select("thead tr").selectAll("th")
                             .data(columns)
                             .enter().append("th")
                             .attr("class", function(d, i) {
@@ -397,17 +417,20 @@
                                 }
                                 return str;
                             })
-                            .attr("origin-type", function(d) {
-                                return d.originType
-                            })
                             .html(function(d) {
                                 var str = d.name;
                                 if (d.orderDirection === "ASC") {
-                                    str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
-                                } else if (d.orderDirection === "DESC") {
                                     str = str + " " + "<span class='sort-direction'>&#xffec;</span>";
+                                } else if (d.orderDirection === "DESC") {
+                                    str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
                                 }
                                 return str;
+                            })
+                            .attr("data-role", function(d) {
+                                return d.role;
+                            })
+                            .attr("origin-type", function(d) {
+                                return d.originType;
                             })
                             .attr("data-content", function(d) {
                                 if (d.definition) {
@@ -422,6 +445,60 @@
                             this.$el.find("table").addClass("many-columns");
                         } else {
                             this.$el.find("table").removeClass("many-columns");
+                        }
+
+                        // add tooltips on metrics / compare columns
+                        var headerCols = this.$el.find("thead th");
+                        for (var ix=0; ix<headerCols.length; ix++) {
+                            var column = $(headerCols[ix]);
+
+                            var role = column.attr("data-role");
+                            var originType = column.attr("origin-type");
+                            var id = column.attr("data-content");
+
+                            var options = {
+                                position: {
+                                    my: "center bottom",
+                                    at: "center top+5",
+                                }
+                            };
+
+                            if (role === "DATA" && originType !== "COMPARETO") {
+                                // metric
+                                squid_api.getCustomer().then(function(customer) {
+                                    return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                                        return project.get("domains").load(me.config.get("domain")).then(function(domain) {
+                                            metrics = domain.get("metrics");
+                                        });
+                                    });
+                                });
+
+                                var metricItem = metrics.findWhere({"definition" : id});
+                                var metricItemDescription = "";
+                                if (metricItem) {
+                                    metricItemDescription = metricItem.get("description");
+                                }
+                                column.attr("title", metricItemDescription);
+
+                            } else if (originType === "COMPARETO") {
+                                // compare column
+                                var results = squid_api.model.filters.get("results");
+                                var period = squid_api.model.config.get("period");
+                                if (results) {
+                                    var compareTo = results.compareTo;
+                                    if (compareTo) {
+                                        if (compareTo[0]) {
+                                            if (compareTo[0].selectedItems[0]) {
+                                                var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
+                                                var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
+                                                column.attr("title", "metric comparaison on period " + lowerBound + " to " + upperBound);
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                            }
+                            column.tooltip(options);
                         }
                     }
                 }
@@ -461,43 +538,46 @@
                 }
                 // apply paging and number formatting
                 var data = {};
-                data.results = {"cols" : results.cols, "rows" : []};
-                rows = results.rows;
-                for (rowIdx = 0; (rowIdx<rows.length && rowIdx<this.maxRowsPerPage); rowIdx++) {
-                    row = rows[rowIdx];
-                    newRow = {v:[]};
-                    for (colIdx = 0; colIdx<results.cols.length; colIdx++) {
-                        v = row.v[colIdx];
-                        if (results.cols[colIdx].extendedType) {
-                            var words = results.cols[colIdx].name.split(" ");
-                            var toRound = true;
-                            for (i=0; i<words.length; i++) {
-                                // see if column header contains the text duration / time
-                                if (words[i].toLowerCase() == "duration" || words[i].toLowerCase() == "time") {
-                                    toRound = false;
-                                    // parse value with moment
-                                    var d = moment.duration(parseFloat(v), 'milliseconds');
-                                    // obtain hours / minutes & seconds
-                                    var hours = d.asHours();
-                                    var minutes = d.asMinutes();
-                                    var days = d.asDays();
-                                    var years = d.asYears();
-                                    var seconds = d.asSeconds();
-                                    var milliseconds = d.asMilliseconds();
-                                    var timeData = d._data;
-                                    // contruct readable time values
-                                    if (milliseconds > 1) {
-                                        v = this.d3Formatter(Math.round(timeData.milliseconds * 100) / 100);
-                                        if (seconds > 1) {
-                                            v = timeData.seconds + "s";
-                                            if (minutes > 1) {
-                                                v = timeData.minutes + "m " + v;
-                                                if (hours > 1) {
-                                                    v = timeData.hours + "h " + v;
-                                                    if (days > 1) {
-                                                        v = timeData.days + "d " + v;
-                                                        if (years > 1) {
-                                                            v = timeData.years + "y " + v;
+                data.results = {"cols" : results.cols, "rows" : results.rows};
+                if (this.enableFormatting) {
+                    data.results.rows = [];
+                    rows = results.rows;
+                    for (rowIdx = 0; (rowIdx<rows.length && rowIdx<this.maxRowsPerPage); rowIdx++) {
+                        row = rows[rowIdx];
+                        newRow = {v:[]};
+                        for (colIdx = 0; colIdx<results.cols.length; colIdx++) {
+                            v = row.v[colIdx];
+                            if (results.cols[colIdx].extendedType) {
+                                var words = results.cols[colIdx].name.split(" ");
+                                var toRound = true;
+                                for (i=0; i<words.length; i++) {
+                                    // see if column header contains the text duration / time
+                                    if (words[i].toLowerCase() === "duration" || words[i].toLowerCase() === "time") {
+                                        toRound = false;
+                                        // parse value with moment
+                                        var d = moment.duration(parseFloat(v), 'milliseconds');
+                                        // obtain hours / minutes & seconds
+                                        var hours = d.asHours();
+                                        var minutes = d.asMinutes();
+                                        var days = d.asDays();
+                                        var years = d.asYears();
+                                        var seconds = d.asSeconds();
+                                        var milliseconds = d.asMilliseconds();
+                                        var timeData = d._data;
+                                        // contruct readable time values
+                                        if (milliseconds > 1) {
+                                            v = this.d3Formatter(Math.round(timeData.milliseconds * 100) / 100);
+                                            if (seconds > 1) {
+                                                v = timeData.seconds + "s";
+                                                if (minutes > 1) {
+                                                    v = timeData.minutes + "m " + v;
+                                                    if (hours > 1) {
+                                                        v = timeData.hours + "h " + v;
+                                                        if (days > 1) {
+                                                            v = timeData.days + "d " + v;
+                                                            if (years > 1) {
+                                                                v = timeData.years + "y " + v;
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -505,14 +585,14 @@
                                         }
                                     }
                                 }
+                                if (typeof v === "number" && toRound) {
+                                    v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
+                                }
                             }
-                            if (typeof v === "number" && toRound) {
-                                v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
-                            }
+                            newRow.v.push(v);
                         }
-                        newRow.v.push(v);
+                        data.results.rows.push(newRow);
                     }
-                    data.results.rows.push(newRow);
                 }
 
                 // Rows
