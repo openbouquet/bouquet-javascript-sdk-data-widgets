@@ -65,9 +65,11 @@
                     for (var ix=0; ix<selection.facets.length; ix++) {
                         if (selection.facets[ix].dimension.type === "CONTINUOUS" && selection.facets[ix].dimension.valueType === "DATE") {
                             var indexToRemoveFromChosen = null;
-                            var chosenIndex = chosenDimensions.indexOf(selection.facets[ix].id);
-                            if (chosenDimensions && (chosenIndex > -1)) {
-                                indexToRemoveFromChosen = chosenIndex;
+                            if (chosenDimensions) {
+                                var chosenIndex = chosenDimensions.indexOf(selection.facets[ix].id);
+                                if (chosenDimensions && (chosenIndex > -1)) {
+                                    indexToRemoveFromChosen = chosenIndex;
+                                }
                             }
                             this.setFacets(a, selection.facets[ix].id, indexToRemoveFromChosen);
                             break;
