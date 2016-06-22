@@ -710,6 +710,7 @@
                 "staleMessage" : this.staleMessage,
                 "reRunMessage" : this.reRunMessage
             }));
+            this.$el.find(".sq-loading").hide();
             if (this.paging) {
                 this.paginationView = new squid_api.view.PaginationView( {
                     model : this.model,
