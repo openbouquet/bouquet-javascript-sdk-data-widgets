@@ -23,7 +23,7 @@
             } else {
                 // default number formatter
                 if (d3) {
-                    this.format = d3.format(",.1f");
+                    this.format = d3.format(",.0f");
                 } else {
                     this.format = function(f){
                         return f;

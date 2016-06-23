@@ -4,6 +4,8 @@ module.exports = function(grunt) {
                 jshint : {
                     all : [ 'src/*.js' ],
 		    options : {
+                         //"" for stdout
+                         reporterOutput: "",
   			 jshintrc: '.jshintrc',
 			 force: true
 		    }
