@@ -2039,6 +2039,7 @@ function program2(depth0,data) {
                                         obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
                                         if (obj) {
                                             obj.dataType = "NUMBER";
+                                            columns.push(obj);
                                         } else {
                                             // impossible to get column data from selection
                                             invalidSelection = true;
@@ -2049,8 +2050,8 @@ function program2(depth0,data) {
                                                 "name" : metrics[i].name,
                                                 "dataType" : "NUMBER"
                                         };
+                                        columns.push(obj);
                                     }
-                                    columns.push(obj);
                                 }
                             }
                             if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
