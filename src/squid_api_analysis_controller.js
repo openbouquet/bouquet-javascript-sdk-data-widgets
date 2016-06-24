@@ -38,6 +38,12 @@
             if (!this.config) {
                 this.config = squid_api.model.config;
             }
+            
+            this.listenTo(squid_api.model.status, "change:configReady", function() {
+                if (squid_api.model.status.get("configReady") === true) {
+                    me.refreshAnalysis();
+                }
+            });
 
             // controller
             this.listenTo(this.config, "change", function() {
@@ -69,7 +75,7 @@
                 if (this.config.hasChanged("startIndex")) {
                     refreshNeeded = true;
                 }
-                if (refreshNeeded) {
+                if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
                     me.refreshAnalysis();
                 }
             });
