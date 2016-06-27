@@ -470,17 +470,16 @@
                                     return customer.get("projects").load(me.config.get("project")).then(function(project) {
                                         return project.get("domains").load(me.config.get("domain")).then(function(domain) {
                                             metrics = domain.get("metrics");
+                                            var metricItem = metrics.findWhere({"definition" : id});
+                                            var metricItemDescription = "";
+                                            if (metricItem) {
+                                                metricItemDescription = metricItem.get("description");
+                                            }
+                                            column.attr("title", metricItemDescription);
+                                            column.tooltip(options);
                                         });
                                     });
                                 });
-
-                                var metricItem = metrics.findWhere({"definition" : id});
-                                var metricItemDescription = "";
-                                if (metricItem) {
-                                    metricItemDescription = metricItem.get("description");
-                                }
-                                column.attr("title", metricItemDescription);
-
                             } else if (originType === "COMPARETO") {
                                 // compare column
                                 var results = squid_api.model.filters.get("results");
@@ -497,9 +496,10 @@
                                         }
                                     }
                                 }
-                                
+                                column.tooltip(options);
+                            } else {
+                                column.tooltip(options);
                             }
-                            column.tooltip(options);
                         }
                     }
                 }

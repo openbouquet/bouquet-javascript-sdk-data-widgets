@@ -119,9 +119,17 @@
                     me.model.setFacets(this.configClone.get("chosenDimensions"));
                 });
 
+                this.listenTo(squid_api.model.status, "change:configReady", function() {
+                    if (squid_api.model.status.get("configReady") === true) {
+                        me.model.setMetrics(this.configClone.get("chosenMetrics"));
+                    }
+                });
+
                 this.listenTo(this.configClone, 'change:chosenMetrics', function() {
                     // update the analysis with extra metrics
-                    me.model.setMetrics(this.configClone.get("chosenMetrics"));
+                    if (squid_api.model.status.get("configReady") === true) {
+                        me.model.setMetrics(this.configClone.get("chosenMetrics"));
+                    }
                 });
 
                 this.listenTo(this.config, 'change', function() {

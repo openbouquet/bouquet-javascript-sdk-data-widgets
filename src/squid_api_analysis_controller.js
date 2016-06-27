@@ -38,6 +38,12 @@
             if (!this.config) {
                 this.config = squid_api.model.config;
             }
+            
+            this.listenTo(squid_api.model.status, "change:configReady", function() {
+                if (squid_api.model.status.get("configReady") === true) {
+                    me.refreshAnalysis();
+                }
+            });
 
             // controller
             this.listenTo(this.config, "change", function() {
@@ -69,11 +75,13 @@
                 if (this.config.hasChanged("startIndex")) {
                     refreshNeeded = true;
                 }
-                if (refreshNeeded) {
-                    me.refreshAnalysis();
+                if (this.config.hasChanged("timeUnit")) {
+                    refreshNeeded = true;
+                }
+                if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
+                    this.refreshAnalysis();
                 }
             });
-            this.customEvents();
 
             if (this.afterInitializedCallback) {
                 this.afterInitializedCallback.call(this);
