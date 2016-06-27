@@ -1190,11 +1190,13 @@ function program2(depth0,data) {
                 if (this.config.hasChanged("startIndex")) {
                     refreshNeeded = true;
                 }
+                if (this.config.hasChanged("timeUnit")) {
+                    refreshNeeded = true;
+                }
                 if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
-                    me.refreshAnalysis();
+                    this.refreshAnalysis();
                 }
             });
-            this.customEvents();
 
             if (this.afterInitializedCallback) {
                 this.afterInitializedCallback.call(this);
@@ -2562,15 +2564,6 @@ function program2(depth0,data) {
     var View = squid_api.controller.AnalysisController.extend({
         analysis : null,
         config : null,
-
-        /*
-        customEvents: function() {
-            var me = this;
-            this.config.on('change:timeUnit', function() {
-                me.refreshAnalysis();
-            });
-        },
-        */
 
         refreshAnalysis : function(silent) {
             var changed = false;

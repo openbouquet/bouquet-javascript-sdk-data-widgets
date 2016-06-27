@@ -75,11 +75,13 @@
                 if (this.config.hasChanged("startIndex")) {
                     refreshNeeded = true;
                 }
+                if (this.config.hasChanged("timeUnit")) {
+                    refreshNeeded = true;
+                }
                 if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
-                    me.refreshAnalysis();
+                    this.refreshAnalysis();
                 }
             });
-            this.customEvents();
 
             if (this.afterInitializedCallback) {
                 this.afterInitializedCallback.call(this);
