@@ -2672,7 +2672,7 @@ function program2(depth0,data) {
             });
             if (toDate) {
                 var timeUnit = this.config.get("timeUnit");
-                var dimensions =  this.config.get("chosenDimensions");
+                var dimensions = $.extend(true, [], this.config.get("chosenDimensions"));
 
                 // if current date is in dimension list, remove it
                 if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
