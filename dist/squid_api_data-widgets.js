@@ -2563,12 +2563,14 @@ function program2(depth0,data) {
         analysis : null,
         config : null,
 
+        /*
         customEvents: function() {
             var me = this;
             this.config.on('change:timeUnit', function() {
                 me.refreshAnalysis();
             });
         },
+        */
 
         refreshAnalysis : function(silent) {
             var changed = false;
