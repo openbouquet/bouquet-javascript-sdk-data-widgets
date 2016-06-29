@@ -2686,7 +2686,7 @@ function program2(depth0,data) {
                 a.setFacets([id], silent);
             }
             if (beyondLimit) {
-                a.set('beyondLimit', [{"col" : 0}]);
+                a.set({'beyondLimit' : [{"col" : 0}]}, {silent : true});
             }
         }
     });
