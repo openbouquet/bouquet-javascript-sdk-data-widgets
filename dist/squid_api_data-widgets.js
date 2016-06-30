@@ -2602,7 +2602,7 @@ function program2(depth0,data) {
                     if (chosenDimensions) {
                         var existsInChosen = chosenDimensions.includes(id);
                         if (config.get("chosenDimensions").length > 0) {
-                            if (! existsInChosen && facet.dimension.valueType === "DATE") {
+                            if (! existsInChosen && facet.dimension.valueType === "DATE" && facet.dimension.valueType === "CONTINUOUS") {
                                 this.setFacets(a, facet.id);
                                 dateFound = true;
                                 break;
