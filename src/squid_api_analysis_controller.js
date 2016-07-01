@@ -149,7 +149,6 @@
                 a.setParameter("maxResults", this.config.get("maxResults"), silent);
                 var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
                 if (startIndexChange) {
-                    var startIndex = a.getParameter("startIndex");
                     // update if pagination changed
                     if (a.get("id") && (a.get("id").analysisJobId)) {
                         a.setParameter("startIndex", this.config.get("startIndex"), silent);
