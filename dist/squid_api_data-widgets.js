@@ -3761,7 +3761,7 @@ function program2(depth0,data) {
                 }
                 postMethod = "POST";
             }
-            if (me.compression) {
+            if (me.compression && !velocityTemplate) {
                 analysisJobResults.addParameter("compression","gzip");
             } else {
                 analysisJobResults.addParameter("compression","none");
@@ -3775,11 +3775,12 @@ function program2(depth0,data) {
 
             downloadForm.attr("action",analysisJobResults.url());
             downloadForm.attr("method",postMethod);
+            downloadForm.attr("accept-charset","UTF-8");
             downloadForm.empty();
             downloadForm.append("<input type='hidden' name='access_token' value='"+analysisJobResults.getParameter("access_token")+"'/>");
             downloadForm.append("<input type='hidden' name='compression' value='"+analysisJobResults.getParameter("compression")+"'/>");
             if (velocityTemplate) {
-                downloadForm.append("<input type='hidden' name='template' value='"+base64.encode(velocityTemplate)+"'/>");
+                downloadForm.append("<input type='hidden' name='template' value='"+base64.encode(encodeURIComponent(velocityTemplate))+"'/>");
             }
             if (analysisJobResults.getParameter("type")) {
                 downloadForm.append("<input type='hidden' name='type' value='"+analysisJobResults.getParameter("type")+"'/>");
@@ -6482,7 +6483,7 @@ function program2(depth0,data) {
      
                      // build the template
                      var velocityTemplate = me.exportTemplate(me.model.get("templateData"));
-                     analysisJobResults.setParameter("template", base64.encode(velocityTemplate));
+                     analysisJobResults.setParameter("template", base64.encode(encodeURIComponent(velocityTemplate)));
                      analysisJobResults.setParameter("type","text/html");
                      analysisJobResults.setParameter("timeout",null);
                              

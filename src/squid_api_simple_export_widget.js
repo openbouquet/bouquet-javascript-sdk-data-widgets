@@ -73,7 +73,7 @@
      
                      // build the template
                      var velocityTemplate = me.exportTemplate(me.model.get("templateData"));
-                     analysisJobResults.setParameter("template", base64.encode(velocityTemplate));
+                     analysisJobResults.setParameter("template", base64.encode(encodeURIComponent(velocityTemplate)));
                      analysisJobResults.setParameter("type","text/html");
                      analysisJobResults.setParameter("timeout",null);
                              
