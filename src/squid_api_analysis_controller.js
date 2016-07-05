@@ -30,11 +30,20 @@
                 if (options.pagination) {
                     this.pagination = options.pagination;
                 }
+                if (options.afterInitializedCallback) {
+                    this.afterInitializedCallback = options.afterInitializedCallback;
+                }
             }
 
             if (!this.config) {
                 this.config = squid_api.model.config;
             }
+            
+            this.listenTo(squid_api.model.status, "change:configReady", function() {
+                if (squid_api.model.status.get("configReady") === true) {
+                    me.refreshAnalysis();
+                }
+            });
 
             // controller
             this.listenTo(this.config, "change", function() {
@@ -66,12 +75,17 @@
                 if (this.config.hasChanged("startIndex")) {
                     refreshNeeded = true;
                 }
-                if (refreshNeeded) {
-                    me.refreshAnalysis();
+                if (this.config.hasChanged("timeUnit")) {
+                    refreshNeeded = true;
+                }
+                if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
+                    this.refreshAnalysis();
                 }
             });
 
-            this.customEvents();
+            if (this.afterInitializedCallback) {
+                this.afterInitializedCallback.call(this);
+            }
         },
 
         customEvents: function() {
@@ -98,22 +112,6 @@
             }, {
                 "silent" : silent
             });
-            if (this.pagination) {
-                a.setParameter("maxResults", this.config.get("maxResults"), silent);
-                changed = changed || a.hasChanged();
-                var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
-                if (startIndexChange) {
-                    var startIndex = a.getParameter("startIndex");
-                    if ((startIndex || startIndex === 0)) {
-                        // update if pagination changed
-                        if (a.get("id") && (a.get("id").analysisJobId)) {
-                            a.setParameter("startIndex", this.config.get("startIndex"), silent);
-                            changed = changed || a.hasChanged();
-                            squid_api.compute(a);
-                        }
-                    }
-                }
-            }
             a.set({
                 "domains" : [ {
                     "projectId" : config.get("project"),
@@ -147,7 +145,17 @@
                 "silent" : silent
             });
             changed = changed || a.hasChanged();
-
+            if (this.pagination) {
+                a.setParameter("maxResults", this.config.get("maxResults"), silent);
+                var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
+                if (startIndexChange) {
+                    // update if pagination changed
+                    if (a.get("id") && (a.get("id").analysisJobId)) {
+                        a.setParameter("startIndex", this.config.get("startIndex"), silent);
+                        squid_api.compute(a);
+                    }
+                }
+            }
             if (changed === true) {
                 this.onChangeHandler(this.analysis);
             }

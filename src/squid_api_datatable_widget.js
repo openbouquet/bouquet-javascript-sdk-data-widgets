@@ -22,6 +22,8 @@
 
         headerBadges : false,
 
+        enableFormatting : true,
+
         paginationView : null,
 
         rollupSummaryColumn : null,
@@ -60,6 +62,22 @@
                 this.template = squid_api.template.squid_api_datatable_widget;
             }
 
+            // detect analysis formatting
+            var optionKeys = this.model.get("optionKeys");
+            if (optionKeys) {
+                if (optionKeys.applyFormat === true) {
+                    squid_api.utils.checkAPIVersion(">=4.2.15").done(function(){
+                        this.enableFormatting = false;
+                    }).fail(function(v){
+                        if (v) {
+                            console.log("API version NOT OK : "+v + " for Automatic Analysis Results Formatting");
+                        } else {
+                            console.error("WARN unable to get Bouquet Server version");
+                        }
+                    });
+                }
+            }
+
             // filters are used to get the Dimensions and Metrics names
             if (options.filters) {
                 this.filters = options.filters;
@@ -94,28 +112,30 @@
             if (options.addFacetValueFromResults) {
                 this.addFacetValueFromResults = options.addFacetValueFromResults;
             }
-            if (d3) {
-                this.d3Formatter = d3.format(",");
-            }
-            if (options.format) {
-                this.format = options.format;
-            } else {
+            if (this.enableFormatting) {
+                if (d3) {
+                    this.d3Formatter = d3.format(",");
+                }
+                if (options.format) {
+                    this.format = options.format;
+                } else {
                 // default number formatter
                 if (this.d3Formatter) {
-                    this.format = function(f){
-                        if (isNaN(f)) {
-                            return f;
-                        } else {
-                            return me.d3Formatter(f);
-                        }
-                    };
-                } else {
-                    this.format = function(f){
+                        this.format = function(f){
+                            if (isNaN(f)) {
+                                return f;
+                            } else {
+                                return me.d3Formatter(f);
+                            }
+                        };
+                    } else {
+                        this.format = function(f){
                         return f;
-                    };
+                        };
+                    }
                 }
             }
-
+            
             this.renderBaseViewPort();
         },
 
@@ -251,7 +271,7 @@
                             var facets = this.model.get("facets");
                             if (facets) {
                                 for (i=0; i<facets.length; i++) {
-                                    obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value);
+                                    obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value) || {};
                                     if (obj) {
                                         obj.dataType = "STRING";
                                         columns.push(obj);
@@ -277,9 +297,10 @@
                                                 metrics[i].name = me.domainMetrics[ix].name;
                                             }
                                         }
-                                        obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId);
+                                        obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId) || {};
                                         if (obj) {
                                             obj.dataType = "NUMBER";
+                                            columns.push(obj);
                                         } else {
                                             // impossible to get column data from selection
                                             invalidSelection = true;
@@ -290,8 +311,8 @@
                                                 "name" : metrics[i].name,
                                                 "dataType" : "NUMBER"
                                         };
+                                        columns.push(obj);
                                     }
-                                    columns.push(obj);
                                 }
                             }
                             if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
@@ -352,12 +373,19 @@
                     this.compareCols = [];
                     this.metricCols = [];
                     this.dateCols = [];
+                    this.firstMeasure = -1;
                     for (i=0; i<columns.length; i++) {
                         if (columns[i].originType === "COMPARETO") {
                             this.compareCols.push(i);
+                            if (this.firstMeasure === -1 || this.firstMeasure>i) {
+                            	this.firstMeasure = i;
+                            }
                         }
                         if (columns[i].role === "DATA") {
                             this.metricCols.push(i);
+                            if (this.firstMeasure === -1 || this.firstMeasure>i) {
+                            	this.firstMeasure = i;
+                            }
                         }
                         if (columns[i].extendedType) {
                             if (columns[i].extendedType.name === "DATE") {
@@ -397,9 +425,6 @@
                                 }
                                 return str;
                             })
-                            .attr("origin-type", function(d) {
-                                return d.originType;
-                            })
                             .html(function(d) {
                                 var str = d.name;
                                 if (d.orderDirection === "ASC") {
@@ -408,6 +433,12 @@
                                     str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
                                 }
                                 return str;
+                            })
+                            .attr("data-role", function(d) {
+                                return d.role;
+                            })
+                            .attr("origin-type", function(d) {
+                                return d.originType;
                             })
                             .attr("data-content", function(d) {
                                 if (d.definition) {
@@ -423,6 +454,59 @@
                         } else {
                             this.$el.find("table").removeClass("many-columns");
                         }
+
+                        // add tooltips on metrics / compare columns
+                        var headerCols = this.$el.find("thead th");
+                        squid_api.getCustomer().then(function(customer) {
+                            return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                                return project.get("domains").load(me.config.get("domain")).then(function(domain) {
+			                        for (ix=0; ix<headerCols.length; ix++) {
+			                            var column = $(headerCols[ix]);
+			
+			                            var role = column.attr("data-role");
+			                            var originType = column.attr("origin-type");
+			                            var id = column.attr("data-content");
+			
+			                            var options = {
+			                                position: {
+			                                    my: "center bottom",
+			                                    at: "center top+5",
+			                                }
+			                            };
+			
+			                            if (role === "DATA" && originType !== "COMPARETO") {
+			                                // metric
+			                                metrics = domain.get("metrics");
+			                                var metricItem = metrics.findWhere({"definition" : id});
+			                                var metricItemDescription = "";
+			                                if (metricItem) {
+			                                    metricItemDescription = metricItem.get("description");
+			                                }
+			                                column.attr("title", metricItemDescription);
+			                                column.tooltip(options);
+			                            } else if (originType === "COMPARETO") {
+			                                // compare column
+			                                results = squid_api.model.filters.get("results");
+			                                if (results) {
+			                                    var compareTo = results.compareTo;
+			                                    if (compareTo) {
+			                                        if (compareTo[0]) {
+			                                            if (compareTo[0].selectedItems[0]) {
+			                                                var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
+			                                                var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
+			                                                column.attr("title", "metric comparaison on period " + lowerBound + " to " + upperBound);
+			                                            }
+			                                        }
+			                                    }
+			                                }
+			                                column.tooltip(options);
+			                            } else {
+			                                column.tooltip(options);
+			                            }
+			                        }
+                                });
+                            });
+                        });
                     }
                 }
             }
@@ -461,43 +545,46 @@
                 }
                 // apply paging and number formatting
                 var data = {};
-                data.results = {"cols" : results.cols, "rows" : []};
-                rows = results.rows;
-                for (rowIdx = 0; (rowIdx<rows.length && rowIdx<this.maxRowsPerPage); rowIdx++) {
-                    row = rows[rowIdx];
-                    newRow = {v:[]};
-                    for (colIdx = 0; colIdx<results.cols.length; colIdx++) {
-                        v = row.v[colIdx];
-                        if (results.cols[colIdx].extendedType) {
-                            var words = results.cols[colIdx].name.split(" ");
-                            var toRound = true;
-                            for (i=0; i<words.length; i++) {
-                                // see if column header contains the text duration / time
-                                if (words[i].toLowerCase() === "duration" || words[i].toLowerCase() === "time") {
-                                    toRound = false;
-                                    // parse value with moment
-                                    var d = moment.duration(parseFloat(v), 'milliseconds');
-                                    // obtain hours / minutes & seconds
-                                    var hours = d.asHours();
-                                    var minutes = d.asMinutes();
-                                    var days = d.asDays();
-                                    var years = d.asYears();
-                                    var seconds = d.asSeconds();
-                                    var milliseconds = d.asMilliseconds();
-                                    var timeData = d._data;
-                                    // contruct readable time values
-                                    if (milliseconds > 1) {
-                                        v = this.d3Formatter(Math.round(timeData.milliseconds * 100) / 100);
-                                        if (seconds > 1) {
-                                            v = timeData.seconds + "s";
-                                            if (minutes > 1) {
-                                                v = timeData.minutes + "m " + v;
-                                                if (hours > 1) {
-                                                    v = timeData.hours + "h " + v;
-                                                    if (days > 1) {
-                                                        v = timeData.days + "d " + v;
-                                                        if (years > 1) {
-                                                            v = timeData.years + "y " + v;
+                data.results = {"cols" : results.cols, "rows" : results.rows};
+                if (this.enableFormatting) {
+                    data.results.rows = [];
+                    rows = results.rows;
+                    for (rowIdx = 0; (rowIdx<rows.length && rowIdx<this.maxRowsPerPage); rowIdx++) {
+                        row = rows[rowIdx];
+                        newRow = {v:[]};
+                        for (colIdx = 0; colIdx<results.cols.length; colIdx++) {
+                            v = row.v[colIdx];
+                            if (results.cols[colIdx].extendedType) {
+                                var words = results.cols[colIdx].name.split(" ");
+                                var toRound = true;
+                                for (i=0; i<words.length; i++) {
+                                    // see if column header contains the text duration / time
+                                    if (words[i].toLowerCase() === "duration" || words[i].toLowerCase() === "time") {
+                                        toRound = false;
+                                        // parse value with moment
+                                        var d = moment.duration(parseFloat(v), 'milliseconds');
+                                        // obtain hours / minutes & seconds
+                                        var hours = d.asHours();
+                                        var minutes = d.asMinutes();
+                                        var days = d.asDays();
+                                        var years = d.asYears();
+                                        var seconds = d.asSeconds();
+                                        var milliseconds = d.asMilliseconds();
+                                        var timeData = d._data;
+                                        // contruct readable time values
+                                        if (milliseconds > 1) {
+                                            v = this.d3Formatter(Math.round(timeData.milliseconds * 100) / 100);
+                                            if (seconds > 1) {
+                                                v = timeData.seconds + "s";
+                                                if (minutes > 1) {
+                                                    v = timeData.minutes + "m " + v;
+                                                    if (hours > 1) {
+                                                        v = timeData.hours + "h " + v;
+                                                        if (days > 1) {
+                                                            v = timeData.days + "d " + v;
+                                                            if (years > 1) {
+                                                                v = timeData.years + "y " + v;
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -505,14 +592,14 @@
                                         }
                                     }
                                 }
+                                if (typeof v === "number" && toRound) {
+                                    v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
+                                }
                             }
-                            if (typeof v === "number" && toRound) {
-                                v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
-                            }
+                            newRow.v.push(v);
                         }
-                        newRow.v.push(v);
+                        data.results.rows.push(newRow);
                     }
-                    data.results.rows.push(newRow);
                 }
 
                 // Rows
@@ -531,7 +618,15 @@
                     .append("td")
                     .attr("class", function(d, i) {
                         var str = "";
+                        var colspan = 1;
                         if (rollups) {
+                        	if ((parseInt(this.parentNode.__data__.v[0]) >= 0)) {
+                        		colspan = me.getColspanValue(me.firstMeasure, parseInt(this.parentNode.__data__.v[0]));
+                        	}
+                        	if ((i === 1 && parseInt(this.parentNode.__data__.v[0]) === 1)) {
+                                // this is a total line
+                                this.parentNode.className = "group";
+                        	}
                             if (i === 0) {
                                 // hide grouping column
                                 str = "hide";
@@ -547,38 +642,46 @@
                                   // this is a rollup sub level line
                                   str = "new-category";
                                 }
-                            } else if ((i === 1 && parseInt(this.parentNode.__data__.v[0]) === 1)) {
-                                // this is a total line
-                                this.parentNode.className = "group";
-                                str = "new-category";
-                            } else if (parseInt(this.parentNode.__data__.v[0]) > 1) {
+                            } else if (parseInt(this.parentNode.__data__.v[0]) >= 1) {
                                 // this is a rollup sub level line
                                 str = "new-category";
                             } else if ((parseInt(this.parentNode.__data__.v[0]) === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
                                 // detect total column
                                 this.parentNode.className = "total-column";
                             }
-                            // Detect Group & Empty Value
-                            if (this.parentNode.className === "group" && d) {
-                                me.categoryColSpan(this);
+                            if (colspan > 1 && i === rollupSummaryIndex) {
+                            	//set the correct colspan to the rollup column
+                            	this.colSpan = colspan;
+                            } else if ((parseInt(this.parentNode.__data__.v[0]) >= 0) && i > rollupSummaryIndex && i < me.firstMeasure) {
+                            	//Remove the cell if part of the colspan
+                            	this.remove();
                             }
                         }
                         if (me.compareCols) {
                             if (me.compareCols.indexOf(i) > -1) {
                                 str += " compareTo";
                             } else if (me.metricCols.indexOf(i) > -1) {
-                                str += " compare";
+                                str += " current";
                             }
                         }
                         if (me.metricCols) {
-                            if (me.metricCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
+                            if (me.metricCols.indexOf(i) === -1 && me.compareCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
                                 str += " dimension";
+                            } else {
+                                str += " measure";
                             }
                         }
                         return str;
                     })
                     .text(function(d, i) {
                         var text = d;
+                        var offset = 0;
+                        if (this.parentNode && this.parentNode.className === "group" && me.firstMeasure !== -1 && i>=me.firstMeasure - me.metricCols.length) {
+                        	//offset = me.metricCols.length;
+                        	if (offset<0) {
+                        		offset=0;
+                        	}
+                        }
                         if (rollups) {
                             if ((rollupSummaryIndex !== null) && (i === rollupSummaryIndex)) {
                                 if (parseInt(this.parentNode.__data__.v[0]) === 1) {
@@ -596,6 +699,8 @@
                                     text = "Total";
                                 }
                             }
+                        } else if (offset>0) {
+                        	text = this.parentNode.__data__.v[i - offset];
                         }
                         return text;
                     });
@@ -605,24 +710,13 @@
                 this.$el.find("#total-entries").html(""+results.totalSize);
             }
         },
-
-        categoryColSpan : function(node) {
-            var siblings = node.parentNode.childNodes;
-            var colSpan = 1;
-
-            for (i=0; i<siblings.length; i++) {
-                // Obtain Sibling With Matching Class
-                if (d3.select(siblings[i]).classed("new-category")) {
-                    if (d3.select(siblings[i]).attr("colspan")) {
-                        colSpan = parseInt(d3.select(siblings[i]).attr("colspan"));
-                    }
-                    // Increment ColSpan Value
-                    d3.select(siblings[i]).attr("colspan", colSpan + 1);
-                }
-            }
-
-            // Remove Node
-            node.remove();
+        
+        getColspanValue: function(firstMeasurePosition, rollupLevel) {
+        	if (rollupLevel >= 0 && firstMeasurePosition >= 3) {
+        		return firstMeasurePosition - 2;
+        	} else {
+        		return 1;
+        	}
         },
 
         renderBaseViewPort : function() {
@@ -630,6 +724,7 @@
                 "staleMessage" : this.staleMessage,
                 "reRunMessage" : this.reRunMessage
             }));
+            this.$el.find(".sq-loading").hide();
             if (this.paging) {
                 this.paginationView = new squid_api.view.PaginationView( {
                     model : this.model,

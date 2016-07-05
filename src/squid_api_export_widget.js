@@ -119,9 +119,17 @@
                     me.model.setFacets(this.configClone.get("chosenDimensions"));
                 });
 
+                this.listenTo(squid_api.model.status, "change:configReady", function() {
+                    if (squid_api.model.status.get("configReady") === true) {
+                        me.model.setMetrics(this.configClone.get("chosenMetrics"));
+                    }
+                });
+
                 this.listenTo(this.configClone, 'change:chosenMetrics', function() {
                     // update the analysis with extra metrics
-                    me.model.setMetrics(this.configClone.get("chosenMetrics"));
+                    if (squid_api.model.status.get("configReady") === true) {
+                        me.model.setMetrics(this.configClone.get("chosenMetrics"));
+                    }
                 });
 
                 this.listenTo(this.config, 'change', function() {
@@ -240,7 +248,7 @@
                 }
                 postMethod = "POST";
             }
-            if (me.compression) {
+            if (me.compression && !velocityTemplate) {
                 analysisJobResults.addParameter("compression","gzip");
             } else {
                 analysisJobResults.addParameter("compression","none");
@@ -254,11 +262,12 @@
 
             downloadForm.attr("action",analysisJobResults.url());
             downloadForm.attr("method",postMethod);
+            downloadForm.attr("accept-charset","UTF-8");
             downloadForm.empty();
             downloadForm.append("<input type='hidden' name='access_token' value='"+analysisJobResults.getParameter("access_token")+"'/>");
             downloadForm.append("<input type='hidden' name='compression' value='"+analysisJobResults.getParameter("compression")+"'/>");
             if (velocityTemplate) {
-                downloadForm.append("<input type='hidden' name='template' value='"+base64.encode(velocityTemplate)+"'/>");
+                downloadForm.append("<input type='hidden' name='template' value='"+base64.encode(encodeURIComponent(velocityTemplate))+"'/>");
             }
             if (analysisJobResults.getParameter("type")) {
                 downloadForm.append("<input type='hidden' name='type' value='"+analysisJobResults.getParameter("type")+"'/>");

@@ -8,13 +8,6 @@
         analysis : null,
         config : null,
 
-        customEvents: function() {
-            var me = this;
-            this.config.on('change:timeUnit', function() {
-                me.refreshAnalysis();
-            });
-        },
-
         refreshAnalysis : function(silent) {
             var changed = false;
             var a = this.analysis;
@@ -44,15 +37,15 @@
             var selection = this.config.get("selection");
             if (selection) {
                 var dateFound = false;
-                for (i=0; i<selection.facets.length; i++) {
+                var chosenDimensions = config.get("chosenDimensions");
+                for (var i=0; i<selection.facets.length; i++) {
                     // search for date facet within chosenDimensions
                     var facet = selection.facets[i];
-                    var chosenDimensions = config.get("chosenDimensions");
                     var id = facet.id;
                     if (chosenDimensions) {
                         var existsInChosen = chosenDimensions.includes(id);
                         if (config.get("chosenDimensions").length > 0) {
-                            if (existsInChosen && facet.dimension.valueType === "DATE") {
+                            if (! existsInChosen && facet.dimension.valueType === "DATE" && facet.dimension.valueType === "CONTINUOUS") {
                                 this.setFacets(a, facet.id);
                                 dateFound = true;
                                 break;
@@ -62,9 +55,16 @@
                 }
                 if (! dateFound) {
                     // if no date is found, use the first one found
-                    for (i=0; i<selection.facets.length; i++) {
-                        if (selection.facets[i].dimension.type === "CONTINUOUS" && selection.facets[i].dimension.valueType === "DATE") {
-                            this.setFacets(a, selection.facets[i].id);
+                    for (var ix=0; ix<selection.facets.length; ix++) {
+                        if (selection.facets[ix].dimension.type === "CONTINUOUS" && selection.facets[ix].dimension.valueType === "DATE") {
+                            var indexToRemoveFromChosen = null;
+                            if (chosenDimensions) {
+                                var chosenIndex = chosenDimensions.indexOf(selection.facets[ix].id);
+                                if (chosenDimensions && (chosenIndex > -1)) {
+                                    indexToRemoveFromChosen = chosenIndex;
+                                }
+                            }
+                            this.setFacets(a, selection.facets[ix].id, indexToRemoveFromChosen);
                             break;
                         }
                     }
@@ -99,7 +99,7 @@
             }
         },
 
-        setFacets: function(a, id) {
+        setFacets: function(a, id, indexToRemoveFromChosen) {
             var toDate = false;
             var beyondLimit = false;
             squid_api.utils.checkAPIVersion(">=4.2.1").done(function(){
@@ -110,7 +110,12 @@
             });
             if (toDate) {
                 var timeUnit = this.config.get("timeUnit");
-                var dimensions =  this.config.get("chosenDimensions");
+                var dimensions = $.extend(true, [], this.config.get("chosenDimensions"));
+
+                // if current date is in dimension list, remove it
+                if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
+                    dimensions.splice(indexToRemoveFromChosen, 1);
+                }
                 a.setFacets(dimensions, {silent : true});
                 var facets = a.get("facets");
                 if (facets) {
@@ -124,7 +129,7 @@
                 a.setFacets([id], silent);
             }
             if (beyondLimit) {
-                a.set('beyondLimit', [{"col" : 0}]);
+                a.set({'beyondLimit' : [{"col" : 0}]}, {silent : true});
             }
         }
     });
