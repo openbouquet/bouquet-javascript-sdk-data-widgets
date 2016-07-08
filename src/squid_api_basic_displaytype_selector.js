@@ -11,6 +11,7 @@
         barView : null,
         timeView : null,
         displayOnly : null,
+        afterRender: null,
 
         initialize: function(options) {
 
@@ -28,6 +29,9 @@
                 }
                 if (options.displayOnly) {
                     this.displayOnly = options.displayOnly;
+                }
+                if (options.afterRender) {
+                    this.afterRender = options.afterRender;
                 }
 
                 this.tableView = options.tableView;
@@ -133,6 +137,10 @@
             }
 
             this.$el.html(this.template(data));
+
+            if (this.afterRender) {
+                this.afterRender.call(this);
+            }
 
             return this;
         }
