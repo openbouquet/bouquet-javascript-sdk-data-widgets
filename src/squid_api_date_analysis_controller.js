@@ -37,10 +37,10 @@
             var selection = this.config.get("selection");
             if (selection) {
                 var dateFound = false;
+                var chosenDimensions = config.get("chosenDimensions");
                 for (var i=0; i<selection.facets.length; i++) {
                     // search for date facet within chosenDimensions
                     var facet = selection.facets[i];
-                    var chosenDimensions = config.get("chosenDimensions");
                     var id = facet.id;
                     if (chosenDimensions) {
                         var existsInChosen = chosenDimensions.includes(id);

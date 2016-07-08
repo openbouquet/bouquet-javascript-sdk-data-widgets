@@ -1264,7 +1264,6 @@ function program2(depth0,data) {
                 a.setParameter("maxResults", this.config.get("maxResults"), silent);
                 var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
                 if (startIndexChange) {
-                    var startIndex = a.getParameter("startIndex");
                     // update if pagination changed
                     if (a.get("id") && (a.get("id").analysisJobId)) {
                         a.setParameter("startIndex", this.config.get("startIndex"), silent);
@@ -1834,7 +1833,7 @@ function program2(depth0,data) {
             var optionKeys = this.model.get("optionKeys");
             if (optionKeys) {
                 if (optionKeys.applyFormat === true) {
-                    squid_api.utils.checkAPIVersion(">=4.2.15").done(function(v){
+                    squid_api.utils.checkAPIVersion(">=4.2.15").done(function(){
                         this.enableFormatting = false;
                     }).fail(function(v){
                         if (v) {
@@ -2141,12 +2140,19 @@ function program2(depth0,data) {
                     this.compareCols = [];
                     this.metricCols = [];
                     this.dateCols = [];
+                    this.firstMeasure = -1;
                     for (i=0; i<columns.length; i++) {
                         if (columns[i].originType === "COMPARETO") {
                             this.compareCols.push(i);
+                            if (this.firstMeasure === -1 || this.firstMeasure>i) {
+                            	this.firstMeasure = i;
+                            }
                         }
                         if (columns[i].role === "DATA") {
                             this.metricCols.push(i);
+                            if (this.firstMeasure === -1 || this.firstMeasure>i) {
+                            	this.firstMeasure = i;
+                            }
                         }
                         if (columns[i].extendedType) {
                             if (columns[i].extendedType.name === "DATE") {
@@ -2156,7 +2162,7 @@ function program2(depth0,data) {
                     }
 
                     if (!invalidSelection) {
-                        var header = d3.select(selector).select("thead tr").selectAll("th")
+                        d3.select(selector).select("thead tr").selectAll("th")
                             .data(columns)
                             .enter().append("th")
                             .attr("class", function(d, i) {
@@ -2218,57 +2224,56 @@ function program2(depth0,data) {
 
                         // add tooltips on metrics / compare columns
                         var headerCols = this.$el.find("thead th");
-                        for (var ix=0; ix<headerCols.length; ix++) {
-                            var column = $(headerCols[ix]);
-
-                            var role = column.attr("data-role");
-                            var originType = column.attr("origin-type");
-                            var id = column.attr("data-content");
-
-                            var options = {
-                                position: {
-                                    my: "center bottom",
-                                    at: "center top+5",
-                                }
-                            };
-
-                            if (role === "DATA" && originType !== "COMPARETO") {
-                                // metric
-                                squid_api.getCustomer().then(function(customer) {
-                                    return customer.get("projects").load(me.config.get("project")).then(function(project) {
-                                        return project.get("domains").load(me.config.get("domain")).then(function(domain) {
-                                            metrics = domain.get("metrics");
-                                            var metricItem = metrics.findWhere({"definition" : id});
-                                            var metricItemDescription = "";
-                                            if (metricItem) {
-                                                metricItemDescription = metricItem.get("description");
-                                            }
-                                            column.attr("title", metricItemDescription);
-                                            column.tooltip(options);
-                                        });
-                                    });
+                        squid_api.getCustomer().then(function(customer) {
+                            return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                                return project.get("domains").load(me.config.get("domain")).then(function(domain) {
+			                        for (ix=0; ix<headerCols.length; ix++) {
+			                            var column = $(headerCols[ix]);
+			
+			                            var role = column.attr("data-role");
+			                            var originType = column.attr("origin-type");
+			                            var id = column.attr("data-content");
+			
+			                            var options = {
+			                                position: {
+			                                    my: "center bottom",
+			                                    at: "center top+5",
+			                                }
+			                            };
+			
+			                            if (role === "DATA" && originType !== "COMPARETO") {
+			                                // metric
+			                                metrics = domain.get("metrics");
+			                                var metricItem = metrics.findWhere({"definition" : id});
+			                                var metricItemDescription = "";
+			                                if (metricItem) {
+			                                    metricItemDescription = metricItem.get("description");
+			                                }
+			                                column.attr("title", metricItemDescription);
+			                                column.tooltip(options);
+			                            } else if (originType === "COMPARETO") {
+			                                // compare column
+			                                results = squid_api.model.filters.get("results");
+			                                if (results) {
+			                                    var compareTo = results.compareTo;
+			                                    if (compareTo) {
+			                                        if (compareTo[0]) {
+			                                            if (compareTo[0].selectedItems[0]) {
+			                                                var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
+			                                                var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
+			                                                column.attr("title", "metric comparaison on period " + lowerBound + " to " + upperBound);
+			                                            }
+			                                        }
+			                                    }
+			                                }
+			                                column.tooltip(options);
+			                            } else {
+			                                column.tooltip(options);
+			                            }
+			                        }
                                 });
-                            } else if (originType === "COMPARETO") {
-                                // compare column
-                                var results = squid_api.model.filters.get("results");
-                                var period = squid_api.model.config.get("period");
-                                if (results) {
-                                    var compareTo = results.compareTo;
-                                    if (compareTo) {
-                                        if (compareTo[0]) {
-                                            if (compareTo[0].selectedItems[0]) {
-                                                var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
-                                                var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
-                                                column.attr("title", "metric comparaison on period " + lowerBound + " to " + upperBound);
-                                            }
-                                        }
-                                    }
-                                }
-                                column.tooltip(options);
-                            } else {
-                                column.tooltip(options);
-                            }
-                        }
+                            });
+                        });
                     }
                 }
             }
@@ -2380,7 +2385,15 @@ function program2(depth0,data) {
                     .append("td")
                     .attr("class", function(d, i) {
                         var str = "";
+                        var colspan = 1;
                         if (rollups) {
+                        	if ((parseInt(this.parentNode.__data__.v[0]) >= 0)) {
+                        		colspan = me.getColspanValue(me.firstMeasure, parseInt(this.parentNode.__data__.v[0]));
+                        	}
+                        	if ((i === 1 && parseInt(this.parentNode.__data__.v[0]) === 1)) {
+                                // this is a total line
+                                this.parentNode.className = "group";
+                        	}
                             if (i === 0) {
                                 // hide grouping column
                                 str = "hide";
@@ -2396,38 +2409,46 @@ function program2(depth0,data) {
                                   // this is a rollup sub level line
                                   str = "new-category";
                                 }
-                            } else if ((i === 1 && parseInt(this.parentNode.__data__.v[0]) === 1)) {
-                                // this is a total line
-                                this.parentNode.className = "group";
-                                str = "new-category";
-                            } else if (parseInt(this.parentNode.__data__.v[0]) > 1) {
+                            } else if (parseInt(this.parentNode.__data__.v[0]) >= 1) {
                                 // this is a rollup sub level line
                                 str = "new-category";
                             } else if ((parseInt(this.parentNode.__data__.v[0]) === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
                                 // detect total column
                                 this.parentNode.className = "total-column";
                             }
-                            // Detect Group & Empty Value
-                            if (this.parentNode.className === "group" && d) {
-                                me.categoryColSpan(this);
+                            if (colspan > 1 && i === rollupSummaryIndex) {
+                            	//set the correct colspan to the rollup column
+                            	this.colSpan = colspan;
+                            } else if ((parseInt(this.parentNode.__data__.v[0]) >= 0) && i > rollupSummaryIndex && i < me.firstMeasure) {
+                            	//Remove the cell if part of the colspan
+                            	this.remove();
                             }
                         }
                         if (me.compareCols) {
                             if (me.compareCols.indexOf(i) > -1) {
                                 str += " compareTo";
                             } else if (me.metricCols.indexOf(i) > -1) {
-                                str += " compare";
+                                str += " current";
                             }
                         }
                         if (me.metricCols) {
-                            if (me.metricCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
+                            if (me.metricCols.indexOf(i) === -1 && me.compareCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
                                 str += " dimension";
+                            } else {
+                                str += " measure";
                             }
                         }
                         return str;
                     })
                     .text(function(d, i) {
                         var text = d;
+                        var offset = 0;
+                        if (this.parentNode && this.parentNode.className === "group" && me.firstMeasure !== -1 && i>=me.firstMeasure - me.metricCols.length) {
+                        	//offset = me.metricCols.length;
+                        	if (offset<0) {
+                        		offset=0;
+                        	}
+                        }
                         if (rollups) {
                             if ((rollupSummaryIndex !== null) && (i === rollupSummaryIndex)) {
                                 if (parseInt(this.parentNode.__data__.v[0]) === 1) {
@@ -2445,6 +2466,8 @@ function program2(depth0,data) {
                                     text = "Total";
                                 }
                             }
+                        } else if (offset>0) {
+                        	text = this.parentNode.__data__.v[i - offset];
                         }
                         return text;
                     });
@@ -2454,24 +2477,13 @@ function program2(depth0,data) {
                 this.$el.find("#total-entries").html(""+results.totalSize);
             }
         },
-
-        categoryColSpan : function(node) {
-            var siblings = node.parentNode.childNodes;
-            var colSpan = 1;
-
-            for (i=0; i<siblings.length; i++) {
-                // Obtain Sibling With Matching Class
-                if (d3.select(siblings[i]).classed("new-category")) {
-                    if (d3.select(siblings[i]).attr("colspan")) {
-                        colSpan = parseInt(d3.select(siblings[i]).attr("colspan"));
-                    }
-                    // Increment ColSpan Value
-                    d3.select(siblings[i]).attr("colspan", colSpan + 1);
-                }
-            }
-
-            // Remove Node
-            node.remove();
+        
+        getColspanValue: function(firstMeasurePosition, rollupLevel) {
+        	if (rollupLevel >= 0 && firstMeasurePosition >= 3) {
+        		return firstMeasurePosition - 2;
+        	} else {
+        		return 1;
+        	}
         },
 
         renderBaseViewPort : function() {
@@ -2594,10 +2606,10 @@ function program2(depth0,data) {
             var selection = this.config.get("selection");
             if (selection) {
                 var dateFound = false;
+                var chosenDimensions = config.get("chosenDimensions");
                 for (var i=0; i<selection.facets.length; i++) {
                     // search for date facet within chosenDimensions
                     var facet = selection.facets[i];
-                    var chosenDimensions = config.get("chosenDimensions");
                     var id = facet.id;
                     if (chosenDimensions) {
                         var existsInChosen = chosenDimensions.includes(id);
@@ -3749,7 +3761,7 @@ function program2(depth0,data) {
                 }
                 postMethod = "POST";
             }
-            if (me.compression) {
+            if (me.compression && !velocityTemplate) {
                 analysisJobResults.addParameter("compression","gzip");
             } else {
                 analysisJobResults.addParameter("compression","none");
@@ -3763,11 +3775,12 @@ function program2(depth0,data) {
 
             downloadForm.attr("action",analysisJobResults.url());
             downloadForm.attr("method",postMethod);
+            downloadForm.attr("accept-charset","UTF-8");
             downloadForm.empty();
             downloadForm.append("<input type='hidden' name='access_token' value='"+analysisJobResults.getParameter("access_token")+"'/>");
             downloadForm.append("<input type='hidden' name='compression' value='"+analysisJobResults.getParameter("compression")+"'/>");
             if (velocityTemplate) {
-                downloadForm.append("<input type='hidden' name='template' value='"+base64.encode(velocityTemplate)+"'/>");
+                downloadForm.append("<input type='hidden' name='template' value='"+base64.encode(encodeURIComponent(velocityTemplate))+"'/>");
             }
             if (analysisJobResults.getParameter("type")) {
                 downloadForm.append("<input type='hidden' name='type' value='"+analysisJobResults.getParameter("type")+"'/>");
@@ -6474,7 +6487,7 @@ function program2(depth0,data) {
      
                      // build the template
                      var velocityTemplate = me.exportTemplate(me.model.get("templateData"));
-                     analysisJobResults.setParameter("template", base64.encode(velocityTemplate));
+                     analysisJobResults.setParameter("template", base64.encode(encodeURIComponent(velocityTemplate)));
                      analysisJobResults.setParameter("type","text/html");
                      analysisJobResults.setParameter("timeout",null);
                              
