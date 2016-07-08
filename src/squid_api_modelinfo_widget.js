@@ -114,19 +114,23 @@
                         }
 
                         // sort dimensions
-                        this.dimensions.sort(function(a, b){
-                            if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-                            if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-                            return 0;
-                        });
+                        if (this.dimensions) {
+                            this.dimensions.sort(function(a, b){
+                                if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                                if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                                return 0;
+                            });
+                        }
 
                         // sort metrics
-                        this.metrics.sort(function(a, b){
-                            if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-                            if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-                            return 0;
-                        });
-
+                        if (this.metrics) {
+                            this.metrics.sort(function(a, b){
+                                if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                                if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                                return 0;
+                            });
+                        }
+                        
                         var jsonData = {
                             dimensions: this.dimensions,
                             metrics: this.metrics
