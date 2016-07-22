@@ -20,11 +20,17 @@
 
             if (options) {
                 this.onChangeHandler = options.onChangeHandler;
+                if (options.autoInit) {
+                    this.autoInit = options.autoInit;
+                }
             }
 
             // check for new filter selection made by config update
             this.listenTo(this.config, 'change:selection', this.initFilters);
-            this.initFilters();
+
+            if (this.autoInit) {
+                this.initFilters();
+            }
         },
 
         initFilters : function() {

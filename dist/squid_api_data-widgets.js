@@ -4124,7 +4124,10 @@ function program2(depth0,data) {
 
             // check for new filter selection made by config update
             this.listenTo(this.config, 'change:selection', this.initFilters);
-            this.initFilters();
+
+            if (options.autoInit === true) {
+                this.initFilters();
+            }
         },
 
         initFilters : function() {
