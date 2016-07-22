@@ -4107,6 +4107,7 @@ function program2(depth0,data) {
         filters : null,
         config : null,
         onChangeHandler : null,
+        autoInit: null,
         timeFacetDef : [],
 
         initialize: function(options) {
@@ -4120,12 +4121,15 @@ function program2(depth0,data) {
 
             if (options) {
                 this.onChangeHandler = options.onChangeHandler;
+                if (options.autoInit) {
+                    this.autoInit = options.autoInit;
+                }
             }
 
             // check for new filter selection made by config update
             this.listenTo(this.config, 'change:selection', this.initFilters);
 
-            if (options.autoInit === true) {
+            if (this.autoInit) {
                 this.initFilters();
             }
         },

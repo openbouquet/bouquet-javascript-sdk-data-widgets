@@ -7,6 +7,7 @@
         filters : null,
         config : null,
         onChangeHandler : null,
+        autoInit: null,
         timeFacetDef : [],
 
         initialize: function(options) {
