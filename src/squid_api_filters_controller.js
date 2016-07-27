@@ -9,6 +9,7 @@
         onChangeHandler : null,
         autoInit: null,
         timeFacetDef : [],
+        includeDynamic: null,
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -23,6 +24,9 @@
                 this.onChangeHandler = options.onChangeHandler;
                 if (options.autoInit) {
                     this.autoInit = options.autoInit;
+                }
+                if (options.includeDynamic) {
+                    this.includeDynamic = options.includeDynamic;
                 }
             }
 
@@ -52,6 +56,8 @@
                 });
                 filters.set("engineVersion", "2");
                 filters.setDomainIds([domainPk]);
+
+                filters.set("includeDynamic", this.includeDynamic);
 
                 console.log("compute (initFilters)");
                 var timeFacets = [];
