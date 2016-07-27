@@ -66,7 +66,8 @@
                     // update global filters
                     me.filters.set({
                         "domains": filters.get("domains"), 
-                        "id" : filters.get("id")
+                        "id" : filters.get("id"),
+                        "includeDynamic" : me.includeDynamic
                     }, {
                         "silent" : true
                     });
