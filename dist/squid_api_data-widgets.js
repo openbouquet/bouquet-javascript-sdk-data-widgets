@@ -1262,11 +1262,13 @@ function program2(depth0,data) {
             changed = changed || a.hasChanged();
             if (this.pagination) {
                 a.setParameter("maxResults", this.config.get("maxResults"), silent);
-                var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
+
+                var configStartIndex = this.config.get("startIndex") || 0;
+                var startIndexChange = (a.getParameter("startIndex") !== configStartIndex);
                 if (startIndexChange) {
                     // update if pagination changed
                     if (a.get("id") && (a.get("id").analysisJobId)) {
-                        a.setParameter("startIndex", this.config.get("startIndex"), silent);
+                        a.setParameter("startIndex", configStartIndex, silent);
                         squid_api.compute(a);
                     }
                 }
