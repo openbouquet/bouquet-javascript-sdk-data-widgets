@@ -735,6 +735,14 @@
             }
         },
 
+        show: function() {
+            this.$el.show();
+        },
+
+        hide: function() {
+            this.$el.hide();
+        },
+
         render : function() {
             if (this.el) {
                 var selector = "#"+this.el.id+" .sq-table";
