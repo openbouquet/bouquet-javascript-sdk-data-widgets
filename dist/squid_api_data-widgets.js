@@ -4118,7 +4118,7 @@ function program2(depth0,data) {
         config : null,
         onChangeHandler : null,
         autoInit: null,
-        timeFacetDef : []
+        timeFacetDef : [],
 
         initialize: function(options) {
             this.config = squid_api.model.config;
