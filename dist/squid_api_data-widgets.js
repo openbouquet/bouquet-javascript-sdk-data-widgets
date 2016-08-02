@@ -4118,8 +4118,7 @@ function program2(depth0,data) {
         config : null,
         onChangeHandler : null,
         autoInit: null,
-        timeFacetDef : [],
-        includeDynamic: null,
+        timeFacetDef : []
 
         initialize: function(options) {
             this.config = squid_api.model.config;
@@ -4134,9 +4133,6 @@ function program2(depth0,data) {
                 this.onChangeHandler = options.onChangeHandler;
                 if (options.autoInit) {
                     this.autoInit = options.autoInit;
-                }
-                if (options.includeDynamic) {
-                    this.includeDynamic = options.includeDynamic;
                 }
             }
 
@@ -4167,8 +4163,6 @@ function program2(depth0,data) {
                 filters.set("engineVersion", "2");
                 filters.setDomainIds([domainPk]);
 
-                filters.set("includeDynamic", this.includeDynamic);
-
                 console.log("compute (initFilters)");
                 var timeFacets = [];
                 $.when(squid_api.controller.facetjob.compute(filters, this.config.get("selection")))
@@ -4176,8 +4170,7 @@ function program2(depth0,data) {
                     // update global filters
                     me.filters.set({
                         "domains": filters.get("domains"), 
-                        "id" : filters.get("id"),
-                        "includeDynamic" : me.includeDynamic
+                        "id" : filters.get("id")
                     }, {
                         "silent" : true
                     });
