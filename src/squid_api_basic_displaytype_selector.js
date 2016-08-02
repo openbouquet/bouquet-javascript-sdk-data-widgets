@@ -43,11 +43,11 @@
             if (this.model) {
                 this.listenTo(this.model,"change", this.render);
             }
-
             if (!this.config) {
                 this.config = squid_api.model.config;
             }
             this.listenTo(this.config, "change:selection", this.render);
+            this.listenTo(this.config, "change:currentAnalysis", this.render);
         },
 
         setModel: function(model) {
