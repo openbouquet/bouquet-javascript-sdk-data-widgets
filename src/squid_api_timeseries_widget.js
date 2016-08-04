@@ -532,9 +532,6 @@
                 this.results = data.results;
 
                 if (data.done && this.results && ! this.model.get("error")) {
-                    this.renderGraphic();
-                } else {
-                    var chartChildren = this.$el.find("#chart_container").children();
                     if (this.model.get("results") === null) {
                         for (i=0; i<chartChildren.length; i++) {
                             if ($(chartChildren[i]).is("#re-run")) {
@@ -543,7 +540,12 @@
                                 $(chartChildren[i]).hide();
                             }
                         }
-                    } else if (this.model.get("error")) {
+                    } else {
+                        this.renderGraphic();
+                    }
+                } else {
+                    var chartChildren = this.$el.find("#chart_container").children();
+                    if (this.model.get("error")) {
                          this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                     }
                 }

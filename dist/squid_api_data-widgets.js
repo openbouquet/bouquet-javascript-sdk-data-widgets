@@ -1261,7 +1261,7 @@ function program2(depth0,data) {
             });
             changed = changed || a.hasChanged();
             if (this.pagination) {
-                a.setParameter("maxResults", this.config.get("maxResults"), silent);
+                a.setParameter("maxResults", this.config.get("maxResults") - 1, silent);
 
                 var configStartIndex = this.config.get("startIndex") || 0;
                 var startIndexChange = (a.getParameter("startIndex") !== configStartIndex);
@@ -2539,6 +2539,9 @@ function program2(depth0,data) {
                             this.paginationView.render();
                             this.$el.find("#pagination").show();
                         }
+                        if (this.model.get("results") === null) {
+                            this.$el.find("#re-run").show();
+                        }
                         this.$el.find("#error").html("");
                     } else {
                         var analysis = this.model;
@@ -2546,11 +2549,7 @@ function program2(depth0,data) {
                         if (analysis.get("analyses")) {
                             analysis = analysis.get("analyses")[0];
                         }
-                        if (this.model.get("results") === null) {
-                            this.$el.find("#re-run").show();
-                        } else {
-                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
-                        }
+                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                     }
                 }
 
@@ -7167,9 +7166,6 @@ function program2(depth0,data) {
                 this.results = data.results;
 
                 if (data.done && this.results && ! this.model.get("error")) {
-                    this.renderGraphic();
-                } else {
-                    var chartChildren = this.$el.find("#chart_container").children();
                     if (this.model.get("results") === null) {
                         for (i=0; i<chartChildren.length; i++) {
                             if ($(chartChildren[i]).is("#re-run")) {
@@ -7178,7 +7174,12 @@ function program2(depth0,data) {
                                 $(chartChildren[i]).hide();
                             }
                         }
-                    } else if (this.model.get("error")) {
+                    } else {
+                        this.renderGraphic();
+                    }
+                } else {
+                    var chartChildren = this.$el.find("#chart_container").children();
+                    if (this.model.get("error")) {
                          this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                     }
                 }

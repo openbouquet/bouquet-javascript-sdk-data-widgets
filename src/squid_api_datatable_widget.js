@@ -765,6 +765,9 @@
                             this.paginationView.render();
                             this.$el.find("#pagination").show();
                         }
+                        if (this.model.get("results") === null) {
+                            this.$el.find("#re-run").show();
+                        }
                         this.$el.find("#error").html("");
                     } else {
                         var analysis = this.model;
@@ -772,11 +775,7 @@
                         if (analysis.get("analyses")) {
                             analysis = analysis.get("analyses")[0];
                         }
-                        if (this.model.get("results") === null) {
-                            this.$el.find("#re-run").show();
-                        } else {
-                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
-                        }
+                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                     }
                 }
 
