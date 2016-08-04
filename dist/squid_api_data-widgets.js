@@ -13,7 +13,7 @@ function program1(depth0,data) {
   }
 
   buffer += "<div id=\"bar_chart\" class=\"squid-api-data-widgets-bar-chart\">\n    <div id=\"re-run\" style=\"";
-  stack1 = helpers.unless.call(depth0, (depth0 && depth0.enableRerun), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  stack1 = helpers.unless.call(depth0, (depth0 && depth0.isInCache), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\">\n        <div class=\"reactiveMessage\">\n            <span>\n                <i class=\"fa fa-refresh\"></i><br>\n                Please manually refresh your analysis\n            </span>\n        </div>\n    </div>\n</div>\n";
   return buffer;
@@ -1261,7 +1261,7 @@ function program2(depth0,data) {
             });
             changed = changed || a.hasChanged();
             if (this.pagination) {
-                a.setParameter("maxResults", this.config.get("maxResults") - 1, silent);
+                a.setParameter("maxResults", this.config.get("maxResults"), silent);
 
                 var configStartIndex = this.config.get("startIndex") || 0;
                 var startIndexChange = (a.getParameter("startIndex") !== configStartIndex);
@@ -1449,14 +1449,10 @@ function program2(depth0,data) {
         },
 
         renderBase: function(done) {
-            var error = this.model.get("error");
-            var enableRerun;
-            if (error) {
-                enableRerun = error.enableRerun;
-            }
+            var isInCache = this.model.get("results") === null;
             this.$el.html(this.template({
                 done: done,
-                enableRerun: enableRerun
+                isInCache: isInCache
             }));
         },
 
@@ -1573,6 +1569,7 @@ function program2(depth0,data) {
                             .style('fill', tempColor);
                     })
                     .transition()
+                        // available callback options (to check)
                         .attr('width', function(d) {
                             return xScale(d[1]);
                         })
@@ -2549,7 +2546,7 @@ function program2(depth0,data) {
                         if (analysis.get("analyses")) {
                             analysis = analysis.get("analyses")[0];
                         }
-                        if (this.model.get("error").enableRerun) {
+                        if (this.model.get("results") === null) {
                             this.$el.find("#re-run").show();
                         } else {
                             this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
@@ -7173,18 +7170,16 @@ function program2(depth0,data) {
                     this.renderGraphic();
                 } else {
                     var chartChildren = this.$el.find("#chart_container").children();
-                    if (this.model.get("error")) {
-                        if (this.model.get("error").enableRerun) {
-                            for (i=0; i<chartChildren.length; i++) {
-                                if ($(chartChildren[i]).is("#re-run")) {
-                                    $(chartChildren[i]).show();
-                                } else {
-                                    $(chartChildren[i]).hide();
-                                }
+                    if (this.model.get("results") === null) {
+                        for (i=0; i<chartChildren.length; i++) {
+                            if ($(chartChildren[i]).is("#re-run")) {
+                                $(chartChildren[i]).show();
+                            } else {
+                                $(chartChildren[i]).hide();
                             }
-                        } else {
-                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                         }
+                    } else if (this.model.get("error")) {
+                         this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                     }
                 }
             }

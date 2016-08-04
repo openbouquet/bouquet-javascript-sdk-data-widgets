@@ -535,18 +535,16 @@
                     this.renderGraphic();
                 } else {
                     var chartChildren = this.$el.find("#chart_container").children();
-                    if (this.model.get("error")) {
-                        if (this.model.get("error").enableRerun) {
-                            for (i=0; i<chartChildren.length; i++) {
-                                if ($(chartChildren[i]).is("#re-run")) {
-                                    $(chartChildren[i]).show();
-                                } else {
-                                    $(chartChildren[i]).hide();
-                                }
+                    if (this.model.get("results") === null) {
+                        for (i=0; i<chartChildren.length; i++) {
+                            if ($(chartChildren[i]).is("#re-run")) {
+                                $(chartChildren[i]).show();
+                            } else {
+                                $(chartChildren[i]).hide();
                             }
-                        } else {
-                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                         }
+                    } else if (this.model.get("error")) {
+                         this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                     }
                 }
             }

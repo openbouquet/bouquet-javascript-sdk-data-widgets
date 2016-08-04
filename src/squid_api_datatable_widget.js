@@ -772,7 +772,7 @@
                         if (analysis.get("analyses")) {
                             analysis = analysis.get("analyses")[0];
                         }
-                        if (this.model.get("error").enableRerun) {
+                        if (this.model.get("results") === null) {
                             this.$el.find("#re-run").show();
                         } else {
                             this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");

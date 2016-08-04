@@ -165,14 +165,10 @@
         },
 
         renderBase: function(done) {
-            var error = this.model.get("error");
-            var enableRerun;
-            if (error) {
-                enableRerun = error.enableRerun;
-            }
+            var isInCache = this.model.get("results") === null;
             this.$el.html(this.template({
                 done: done,
-                enableRerun: enableRerun
+                isInCache: isInCache
             }));
         },
 
@@ -289,6 +285,7 @@
                             .style('fill', tempColor);
                     })
                     .transition()
+                        // available callback options (to check)
                         .attr('width', function(d) {
                             return xScale(d[1]);
                         })
