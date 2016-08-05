@@ -141,6 +141,10 @@
 
         events : ({
             "click thead th" : function(event) {
+                if ($(event.currentTarget).attr("aria-describedby")) {
+                    $(event.currentTarget).tooltip("destroy");
+                }
+
                 if (this.ordering) {
                     var originType = $(event.currentTarget).attr("origin-type");
                     if (originType !== "COMPARETO") {
