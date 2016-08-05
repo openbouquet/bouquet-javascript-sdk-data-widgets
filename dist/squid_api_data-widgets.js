@@ -1921,7 +1921,7 @@ function program2(depth0,data) {
 
                 if (this.ordering) {
                     var originType = $(event.currentTarget).attr("origin-type");
-                    if (originType !== "COMPARETO") {
+                    if (originType !== "COMPARETO" && originType !== "GROWTH") {
                         var orderBy = this.config.get("orderBy");
                         var expressionValue = $(event.currentTarget).attr("data-content");
                         var obj = {"expression" : {"value" : expressionValue}};
