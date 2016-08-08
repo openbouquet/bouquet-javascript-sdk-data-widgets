@@ -9,6 +9,8 @@
         format : null,
 
         initialize : function(options) {
+            var me = this;
+            
             if (this.model) {
                 this.model.on('change', this.render, this);
             }
