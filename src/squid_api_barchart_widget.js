@@ -203,13 +203,7 @@
                     ySpacing = 45;
 
                 // Set A max / min height
-                var height;
-
-                if (barData.values.length < 5) {
-                    height = 200;
-                } else {
-                    height = 500;
-                }
+                var height = (barData.values.length) * 50;
 
                 // To make the chart fit (Width)
                 xScale = d3.scale.linear()
