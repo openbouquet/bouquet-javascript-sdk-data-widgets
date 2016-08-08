@@ -21,15 +21,24 @@
             if (options.format) {
                 this.format = options.format;
             } else {
-                // default number formatter
                 if (d3) {
-                    this.format = d3.format(",.0f");
+                    this.d3Formatter = d3.format(",");
+                }
+                // default number formatter
+                if (this.d3Formatter) {
+                    this.format = function(f){
+                        if (isNaN(f)) {
+                            return f;
+                        } else {
+                            return me.d3Formatter(f);
+                        }
+                    };
                 } else {
                     this.format = function(f){
-                        return f;
+                    return f;
                     };
                 }
-            }
+            }   
         },
 
         setModel : function(model) {
@@ -62,7 +71,7 @@
                         var col = cols[i];
                         if (col.originType === "USER") {
                             var kpi = {};
-                            kpi.value = this.format(values[i]);
+                            kpi.value = (typeof values[i] === "number") ? this.d3Formatter(Math.round(parseFloat(values[i]) * 100) / 100) : this.format(values[i]);
                             var compareIndex = compareMap[col.id];
                             if (compareIndex) {
                                 kpi.compareToValue = this.format(values[compareIndex]);
