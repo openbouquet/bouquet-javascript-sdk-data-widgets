@@ -1806,6 +1806,8 @@ function program2(depth0,data) {
 
         addFacetValueFromResults: false,
 
+        testingSort: false,
+
         initialize : function(options) {
             var me = this;
 
@@ -1828,6 +1830,9 @@ function program2(depth0,data) {
                 this.template = options.template;
             } else {
                 this.template = squid_api.template.squid_api_datatable_widget;
+            }
+            if (options.testingSort) {
+                this.testingSort = options.testingSort;
             }
 
             // detect analysis formatting
@@ -1915,7 +1920,7 @@ function program2(depth0,data) {
 
                 if (this.ordering) {
                     var originType = $(event.currentTarget).attr("origin-type");
-                    if (originType !== "COMPARETO" && originType !== "GROWTH") {
+                    if (this.testingSort || (originType !== "COMPARETO" && originType !== "GROWTH")) {
                         var orderBy = this.config.get("orderBy");
                         var expressionValue = $(event.currentTarget).attr("data-content");
                         var obj = {"expression" : {"value" : expressionValue}};
