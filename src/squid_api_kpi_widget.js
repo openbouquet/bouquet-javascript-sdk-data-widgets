@@ -10,7 +10,7 @@
 
         initialize : function(options) {
             var me = this;
-            
+
             if (this.model) {
                 this.model.on('change', this.render, this);
             }
@@ -76,7 +76,7 @@
                             kpi.value = (typeof values[i] === "number") ? this.d3Formatter(Math.round(parseFloat(values[i]) * 100) / 100) : this.format(values[i]);
                             var compareIndex = compareMap[col.id];
                             if (compareIndex) {
-                                kpi.compareToValue = this.format(values[compareIndex]);
+                                kpi.compareToValue = (typeof values[i] === "number") ? this.d3Formatter(Math.round(parseFloat(values[compareIndex]) * 100) / 100) : this.format(values[compareIndex]);
                             }
                             kpi.unit = "";
                             kpi.name = col.name;
