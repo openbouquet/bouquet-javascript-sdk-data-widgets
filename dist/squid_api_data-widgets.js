@@ -1123,6 +1123,8 @@ function program2(depth0,data) {
         analysis : null,
         config : null,
         pagination: null,
+        autoRefresh: null,
+        ignoreConfigChange: null,
 
         initialize : function(options) {
             var me = this;
@@ -1148,6 +1150,12 @@ function program2(depth0,data) {
                 if (options.afterInitializedCallback) {
                     this.afterInitializedCallback = options.afterInitializedCallback;
                 }
+                if (options.autoRefresh) {
+                    this.autoRefresh = options.autoRefresh;
+                }
+                if (options.ignoreConfigChange) {
+                    this.ignoreConfigChange = options.ignoreConfigChange;
+                }
             }
 
             if (!this.config) {
@@ -1161,45 +1169,50 @@ function program2(depth0,data) {
             });
 
             // controller
-            this.listenTo(this.config, "change", function() {
-                var refreshNeeded = false;
-                if (this.config.hasChanged("project")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("domain")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("chosenDimensions")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("chosenMetrics")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("limit")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("rollups")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("orderBy")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("selection")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("startIndex")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("timeUnit")) {
-                    refreshNeeded = true;
-                }
-                if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
-                    this.refreshAnalysis();
-                }
-            });
+            if (! this.ignoreConfigChange) {
+                this.listenTo(this.config, "change", function() {
+                    var refreshNeeded = false;
+                    if (this.config.hasChanged("project")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("domain")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("chosenDimensions")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("chosenMetrics")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("limit")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("rollups")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("orderBy")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("selection")) {
+                        refreshNeeded = true;
+                    }   
+                    if (this.config.hasChanged("startIndex")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("timeUnit")) {
+                        refreshNeeded = true;
+                    }
+                    if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
+                        this.refreshAnalysis();
+                    }
+                });
+            }
 
             if (this.afterInitializedCallback) {
                 this.afterInitializedCallback.call(this);
+            }
+            if (this.autoRefresh) {
+                this.refreshAnalysis();
             }
         },
 
@@ -1462,7 +1475,7 @@ function program2(depth0,data) {
             var status = this.model.get("status");
             var error = this.model.get("error");
 
-            if (data.done && ! error) {
+            if (data.results && data.done && ! error) {
 
                 // Print Template
                 this.renderBase(true);

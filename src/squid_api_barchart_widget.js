@@ -178,7 +178,7 @@
             var status = this.model.get("status");
             var error = this.model.get("error");
 
-            if (data.done && ! error) {
+            if (data.results && data.done && ! error) {
 
                 // Print Template
                 this.renderBase(true);
