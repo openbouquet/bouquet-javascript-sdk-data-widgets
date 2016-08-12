@@ -38,8 +38,6 @@
 
         addFacetValueFromResults: false,
 
-        testingSort: false,
-
         initialize : function(options) {
             var me = this;
 
@@ -62,9 +60,6 @@
                 this.template = options.template;
             } else {
                 this.template = squid_api.template.squid_api_datatable_widget;
-            }
-            if (options.testingSort) {
-                this.testingSort = options.testingSort;
             }
 
             // detect analysis formatting
@@ -152,27 +147,25 @@
 
                 if (this.ordering) {
                     var originType = $(event.currentTarget).attr("origin-type");
-                    if (this.testingSort || (originType !== "COMPARETO" && originType !== "GROWTH")) {
-                        var orderBy = this.config.get("orderBy");
-                        var expressionValue = $(event.currentTarget).attr("data-content");
-                        var obj = {"expression" : {"value" : expressionValue}};
-                        if (orderBy) {
-                            if (orderBy[0]) {
-                                if (orderBy[0].expression) {
-                                    if (orderBy[0].expression.value === expressionValue) {
-                                        if ($(event.currentTarget).hasClass("ASC")) {
-                                            obj.direction = "DESC";
-                                        } else {
-                                            obj.direction = "ASC";
-                                        }
-                                    } else {
+                    var orderBy = this.config.get("orderBy");
+                    var expressionValue = $(event.currentTarget).attr("data-content");
+                    var obj = {"expression" : {"value" : expressionValue}};
+                    if (orderBy) {
+                        if (orderBy[0]) {
+                            if (orderBy[0].expression) {
+                                if (orderBy[0].expression.value === expressionValue) {
+                                    if ($(event.currentTarget).hasClass("ASC")) {
                                         obj.direction = "DESC";
+                                    } else {
+                                        obj.direction = "ASC";
                                     }
+                                } else {
+                                    obj.direction = "DESC";
                                 }
                             }
                         }
-                        this.config.set("orderBy", [obj]);
                     }
+                    this.config.set("orderBy", [obj]);
                 }
             },
             "click td.dimension" : function(event) {
