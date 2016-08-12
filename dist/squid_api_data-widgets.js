@@ -4185,7 +4185,7 @@ function program2(depth0,data) {
                         var facets = sel.facets;
                         for (var i = 0; i < facets.length; i++) {
                             var facet = facets[i];
-                            if (facet.dimension.type === "CONTINUOUS" && facet.dimension.valueType === "DATE") {
+                            if (facet.dimension.valueType === "DATE") {
                                 timeFacets.push(facet);
                             }
                         }
@@ -4222,7 +4222,7 @@ function program2(depth0,data) {
             if (!timeFacet) {
                 // pick the first time facet
                 for (i=0; i<timeFacets.length; i++) {
-                    if (timeFacets[i].dimension.valueType === "DATE" && timeFacets[i].dimension.type === "CONTINUOUS"  && ! timeFacets[i].error) {
+                    if (timeFacets[i].dimension.valueType === "DATE" && ! timeFacets[i].error) {
                         timeFacet = timeFacets[i];
                         break;
                     }
