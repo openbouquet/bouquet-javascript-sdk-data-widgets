@@ -42,6 +42,17 @@
             });
             this.config.on("change:domain", this.fetchMetrics, this);
             this.filters.on("change:selection", this.render, this);
+
+            /* close popover when clicked outside */
+            $('body').on('click', function (e) {
+                me.$el.find("[data-toggle='popover']").each(function() {
+                    //the 'is' for buttons that trigger popups
+                    //the 'has' for icons within a button that triggers a popup
+                    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                        $(this).popover('hide');
+                    }
+                });
+            });
         },
 
         getMetrics: function() {
@@ -161,18 +172,9 @@
                             me.$el.find("[data-toggle='popover']").on("show.bs.popover", function(){
                                 me.$el.find("[data-toggle='popover']").data("bs.popover").tip().css({"max-width": "inherit"});
                             });
-
-                            /*
-                                close popover when clicked outside
-                            */
-                            $('body').on('click', function (e) {
-                                me.$el.find("[data-toggle='popover']").each(function() {
-                                    //the 'is' for buttons that trigger popups
-                                    //the 'has' for icons within a button that triggers a popup
-                                    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                                        $(this).popover('hide');
-                                    }
-                                });
+                            me.$el.find("[data-toggle='popover']").on("hidden.bs.popover", function(e){
+                                // prevent clicking twice to open bootstrap popover
+                                $(e.target).data("bs.popover").inState.click = false;
                             });
                         } else {
                             this.$el.empty();
