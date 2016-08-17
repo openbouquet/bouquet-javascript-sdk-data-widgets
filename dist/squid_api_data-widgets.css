@@ -621,6 +621,12 @@ Pagination
 .squid-api-modelinfo-internal-view table {
     font-size: 0.7em;
 }
+.squid-api-modelinfo-internal-view table tr td:nth-child(2) {
+    font-weight: bold;
+    font-size: 10px;
+    position: relative;
+    bottom: 2px;
+}
 .squid-api-modelinfo-internal-view h4 {
     padding: 4px;
     margin-top: 0px;
