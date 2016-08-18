@@ -1,11 +1,13 @@
 <div class="squid-api-modelinfo-internal-view">
-    <div class="col-md-6">
+    <div class="col-md-6 nopadding">
         <h4>Dimensions</h4>
         <table class="table table-condensed dimensions">
-          <tr>
+        <thead>
+        <tr>
             <th>Name</th>
             <th>Description</th>
           </tr>
+        </thead>
               {{#each dimensions}}
                 <tr>
                     <td>{{name}}</td>
@@ -14,13 +16,15 @@
               {{/each}}
         </table>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 nopadding">
         <h4>Metrics</h4>
         <table class="table table-condensed metrics">
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
+            <thead> 
+             <tr>
+                <th>Name</th>
+                <th>Description</th>
             </tr>
+            </thead>
                 {{#each metrics}}
                     <tr>
                         <td>{{name}}</td>

@@ -617,6 +617,7 @@ Pagination
 .squid-api-modelinfo-internal-view {
     overflow-y: scroll;
     max-height: 200px;
+    overflow-x: hidden;
 }
 .squid-api-modelinfo-internal-view table {
     font-size: 0.7em;
@@ -631,7 +632,12 @@ Pagination
     padding: 4px;
     margin-top: 0px;
     border-radius: 4px;
+    margin-bottom: 4px;
     text-align: center;
+}
+.squid-api-modelinfo-internal-view table.dimensions {
+    width: 101%;
+    max-width: 101%;
 }
 .squid-api-modelinfo-internal-view::-webkit-scrollbar {
     -webkit-appearance: none;
@@ -641,6 +647,13 @@ Pagination
     border-radius: 4px;
     background-color: rgba(0,0,0,.5);
     -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+.squid-api-modelinfo-internal-view .nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+.squid-api-modelinfo-internal-view table thead {
+    background: #f3f3f3;
 }
 
 .squid-api-data-widgets-orderby-widget .onoffswitch {

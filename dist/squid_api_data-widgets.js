@@ -732,10 +732,10 @@ function program3(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6\">\n        <h4>Dimensions</h4>\n        <table class=\"table table-condensed dimensions\">\n          <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n              ";
+  buffer += "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6 nopadding\">\n        <h4>Dimensions</h4>\n        <table class=\"table table-condensed dimensions\">\n        <thead>\n        <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n        </thead>\n              ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.dimensions), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </table>\n    </div>\n    <div class=\"col-md-6\">\n        <h4>Metrics</h4>\n        <table class=\"table table-condensed metrics\">\n            <tr>\n              <th>Name</th>\n              <th>Description</th>\n            </tr>\n                ";
+  buffer += "\n        </table>\n    </div>\n    <div class=\"col-md-6 nopadding\">\n        <h4>Metrics</h4>\n        <table class=\"table table-condensed metrics\">\n            <thead> \n             <tr>\n                <th>Name</th>\n                <th>Description</th>\n            </tr>\n            </thead>\n                ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.metrics), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        </table>\n    </div>\n</div>\n";
