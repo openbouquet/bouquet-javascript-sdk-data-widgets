@@ -1303,10 +1303,6 @@ function program2(depth0,data) {
     var View = Backbone.View.extend({
         template : null,
 
-        format : null,
-
-        d3Formatter : null,
-
         initialize: function(options) {
             var me = this;
             this.config = squid_api.model.config;
@@ -1322,28 +1318,6 @@ function program2(depth0,data) {
                 this.template = options.template;
             } else {
                 this.template = template;
-            }
-
-            if (d3) {
-                this.d3Formatter = d3.format(",.f");
-            }
-            if (options.format) {
-                this.format = options.format;
-            } else {
-                // default number formatter
-                if (this.d3Formatter) {
-                    this.format = function(f){
-                        if (isNaN(f)) {
-                            return f;
-                        } else {
-                            return me.d3Formatter(f);
-                        }
-                    };
-                } else {
-                    this.format = function(f){
-                        return f;
-                    };
-                }
             }
             $(window).on("resize", _.bind(this.resize(),this));
         },
@@ -1561,7 +1535,7 @@ function program2(depth0,data) {
                     .on('mouseover', function(d) {
                         tooltip.transition()
                             .style('opacity', 1);
-                        tooltip.html(d[0] + " - " + me.format(d[1]))
+                        tooltip.html(d[0] + " - " + d[1])
                             .style('left', (d3.event.pageX - 35) + 'px')
                             .style('top',  (d3.event.pageY - 30) + 'px');
                         tempColor = this.style.fill;
@@ -6677,7 +6651,6 @@ function program2(depth0,data) {
 
         template : null,
         limit : 10000,
-        format : null,
         d3Formatter : null,
         startDate: null,
         endDate: null,
@@ -6803,7 +6776,7 @@ function program2(depth0,data) {
                             for (ix=0; ix<legendItems.length; ix++) {
                                 if ($(legendItems[ix]).text().indexOf(line) > -1) {
                                     $(legendItems[ix]).find(".value").remove();
-                                    $(legendItems[ix]).append("<span class='value'>" + me.format(values[i].value) + "</span> ");
+                                    $(legendItems[ix]).append("<span class='value'>" + values[i].value + "</span> ");
                                 }
                             }
                         }
@@ -6814,18 +6787,6 @@ function program2(depth0,data) {
                         $(this.legend_target + " span .value").remove();
                     }
                 };
-            }
-            if (options.format) {
-                this.format = options.format;
-            } else {
-                // default number formatter
-                if (d3) {
-                    this.format = d3.format(",.0f");
-                } else {
-                    this.format = function(f){
-                        return f;
-                    };
-                }
             }
             if (this.model) {
                 this.listenTo(this.model, 'change:status', this.render);

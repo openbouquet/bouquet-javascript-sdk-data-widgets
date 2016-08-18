@@ -6,7 +6,6 @@
 
         template : null,
         limit : 10000,
-        format : null,
         d3Formatter : null,
         startDate: null,
         endDate: null,
@@ -132,7 +131,7 @@
                             for (ix=0; ix<legendItems.length; ix++) {
                                 if ($(legendItems[ix]).text().indexOf(line) > -1) {
                                     $(legendItems[ix]).find(".value").remove();
-                                    $(legendItems[ix]).append("<span class='value'>" + me.format(values[i].value) + "</span> ");
+                                    $(legendItems[ix]).append("<span class='value'>" + values[i].value + "</span> ");
                                 }
                             }
                         }
@@ -143,18 +142,6 @@
                         $(this.legend_target + " span .value").remove();
                     }
                 };
-            }
-            if (options.format) {
-                this.format = options.format;
-            } else {
-                // default number formatter
-                if (d3) {
-                    this.format = d3.format(",.0f");
-                } else {
-                    this.format = function(f){
-                        return f;
-                    };
-                }
             }
             if (this.model) {
                 this.listenTo(this.model, 'change:status', this.render);
