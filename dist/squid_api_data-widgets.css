@@ -620,13 +620,10 @@ Pagination
     overflow-x: hidden;
 }
 .squid-api-modelinfo-internal-view table {
-    font-size: 0.7em;
+    font-size: 12px;
 }
-.squid-api-modelinfo-internal-view table tr td:nth-child(2) {
+.squid-api-modelinfo-internal-view table tr td:nth-child(1) {
     font-weight: bold;
-    font-size: 10px;
-    position: relative;
-    bottom: 2px;
 }
 .squid-api-modelinfo-internal-view h4 {
     padding: 4px;
