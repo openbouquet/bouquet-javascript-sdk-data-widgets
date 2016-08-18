@@ -34,6 +34,7 @@
             var me = this;
             this.config = squid_api.model.config;
             this.filters = squid_api.model.filters;
+            this.status = squid_api.model.status;
 
             this.internalTemplate = squid_api.template.squid_api_modelinfo_internal_widget;
 
@@ -42,6 +43,7 @@
             });
             this.config.on("change:domain", this.fetchMetrics, this);
             this.filters.on("change:selection", this.render, this);
+            this.status.on("change:status", this.statusUpdate, this);
 
             /* close popover when clicked outside */
             $('body').on('click', function (e) {
@@ -53,6 +55,14 @@
                     }
                 });
             });
+        },
+
+        statusUpdate: function() {
+            if (this.status.get("status") === "RUNNING") {
+                this.$el.find("button").attr("disabled", true);
+            } else {
+                this.$el.find("button").attr("disabled", false);
+            }
         },
 
         getMetrics: function() {
