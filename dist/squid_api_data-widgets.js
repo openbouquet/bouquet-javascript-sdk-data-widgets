@@ -1220,6 +1220,10 @@ function program2(depth0,data) {
             // to be overridden
         },
 
+        onChangeHandler : function(analysis) {
+            squid_api.compute(analysis);
+        },
+
         refreshAnalysis : function(silent) {
             var changed = false;
             var a = this.analysis;
@@ -1945,38 +1949,36 @@ function program2(depth0,data) {
                     this.config.set("orderBy", [obj]);
                 }
             },
-            "click td" : function(event) {
-                if ($(event.currentTarget).hasClass("dimension") || $(event.currentTarget).hasClass("measure")) {
-                    if (this.addFacetValueFromResults) {
+            "click td.dimension" : function(event) {
+                if (this.addFacetValueFromResults) {
 
-                        var value = $(event.currentTarget).text();
-                        var facetId = $(event.currentTarget).parents('tbody').siblings('thead').find('> tr > th:eq(' + $(event.currentTarget).index() + ')').attr("data-content");
+                    var value = $(event.currentTarget).text();
+                    var facetId = $(event.currentTarget).parents('tbody').siblings('thead').find('> tr > th:eq(' + $(event.currentTarget).index() + ')').attr("data-content");
 
-                        var selectionClone = $.extend(true, {}, this.filters.get("selection"));
-                        var facets = selectionClone.facets;
-                        if (facets) {
-                            for (i=0; i<facets.length; i++) {
-                                if (facets[i].id === facetId) {
-                                    var selectedItems = facets[i].selectedItems;
-                                    var add = true;
-                                    for (ix=0; ix<selectedItems.length; ix++) {
-                                        if (selectedItems[ix].value === value) {
-                                            add = false;
-                                            delete facets[i].selectedItems[ix];
-                                        }
-                                    }
-                                    if (add) {
-                                        facets[i].selectedItems.push({
-                                            id    : value,
-                                            type  : "v",
-                                            value : value
-                                        });
+                    var selectionClone = $.extend(true, {}, this.filters.get("selection"));
+                    var facets = selectionClone.facets;
+                    if (facets) {
+                        for (i=0; i<facets.length; i++) {
+                            if (facets[i].id === facetId) {
+                                var selectedItems = facets[i].selectedItems;
+                                var add = true;
+                                for (ix=0; ix<selectedItems.length; ix++) {
+                                    if (selectedItems[ix].value === value) {
+                                        add = false;
+                                        delete facets[i].selectedItems[ix];
                                     }
                                 }
+                                if (add) {
+                                    facets[i].selectedItems.push({
+                                        id    : value,
+                                        type  : "v",
+                                        value : value
+                                    });
+                                }
                             }
-                            // Set the updated filters model
-                            this.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
                         }
+                        // Set the updated filters model
+                        this.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
                     }
                 }
             }
@@ -4224,7 +4226,7 @@ function program2(depth0,data) {
             if (!timeFacet) {
                 // pick the first time facet
                 for (i=0; i<timeFacets.length; i++) {
-                    if (timeFacets[i].dimension.valueType === "DATE" && timeFacets[i].dimension.type === "CONTINUOUS" ! timeFacets[i].error) {
+                    if (timeFacets[i].dimension.valueType === "DATE" && timeFacets[i].dimension.type === "CONTINUOUS" && ! timeFacets[i].error) {
                         timeFacet = timeFacets[i];
                         break;
                     }

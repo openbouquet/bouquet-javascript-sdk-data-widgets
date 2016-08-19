@@ -107,7 +107,7 @@
             if (!timeFacet) {
                 // pick the first time facet
                 for (i=0; i<timeFacets.length; i++) {
-                    if (timeFacets[i].dimension.valueType === "DATE" && timeFacets[i].dimension.type === "CONTINUOUS" ! timeFacets[i].error) {
+                    if (timeFacets[i].dimension.valueType === "DATE" && timeFacets[i].dimension.type === "CONTINUOUS" && ! timeFacets[i].error) {
                         timeFacet = timeFacets[i];
                         break;
                     }
