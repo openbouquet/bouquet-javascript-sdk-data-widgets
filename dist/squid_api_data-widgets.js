@@ -1220,10 +1220,6 @@ function program2(depth0,data) {
             // to be overridden
         },
 
-        onChangeHandler : function(analysis) {
-            squid_api.compute(analysis);
-        },
-
         refreshAnalysis : function(silent) {
             var changed = false;
             var a = this.analysis;
@@ -1949,36 +1945,38 @@ function program2(depth0,data) {
                     this.config.set("orderBy", [obj]);
                 }
             },
-            "click td.dimension" : function(event) {
-                if (this.addFacetValueFromResults) {
+            "click td" : function(event) {
+                if ($(event.currentTarget).hasClass("dimension") || $(event.currentTarget).hasClass("measure")) {
+                    if (this.addFacetValueFromResults) {
 
-                    var value = $(event.currentTarget).text();
-                    var facetId = $(event.currentTarget).parents('tbody').siblings('thead').find('> tr > th:eq(' + $(event.currentTarget).index() + ')').attr("data-content");
+                        var value = $(event.currentTarget).text();
+                        var facetId = $(event.currentTarget).parents('tbody').siblings('thead').find('> tr > th:eq(' + $(event.currentTarget).index() + ')').attr("data-content");
 
-                    var selectionClone = $.extend(true, {}, this.filters.get("selection"));
-                    var facets = selectionClone.facets;
-                    if (facets) {
-                        for (i=0; i<facets.length; i++) {
-                            if (facets[i].id === facetId) {
-                                var selectedItems = facets[i].selectedItems;
-                                var add = true;
-                                for (ix=0; ix<selectedItems.length; ix++) {
-                                    if (selectedItems[ix].value === value) {
-                                        add = false;
-                                        delete facets[i].selectedItems[ix];
+                        var selectionClone = $.extend(true, {}, this.filters.get("selection"));
+                        var facets = selectionClone.facets;
+                        if (facets) {
+                            for (i=0; i<facets.length; i++) {
+                                if (facets[i].id === facetId) {
+                                    var selectedItems = facets[i].selectedItems;
+                                    var add = true;
+                                    for (ix=0; ix<selectedItems.length; ix++) {
+                                        if (selectedItems[ix].value === value) {
+                                            add = false;
+                                            delete facets[i].selectedItems[ix];
+                                        }
+                                    }
+                                    if (add) {
+                                        facets[i].selectedItems.push({
+                                            id    : value,
+                                            type  : "v",
+                                            value : value
+                                        });
                                     }
                                 }
-                                if (add) {
-                                    facets[i].selectedItems.push({
-                                        id    : value,
-                                        type  : "v",
-                                        value : value
-                                    });
-                                }
                             }
+                            // Set the updated filters model
+                            this.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
                         }
-                        // Set the updated filters model
-                        this.config.set("selection", squid_api.utils.buildCleanSelection(selectionClone));
                     }
                 }
             }
@@ -2110,22 +2108,24 @@ function program2(depth0,data) {
                     var orderBy = this.model.get("orderBy");
                     if (orderBy) {
                         // add orderBy direction
-                        for (col=0; col<columns.length; col++) {
-                            if (columns[col]) {
-                                columns[col].orderDirection = undefined;
-                                for (ix=0; ix<orderBy.length; ix++) {
-                                    if (this.ordering) {
-                                        if (columns[col].definition) {
-                                            if (orderBy[ix].expression) {
-                                                if (columns[col].definition === orderBy[ix].expression.value) {
+                        if (columns) {
+                            for (col=0; col<columns.length; col++) {
+                                if (columns[col]) {
+                                    columns[col].orderDirection = undefined;
+                                    for (ix=0; ix<orderBy.length; ix++) {
+                                        if (this.ordering) {
+                                            if (columns[col].definition) {
+                                                if (orderBy[ix].expression) {
+                                                    if (columns[col].definition === orderBy[ix].expression.value) {
+                                                        columns[col].orderDirection = orderBy[ix].direction;
+                                                        break;
+                                                    }
+                                                }
+                                            } else if (orderBy[ix].expression) {
+                                                if (columns[col].id === orderBy[ix].expression.value) {
                                                     columns[col].orderDirection = orderBy[ix].direction;
                                                     break;
                                                 }
-                                            }
-                                        } else if (orderBy[ix].expression) {
-                                            if (columns[col].id === orderBy[ix].expression.value) {
-                                                columns[col].orderDirection = orderBy[ix].direction;
-                                                break;
                                             }
                                         }
                                     }
@@ -2157,27 +2157,29 @@ function program2(depth0,data) {
                     this.metricCols = [];
                     this.dateCols = [];
                     this.firstMeasure = -1;
-                    for (i=0; i<columns.length; i++) {
-                        if (columns[i].originType === "COMPARETO") {
-                            this.compareCols.push(i);
-                            if (this.firstMeasure === -1 || this.firstMeasure>i) {
-                            	this.firstMeasure = i;
+                    if (columns) {
+                        for (i=0; i<columns.length; i++) {
+                            if (columns[i].originType === "COMPARETO") {
+                                this.compareCols.push(i);
+                                if (this.firstMeasure === -1 || this.firstMeasure>i) {
+                                    this.firstMeasure = i;
+                                }
                             }
-                        }
-                        if (columns[i].role === "DATA") {
-                            this.metricCols.push(i);
-                            if (this.firstMeasure === -1 || this.firstMeasure>i) {
-                            	this.firstMeasure = i;
+                            if (columns[i].role === "DATA") {
+                                this.metricCols.push(i);
+                                if (this.firstMeasure === -1 || this.firstMeasure>i) {
+                                    this.firstMeasure = i;
+                                }
                             }
-                        }
-                        if (columns[i].extendedType) {
-                            if (columns[i].extendedType.name === "DATE") {
-                                this.dateCols.push(i);
+                            if (columns[i].extendedType) {
+                                if (columns[i].extendedType.name === "DATE") {
+                                    this.dateCols.push(i);
+                                }
                             }
                         }
                     }
 
-                    if (!invalidSelection) {
+                    if (!invalidSelection && columns) {
                         d3.select(selector).select("thead tr").selectAll("th")
                             .data(columns)
                             .enter().append("th")
@@ -4222,7 +4224,7 @@ function program2(depth0,data) {
             if (!timeFacet) {
                 // pick the first time facet
                 for (i=0; i<timeFacets.length; i++) {
-                    if (timeFacets[i].dimension.valueType === "DATE" && ! timeFacets[i].error) {
+                    if (timeFacets[i].dimension.valueType === "DATE" && timeFacets[i].dimension.type === "CONTINUOUS" ! timeFacets[i].error) {
                         timeFacet = timeFacets[i];
                         break;
                     }

@@ -329,22 +329,24 @@
                     var orderBy = this.model.get("orderBy");
                     if (orderBy) {
                         // add orderBy direction
-                        for (col=0; col<columns.length; col++) {
-                            if (columns[col]) {
-                                columns[col].orderDirection = undefined;
-                                for (ix=0; ix<orderBy.length; ix++) {
-                                    if (this.ordering) {
-                                        if (columns[col].definition) {
-                                            if (orderBy[ix].expression) {
-                                                if (columns[col].definition === orderBy[ix].expression.value) {
+                        if (columns) {
+                            for (col=0; col<columns.length; col++) {
+                                if (columns[col]) {
+                                    columns[col].orderDirection = undefined;
+                                    for (ix=0; ix<orderBy.length; ix++) {
+                                        if (this.ordering) {
+                                            if (columns[col].definition) {
+                                                if (orderBy[ix].expression) {
+                                                    if (columns[col].definition === orderBy[ix].expression.value) {
+                                                        columns[col].orderDirection = orderBy[ix].direction;
+                                                        break;
+                                                    }
+                                                }
+                                            } else if (orderBy[ix].expression) {
+                                                if (columns[col].id === orderBy[ix].expression.value) {
                                                     columns[col].orderDirection = orderBy[ix].direction;
                                                     break;
                                                 }
-                                            }
-                                        } else if (orderBy[ix].expression) {
-                                            if (columns[col].id === orderBy[ix].expression.value) {
-                                                columns[col].orderDirection = orderBy[ix].direction;
-                                                break;
                                             }
                                         }
                                     }
@@ -376,27 +378,29 @@
                     this.metricCols = [];
                     this.dateCols = [];
                     this.firstMeasure = -1;
-                    for (i=0; i<columns.length; i++) {
-                        if (columns[i].originType === "COMPARETO") {
-                            this.compareCols.push(i);
-                            if (this.firstMeasure === -1 || this.firstMeasure>i) {
-                            	this.firstMeasure = i;
+                    if (columns) {
+                        for (i=0; i<columns.length; i++) {
+                            if (columns[i].originType === "COMPARETO") {
+                                this.compareCols.push(i);
+                                if (this.firstMeasure === -1 || this.firstMeasure>i) {
+                                    this.firstMeasure = i;
+                                }
                             }
-                        }
-                        if (columns[i].role === "DATA") {
-                            this.metricCols.push(i);
-                            if (this.firstMeasure === -1 || this.firstMeasure>i) {
-                            	this.firstMeasure = i;
+                            if (columns[i].role === "DATA") {
+                                this.metricCols.push(i);
+                                if (this.firstMeasure === -1 || this.firstMeasure>i) {
+                                    this.firstMeasure = i;
+                                }
                             }
-                        }
-                        if (columns[i].extendedType) {
-                            if (columns[i].extendedType.name === "DATE") {
-                                this.dateCols.push(i);
+                            if (columns[i].extendedType) {
+                                if (columns[i].extendedType.name === "DATE") {
+                                    this.dateCols.push(i);
+                                }
                             }
                         }
                     }
 
-                    if (!invalidSelection) {
+                    if (!invalidSelection && columns) {
                         d3.select(selector).select("thead tr").selectAll("th")
                             .data(columns)
                             .enter().append("th")
