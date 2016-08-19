@@ -6830,7 +6830,7 @@ function program2(depth0,data) {
             } else {
                 // default number formatter
                 if (d3) {
-                    this.format = d3.format(",.0f");
+                    this.format = d3.format(",.2f");
                 } else {
                     this.format = function(f){
                         return f;
