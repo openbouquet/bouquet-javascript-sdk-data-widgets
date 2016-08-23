@@ -1462,7 +1462,7 @@ function program2(depth0,data) {
         },
 
         renderBase: function(done) {
-            var isInCache = this.model.get("results") === null;
+            var isInCache = this.model.get("status") === "PENDING";
             this.$el.html(this.template({
                 done: done,
                 isInCache: isInCache
@@ -2379,6 +2379,9 @@ function program2(depth0,data) {
                                         }
                                     }
                                 }
+                                if (typeof v === "number" && toRound) {
+                                    v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
+                                }
                             }
                             newRow.v.push(v);
                         }
@@ -2549,9 +2552,6 @@ function program2(depth0,data) {
                             this.paginationView.render();
                             this.$el.find("#pagination").show();
                         }
-                        if (this.model.get("results") === null) {
-                            this.$el.find("#re-run").show();
-                        }
                         this.$el.find("#error").html("");
                     } else {
                         var analysis = this.model;
@@ -2580,6 +2580,8 @@ function program2(depth0,data) {
                     this.$el.find(".sq-loading").hide();
                     this.$el.find("#stale").show();
                     this.$el.find("#error").html("");
+                    this.$el.find("#table-container").show();
+                    this.$el.find("#re-run").show();
                 }
             }
 
@@ -7193,9 +7195,14 @@ function program2(depth0,data) {
             this.renderTemplate(false);
 
             if (status === "PENDING") {
-                this.$el.html(this.template({"staleMessage" : this.staleMessage}));
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").show();
+                var chartChildren = this.$el.find("#chart_container").children();
+                for (i=0; i<chartChildren.length; i++) {
+                    if ($(chartChildren[i]).is("#re-run")) {
+                        $(chartChildren[i]).show();
+                    } else {
+                        $(chartChildren[i]).hide();
+                    }
+                }
             }
             if (status === "RUNNING") {
                 this.$el.find(".sq-loading").show();
@@ -7213,23 +7220,8 @@ function program2(depth0,data) {
                 var data = this.getData();
                 this.results = data.results;
 
-                if (data.done && ! this.model.get("error")) {
-                    if (this.model.get("results") === null) {
-                        var chartChildren = this.$el.find("#chart_container").children();
-                        for (i=0; i<chartChildren.length; i++) {
-                            if ($(chartChildren[i]).is("#re-run")) {
-                                $(chartChildren[i]).show();
-                            } else {
-                                $(chartChildren[i]).hide();
-                            }
-                        }
-                    } else {
-                        this.renderGraphic();
-                    }
-                } else {
-                    if (this.model.get("error")) {
-                         this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
-                    }
+                if (data.done && this.model.get("error")) {
+                    this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                 }
             }
         },

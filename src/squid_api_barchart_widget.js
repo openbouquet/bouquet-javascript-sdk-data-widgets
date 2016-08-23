@@ -165,7 +165,7 @@
         },
 
         renderBase: function(done) {
-            var isInCache = this.model.get("results") === null;
+            var isInCache = this.model.get("status") === "PENDING";
             this.$el.html(this.template({
                 done: done,
                 isInCache: isInCache
