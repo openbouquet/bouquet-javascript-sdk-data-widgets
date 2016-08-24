@@ -598,6 +598,9 @@
                                         }
                                     }
                                 }
+                                if (typeof v === "number" && toRound) {
+                                    v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
+                                }
                             }
                             newRow.v.push(v);
                         }
@@ -768,9 +771,6 @@
                             this.paginationView.render();
                             this.$el.find("#pagination").show();
                         }
-                        if (this.model.get("results") === null) {
-                            this.$el.find("#re-run").show();
-                        }
                         this.$el.find("#error").html("");
                     } else {
                         var analysis = this.model;
@@ -799,6 +799,8 @@
                     this.$el.find(".sq-loading").hide();
                     this.$el.find("#stale").show();
                     this.$el.find("#error").html("");
+                    this.$el.find("#table-container").show();
+                    this.$el.find("#re-run").show();
                 }
             }
 

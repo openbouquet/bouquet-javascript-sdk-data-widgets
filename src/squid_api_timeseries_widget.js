@@ -511,15 +511,21 @@
             this.renderTemplate(false);
 
             if (status === "PENDING") {
-                this.$el.html(this.template({"staleMessage" : this.staleMessage}));
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").show();
+                var chartChildren = this.$el.find("#chart_container").children();
+                for (i=0; i<chartChildren.length; i++) {
+                    if ($(chartChildren[i]).is("#re-run")) {
+                        $(chartChildren[i]).show();
+                    } else {
+                        $(chartChildren[i]).hide();
+                    }
+                }
             }
             if (status === "RUNNING") {
                 this.$el.find(".sq-loading").show();
             }
             if (status === "DONE") {
                 this.renderTemplate(true);
+
                 // additional timeserie analysis views
                 if (this.yearSwitcherView){
                     this.renderAdditionalView(this.yearSwitcherView, this.$el.find("#yearswitcher"));
@@ -531,24 +537,10 @@
                 var data = this.getData();
                 this.results = data.results;
 
-                if (data.done && ! this.model.get("error")) {
-                    if (this.model.get("results") === null) {
-                        var chartChildren = this.$el.find("#chart_container").children();
-                        for (i=0; i<chartChildren.length; i++) {
-                            if ($(chartChildren[i]).is("#re-run")) {
-                                $(chartChildren[i]).show();
-                            } else {
-                                $(chartChildren[i]).hide();
-                            }
-                        }
-                    } else {
-                        this.renderGraphic();
-                    }
-                } else {
-                    if (this.model.get("error")) {
-                         this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
-                    }
+                if (data.done && this.model.get("error")) {
+                    this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                 }
+                this.renderGraphic();
             }
         },
 
