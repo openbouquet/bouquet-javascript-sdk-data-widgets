@@ -7209,6 +7209,7 @@ function program2(depth0,data) {
             }
             if (status === "DONE") {
                 this.renderTemplate(true);
+
                 // additional timeserie analysis views
                 if (this.yearSwitcherView){
                     this.renderAdditionalView(this.yearSwitcherView, this.$el.find("#yearswitcher"));
@@ -7223,6 +7224,7 @@ function program2(depth0,data) {
                 if (data.done && this.model.get("error")) {
                     this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                 }
+                this.renderGraphic();
             }
         },
 
