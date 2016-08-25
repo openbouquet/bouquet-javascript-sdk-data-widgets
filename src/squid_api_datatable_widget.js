@@ -598,9 +598,6 @@
                                         }
                                     }
                                 }
-                                if (typeof v === "number" && toRound) {
-                                    v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
-                                }
                             }
                             newRow.v.push(v);
                         }
