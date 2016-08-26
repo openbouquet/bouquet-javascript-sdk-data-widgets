@@ -211,11 +211,11 @@
         },
 
         sortDates : function(rows) {
-            rows.sort(function(a,b){
-                var d1 = new Date(a.v[0]).getTime();
-                var d2 = new Date(b.v[0]).getTime();
-                return d1 > d2 ? 1 : -1;
-            });
+            // rows.sort(function(a,b){
+            //     var d1 = new Date(a.v[0]).getTime();
+            //     var d2 = new Date(b.v[0]).getTime();
+            //     return d1 > d2 ? 1 : -1;
+            // });
             return rows;
         },
 
@@ -407,9 +407,9 @@
                 }
                 if (! compare) {
                     // sort legend alphabetically
-                    legend.sort();
+                    // legend.sort();
                     // sort hashMap alphabetically
-                    keys.sort();
+                    // keys.sort();
                 }
 
                 for (i=0; i<keys.length; i++) {
