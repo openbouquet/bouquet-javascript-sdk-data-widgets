@@ -146,7 +146,6 @@
                 }
 
                 if (this.ordering) {
-                    var originType = $(event.currentTarget).attr("origin-type");
                     var orderBy = this.config.get("orderBy");
                     var expressionValue = $(event.currentTarget).attr("data-content");
                     var obj = {"expression" : {"value" : expressionValue}};

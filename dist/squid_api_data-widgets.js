@@ -1927,7 +1927,6 @@ function program2(depth0,data) {
                 }
 
                 if (this.ordering) {
-                    var originType = $(event.currentTarget).attr("origin-type");
                     var orderBy = this.config.get("orderBy");
                     var expressionValue = $(event.currentTarget).attr("data-content");
                     var obj = {"expression" : {"value" : expressionValue}};
@@ -5326,8 +5325,12 @@ function program2(depth0,data) {
                         // sort dimensions
                         if (this.dimensions) {
                             this.dimensions.sort(function(a, b){
-                                if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-                                if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                                if(a.name.toLowerCase() < b.name.toLowerCase()) {
+                                    return -1;
+                                }
+                                if(a.name.toLowerCase() > b.name.toLowerCase()) {
+                                    return 1;
+                                }
                                 return 0;
                             });
                         }
@@ -5335,8 +5338,12 @@ function program2(depth0,data) {
                         // sort metrics
                         if (this.metrics) {
                             this.metrics.sort(function(a, b){
-                                if(a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-                                if(a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                                if(a.name.toLowerCase() < b.name.toLowerCase()) {
+                                    return -1;
+                                }
+                                if(a.name.toLowerCase() > b.name.toLowerCase()) {
+                                    return 1;
+                                }
                                 return 0;
                             });
                         }
@@ -7090,13 +7097,6 @@ function program2(depth0,data) {
                         keys.push(key);
                     }
                 }
-                if (! compare) {
-                    // sort legend alphabetically
-                    // legend.sort();
-                    // sort hashMap alphabetically
-                    // keys.sort();
-                }
-
                 for (i=0; i<keys.length; i++) {
                     arr = [];
                     for (var date in hashMap[keys[i]]) {

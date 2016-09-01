@@ -405,13 +405,6 @@
                         keys.push(key);
                     }
                 }
-                if (! compare) {
-                    // sort legend alphabetically
-                    // legend.sort();
-                    // sort hashMap alphabetically
-                    // keys.sort();
-                }
-
                 for (i=0; i<keys.length; i++) {
                     arr = [];
                     for (var date in hashMap[keys[i]]) {
