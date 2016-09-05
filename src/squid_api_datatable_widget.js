@@ -49,10 +49,22 @@
             }
 
             if (this.model) {
-                this.listenTo(this.model, 'change:status', this.render);
-                this.listenTo(this.model, 'change:facets', this.render);
-                this.listenTo(this.model, 'change:metricList', this.render);
-                this.listenTo(this.model, 'change:orderBy', this.render);
+                this.listenTo(this.model, 'change:status', function() {
+                    console.log("DEBUG:"+"DataTable status change : "+this.model.get("status"));
+                    me.render();
+                });
+                this.listenTo(this.model, 'change:facets', function() {
+                    console.log("DEBUG:"+"DataTable facets change : "+this.model.get("facets"));
+                    me.render();
+                });
+                this.listenTo(this.model, 'change:metricList', function() {
+                    console.log("DEBUG:"+"DataTable metricList change : "+this.model.get("metricList"));
+                    me.render();
+                });
+                this.listenTo(this.model, 'change:orderBy', function() {
+                    console.log("DEBUG:"+"DataTable orderBy change : "+this.model.get("orderBy"));
+                    me.render();
+                });
             }
 
             // setup options
@@ -218,306 +230,312 @@
         },
 
         displayTableHeader : function(selector) {
+            var r = Math.random();
             var me = this;
-            var i;
-            var metrics;
-            var domain = this.config.get("domain");
-
-            if (domain) {
-                if (! me.headerInformation || this.currentDomain !== domain) {
-                    this.currentDomain = this.config.get("domain");
-                    var parentId = this.config.get("domain");
-                    return squid_api.getCustomer().then(function(customer) {
-                        return customer.get("projects").load(me.config.get("project")).then(function(project) {
-                            return project.get("domains").load(parentId).then(function(domain) {
-                                return domain.get("metrics").load().then(function(metrics) {
-                                    var arr = [];
-                                    for(i=0; i<metrics.size(); i++) {
-                                        arr.push(metrics.models[i].toJSON());
-                                    }
-                                    me.domainMetrics = arr;
-                                    me.headerInformation = true;
-                                    me.displayTableHeader();
-                                });
-                            });
+            this.currentDomain = this.config.get("domain");
+            var parentId = this.config.get("domain");
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    return project.get("domains").load(parentId).then(function(domain) {
+                        return domain.get("metrics").load().then(function(metrics) {
+                            console.log("DEBUG:"+"metrics loaded : displayTableHeader "+r);
+                            var arr = [];
+                            for(i=0; i<metrics.size(); i++) {
+                                arr.push(metrics.models[i].toJSON());
+                            }
+                            me.displayTableHeaderStep2(selector, arr, r);
                         });
                     });
-                } else  {
-                    var columns = [];
-                    var originalColumns;//unaltered by rollup splice
-                    var invalidSelection = false;
-                    var status = this.model.get("status");
+                });
+            });
+        },
+        
+        displayTableHeaderStep2 : function(selector, domainMetrics, r) {
+            console.log("DEBUG:"+"displayTableHeader start "+r);
+            var me = this;
+            var i;
+            var domain = this.config.get("domain");
+            var metrics;
+            if (domain) {
+                var columns = [];
+                var originalColumns;//unaltered by rollup splice
+                var invalidSelection = false;
+                var status = this.model.get("status");
 
-                    var analysis = this.model;
-                    // in case of a multi-analysis model
-                    if (analysis.get("analyses")) {
-                      analysis = analysis.get("analyses")[0];
+                var analysis = this.model;
+                // in case of a multi-analysis model
+                if (analysis.get("analyses")) {
+                  analysis = analysis.get("analyses")[0];
+                }
+                var results = analysis.get("results");
+                var rollups;
+                if (results && status !== "PENDING" && status !== "RUNNING") {
+                    // Analysis computed : use results columns
+                    columns = results.cols;
+
+                    // init rollups
+                    rollups = analysis.get("rollups");
+                    if (rollups && (rollups.length ===0)) {
+                        rollups = this.rollups = null;
                     }
-                    var results = analysis.get("results");
-                    var rollups;
-                    if (results && status !== "PENDING" && status !== "RUNNING") {
-                        // Analysis computed : use results columns
-                        columns = results.cols;
-
-                        // init rollups
-                        rollups = analysis.get("rollups");
-                        if (rollups && (rollups.length ===0)) {
-                            rollups = this.rollups = null;
+                    originalColumns = columns;
+                } else {
+                    // Analysis not computed yet : use analysis definition
+                    if (this.filters.get("selection")) {
+                        var obj;
+                        var facets = this.model.get("facets");
+                        if (facets) {
+                            for (i=0; i<facets.length; i++) {
+                                obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value) || {};
+                                if (obj) {
+                                    obj.dataType = "STRING";
+                                    columns.push(obj);
+                                } else {
+                                    // impossible to get column data from selection
+                                    invalidSelection = true;
+                                    console.error("ERROR:"+"displayTableHeader invalidSelection");
+                                }
+                            }
                         }
-                        originalColumns = columns;
-                    } else {
-                        // Analysis not computed yet : use analysis definition
-                        if (this.filters.get("selection")) {
-                            var obj;
-                            var facets = this.model.get("facets");
-                            if (facets) {
-                                for (i=0; i<facets.length; i++) {
-                                    obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value) || {};
+                        metrics = this.model.get("metricList");
+                        if (metrics) {
+                            if (metrics.length === 0) {
+                                metrics = squid_api.model.config.get("chosenMetrics");
+                            }
+                        }
+                        if (metrics) {
+                            var metric;
+                            for (i=0; i<metrics.length; i++) {
+                                metric = metrics[i];
+                                if (metrics[i].id) {
+                                    for (ix=0; ix<domainMetrics.length; ix++) {
+                                        if (metrics[i].id.metricId === domainMetrics[ix].oid) {
+                                            metrics[i].name = domainMetrics[ix].name;
+                                        }
+                                    }
+                                    obj = squid_api.utils.find(domainMetrics, "oid", metrics[i].id.metricId) || {};
                                     if (obj) {
-                                        obj.dataType = "STRING";
+                                        obj.dataType = "NUMBER";
                                         columns.push(obj);
                                     } else {
                                         // impossible to get column data from selection
                                         invalidSelection = true;
                                     }
+                                } else {
+                                    obj = {
+                                            "id" : null,
+                                            "name" : metrics[i].name,
+                                            "dataType" : "NUMBER"
+                                    };
+                                    columns.push(obj);
                                 }
-                            }
-                            metrics = this.model.get("metricList");
-                            if (metrics) {
-                                if (metrics.length === 0) {
-                                    metrics = squid_api.model.config.get("chosenMetrics");
-                                }
-                            }
-                            if (metrics) {
-                                var metric;
-                                for (i=0; i<metrics.length; i++) {
-                                    metric = metrics[i];
-                                    if (metrics[i].id) {
-                                        for (ix=0; ix<me.domainMetrics.length; ix++) {
-                                            if (metrics[i].id.metricId === me.domainMetrics[ix].oid) {
-                                                metrics[i].name = me.domainMetrics[ix].name;
-                                            }
-                                        }
-                                        obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId) || {};
-                                        if (obj) {
-                                            obj.dataType = "NUMBER";
-                                            columns.push(obj);
-                                        } else {
-                                            // impossible to get column data from selection
-                                            invalidSelection = true;
-                                        }
-                                    } else {
-                                        obj = {
-                                                "id" : null,
-                                                "name" : metrics[i].name,
-                                                "dataType" : "NUMBER"
-                                        };
-                                        columns.push(obj);
-                                    }
-                                }
-                            }
-                            if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
-                                originalColumns = columns.slice();
-                                columns.splice(this.config.get("rollups")[0].col, 1);
-                            } else {
-                                originalColumns = columns;
                             }
                         }
+                        if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
+                            originalColumns = columns.slice();
+                            columns.splice(this.config.get("rollups")[0].col, 1);
+                        } else {
+                            originalColumns = columns;
+                        }
                     }
+                }
 
-                    var orderBy = this.model.get("orderBy");
-                    if (orderBy) {
-                        // add orderBy direction
-                        if (columns) {
-                            for (col=0; col<columns.length; col++) {
-                                if (columns[col]) {
-                                    columns[col].orderDirection = undefined;
-                                    for (ix=0; ix<orderBy.length; ix++) {
-                                        if (this.ordering) {
-                                            if (columns[col].definition) {
-                                                if (orderBy[ix].expression) {
-                                                    if (columns[col].definition === orderBy[ix].expression.value) {
-                                                        columns[col].orderDirection = orderBy[ix].direction;
-                                                        break;
-                                                    }
-                                                }
-                                            } else if (orderBy[ix].expression) {
-                                                if (columns[col].id === orderBy[ix].expression.value) {
+                var orderBy = this.model.get("orderBy");
+                if (orderBy) {
+                    // add orderBy direction
+                    if (columns) {
+                        for (col=0; col<columns.length; col++) {
+                            if (columns[col]) {
+                                columns[col].orderDirection = undefined;
+                                for (ix=0; ix<orderBy.length; ix++) {
+                                    if (this.ordering) {
+                                        if (columns[col].definition) {
+                                            if (orderBy[ix].expression) {
+                                                if (columns[col].definition === orderBy[ix].expression.value) {
                                                     columns[col].orderDirection = orderBy[ix].direction;
                                                     break;
                                                 }
                                             }
+                                        } else if (orderBy[ix].expression) {
+                                            if (columns[col].id === orderBy[ix].expression.value) {
+                                                columns[col].orderDirection = orderBy[ix].direction;
+                                                break;
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-
-                    var rollupColIndex = null;
-                    var rollupSummaryIndex = null;
-                    if (rollups) {
-                        if ((rollups.length>0)) {
-                            if (rollups.length>1 && rollups[0].col === -1) {
-                                rollupColIndex = rollups[1].col + 1;
-                            } else {
-                                rollupColIndex = rollups[0].col + 1;
-                            }
-                        }
-                        if (this.config.get("rollups") && this.rollupSummaryColumn >= 0) {
-                            rollupSummaryIndex = this.rollupSummaryColumn + 1;
-                        }
-                    }
-                    me = this;
-                    // header
-                    d3.select(selector).select("thead tr").selectAll("th").remove();
-
-                    // set compare col
-                    this.compareCols = [];
-                    this.metricCols = [];
-                    this.dateCols = [];
-                    this.firstMeasure = -1;
-                    if (columns) {
-                        for (i=0; i<columns.length; i++) {
-                            if (columns[i].originType === "COMPARETO") {
-                                this.compareCols.push(i);
-                                if (this.firstMeasure === -1 || this.firstMeasure>i) {
-                                    this.firstMeasure = i;
-                                }
-                            }
-                            if (columns[i].role === "DATA") {
-                                this.metricCols.push(i);
-                                if (this.firstMeasure === -1 || this.firstMeasure>i) {
-                                    this.firstMeasure = i;
-                                }
-                            }
-                            if (columns[i].extendedType) {
-                                if (columns[i].extendedType.name === "DATE") {
-                                    this.dateCols.push(i);
-                                }
-                            }
-                        }
-                    }
-
-                    if (!invalidSelection && columns) {
-                        d3.select(selector).select("thead tr").selectAll("th")
-                            .data(columns)
-                            .enter().append("th")
-                            .attr("class", function(d, i) {
-                                var str = "";
-                                if (rollups) {
-                                    if (i === 0) {
-                                        // hide grouping column
-                                        str = str + "hide " + d.dataType;
-                                    } else if (( rollupSummaryIndex !== null) && (i === rollupColIndex)) {
-                                        // hide rollup column
-                                        str = str + "hide " + d.dataType;
-                                    } else {
-                                        str = str + d.dataType;
-                                    }
-                                }
-                                if (d.orderDirection) {
-                                    str = str + " " + d.orderDirection;
-                                }
-                                if (me.compareCols) {
-                                    if (me.compareCols.length > 0) {
-                                        if (me.compareCols.indexOf(i) > -1) {
-                                            str += " compareTo";
-                                        } else if (me.metricCols.indexOf(i) > -1) {
-                                            str += " compare";
-                                        }
-                                    }
-                                }
-                                return str;
-                            })
-                            .html(function(d) {
-                                var str = d.name;
-                                if (d.orderDirection === "ASC") {
-                                    str = str + " " + "<span class='sort-direction'>&#xffec;</span>";
-                                } else if (d.orderDirection === "DESC") {
-                                    str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
-                                }
-                                return str;
-                            })
-                            .attr("data-role", function(d) {
-                                return d.role;
-                            })
-                            .attr("origin-type", function(d) {
-                                return d.originType;
-                            })
-                            .attr("data-content", function(d) {
-                                if (d.definition) {
-                                    return d.definition;
-                                } else {
-                                    return d.id;
-                                }
-                            });
-
-                        // add class if more than 10 columns
-                        if (this.$el.find("thead th").length > 10) {
-                            this.$el.find("table").addClass("many-columns");
-                        } else {
-                            this.$el.find("table").removeClass("many-columns");
-                        }
-
-                        // add tooltips on metrics / compare columns
-                        var headerCols = this.$el.find("thead th");
-                        squid_api.getCustomer().then(function(customer) {
-                            return customer.get("projects").load(me.config.get("project")).then(function(project) {
-                                return project.get("domains").load(me.config.get("domain")).then(function(domain) {
-			                        for (ix=0; ix<headerCols.length; ix++) {
-			                            var column = $(headerCols[ix]);
-			
-			                            var role = column.attr("data-role");
-			                            var originType = column.attr("origin-type");
-			                            var id = column.attr("data-content");
-			
-			                            var options = {
-			                                position: {
-			                                    my: "center bottom",
-			                                    at: "center top+5",
-			                                }
-			                            };
-			
-			                            if (role === "DATA" && originType !== "COMPARETO") {
-			                                // metric
-			                                metrics = domain.get("metrics");
-			                                var metricItem = metrics.findWhere({"definition" : id});
-			                                var metricItemDescription = "";
-			                                if (metricItem) {
-			                                    metricItemDescription = metricItem.get("description");
-			                                }
-			                                column.attr("title", metricItemDescription);
-			                                column.tooltip(options);
-			                            } else if (originType === "COMPARETO") {
-			                                // compare column
-			                                results = squid_api.model.filters.get("results");
-			                                if (results) {
-			                                    var compareTo = results.compareTo;
-			                                    if (compareTo) {
-			                                        if (compareTo[0]) {
-			                                            if (compareTo[0].selectedItems[0]) {
-			                                                var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
-			                                                var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
-			                                                column.attr("title", "metric comparaison on period " + lowerBound + " to " + upperBound);
-			                                            }
-			                                        }
-			                                    }
-			                                }
-			                                column.tooltip(options);
-			                            } else {
-			                                column.tooltip(options);
-			                            }
-			                        }
-                                });
-                            });
-                        });
                     }
                 }
+
+                var rollupColIndex = null;
+                var rollupSummaryIndex = null;
+                if (rollups) {
+                    if ((rollups.length>0)) {
+                        if (rollups.length>1 && rollups[0].col === -1) {
+                            rollupColIndex = rollups[1].col + 1;
+                        } else {
+                            rollupColIndex = rollups[0].col + 1;
+                        }
+                    }
+                    if (this.config.get("rollups") && this.rollupSummaryColumn >= 0) {
+                        rollupSummaryIndex = this.rollupSummaryColumn + 1;
+                    }
+                }
+                me = this;
+                
+                // header
+                d3.select(selector).select("thead tr").selectAll("th").remove();
+
+                // set compare col
+                this.compareCols = [];
+                this.metricCols = [];
+                this.dateCols = [];
+                this.firstMeasure = -1;
+                if (columns) {
+                    for (i=0; i<columns.length; i++) {
+                        if (columns[i].originType === "COMPARETO") {
+                            this.compareCols.push(i);
+                            if (this.firstMeasure === -1 || this.firstMeasure>i) {
+                                this.firstMeasure = i;
+                            }
+                        }
+                        if (columns[i].role === "DATA") {
+                            this.metricCols.push(i);
+                            if (this.firstMeasure === -1 || this.firstMeasure>i) {
+                                this.firstMeasure = i;
+                            }
+                        }
+                        if (columns[i].extendedType) {
+                            if (columns[i].extendedType.name === "DATE") {
+                                this.dateCols.push(i);
+                            }
+                        }
+                    }
+                }
+
+                if (!invalidSelection && columns) {
+                    console.info("DEBUG:"+"displayTableHeader D3, cols :"+columns.length);
+                    d3.select(selector).select("thead tr").selectAll("th")
+                        .data(columns)
+                        .enter().append("th")
+                        .attr("class", function(d, i) {
+                            var str = "";
+                            if (rollups) {
+                                if (i === 0) {
+                                    // hide grouping column
+                                    str = str + "hide " + d.dataType;
+                                } else if (( rollupSummaryIndex !== null) && (i === rollupColIndex)) {
+                                    // hide rollup column
+                                    str = str + "hide " + d.dataType;
+                                } else {
+                                    str = str + d.dataType;
+                                }
+                            }
+                            if (d.orderDirection) {
+                                str = str + " " + d.orderDirection;
+                            }
+                            if (me.compareCols) {
+                                if (me.compareCols.length > 0) {
+                                    if (me.compareCols.indexOf(i) > -1) {
+                                        str += " compareTo";
+                                    } else if (me.metricCols.indexOf(i) > -1) {
+                                        str += " compare";
+                                    }
+                                }
+                            }
+                            return str;
+                        })
+                        .html(function(d) {
+                            var str = d.name;
+                            if (d.orderDirection === "ASC") {
+                                str = str + " " + "<span class='sort-direction'>&#xffec;</span>";
+                            } else if (d.orderDirection === "DESC") {
+                                str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
+                            }
+                            return str;
+                        })
+                        .attr("data-role", function(d) {
+                            return d.role;
+                        })
+                        .attr("origin-type", function(d) {
+                            return d.originType;
+                        })
+                        .attr("data-content", function(d) {
+                            if (d.definition) {
+                                return d.definition;
+                            } else {
+                                return d.id;
+                            }
+                        });
+
+                    // add class if more than 10 columns
+                    if (this.$el.find("thead th").length > 10) {
+                        this.$el.find("table").addClass("many-columns");
+                    } else {
+                        this.$el.find("table").removeClass("many-columns");
+                    }
+
+                    // add tooltips on metrics / compare columns
+                    var headerCols = this.$el.find("thead th");
+                    squid_api.getCustomer().then(function(customer) {
+                        return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                            return project.get("domains").load(me.config.get("domain")).then(function(domain) {
+                                for (ix=0; ix<headerCols.length; ix++) {
+                                    var column = $(headerCols[ix]);
+
+                                    var role = column.attr("data-role");
+                                    var originType = column.attr("origin-type");
+                                    var id = column.attr("data-content");
+
+                                    var options = {
+                                            position: {
+                                                my: "center bottom",
+                                                at: "center top+5",
+                                            }
+                                    };
+
+                                    if (role === "DATA" && originType !== "COMPARETO") {
+                                        // metric
+                                        metrics = domain.get("metrics");
+                                        var metricItem = metrics.findWhere({"definition" : id});
+                                        var metricItemDescription = "";
+                                        if (metricItem) {
+                                            metricItemDescription = metricItem.get("description");
+                                        }
+                                        column.attr("title", metricItemDescription);
+                                        column.tooltip(options);
+                                    } else if (originType === "COMPARETO") {
+                                        // compare column
+                                        results = squid_api.model.filters.get("results");
+                                        if (results) {
+                                            var compareTo = results.compareTo;
+                                            if (compareTo) {
+                                                if (compareTo[0]) {
+                                                    if (compareTo[0].selectedItems[0]) {
+                                                        var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
+                                                        var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
+                                                        column.attr("title", "metric comparaison on period " + lowerBound + " to " + upperBound);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        column.tooltip(options);
+                                    } else {
+                                        column.tooltip(options);
+                                    }
+                                }
+                            });
+                        });
+                    });
+                }
             }
+            console.log("DEBUG:"+"displayTableHeader end "+r);
         },
 
         displayTableContent : function(selector) {
+            console.log("DEBUG:"+"displayTableContent start");
             var me = this;
 
             var analysis = this.model;
@@ -604,6 +622,7 @@
                     }
                 }
 
+                console.log("DEBUG:"+"displayTableContent D3");
                 // Rows
                 d3.select(selector).select("tbody").selectAll("tr").remove();
                 var tr = d3.select(selector).select("tbody").selectAll("tr")
