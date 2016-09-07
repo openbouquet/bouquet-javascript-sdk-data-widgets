@@ -159,8 +159,7 @@
             });
             changed = changed || a.hasChanged();
             if (this.pagination) {
-                a.setParameter("maxResults", this.config.get("maxResults") - 1 || 9, silent);
-
+                a.setParameter("maxResults", this.config.get("maxResults") || 10, silent);
                 var configStartIndex = this.config.get("startIndex") || 0;
                 var startIndexChange = (a.getParameter("startIndex") !== configStartIndex);
                 if (startIndexChange) {
