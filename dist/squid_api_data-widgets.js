@@ -1405,19 +1405,24 @@ function program2(depth0,data) {
                 }
             } else {
                 for (i=0; i<rows.length; i++) {
-                    var item1 = rows[i].v;
+                    var row = rows[i].v;
                     var yAxis1 = "";
                     var xAxis1;
-                    for (ix=0; ix<item1.length; ix++) {
-                        if (typeof(item1[ix]) === "string") {
+                    for (ix=0; ix<row.length; ix++) {
+                        var item1 = row[ix];
+                        if (typeof(item1) === "string") {
                             if (yAxis1.length === 0) {
-                                yAxis1 += item1[ix];
+                                yAxis1 += item1;
                             } else {
-                                yAxis1 += " / " + item1[ix];
+                                yAxis1 += " / " + item1;
                             }
-                        } else if (typeof(item1[ix]) === "number") {
-                            xAxis1 = item1[ix];
-                            barData.xValues.push(item1[ix]);
+                        } else if (typeof(item1) === "number") {
+                            xAxis1 = item1;
+                            barData.xValues.push(item1);
+                            break;
+                        } else if (item1 === null) {
+                            xAxis1 = item1;
+                            barData.xValues.push(item1);
                             break;
                         }
                     }
