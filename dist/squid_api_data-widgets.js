@@ -6735,6 +6735,7 @@ function program2(depth0,data) {
         renderTo: ".squid-api-data-widgets-timeseries-widget #widget",
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
         reRunMessage: "Please manually refresh your analysis",
+        fillMissingDataValues: null,
         timeUnitSelector: null,
         legendState: {},
 
@@ -6791,6 +6792,9 @@ function program2(depth0,data) {
                 }
                 if (options.staleMessage) {
                     this.staleMessage = options.staleMessage;
+                }
+                if (options.fillMissingDataValues) {
+                    this.fillMissingDataValues = options.fillMissingDataValues;
                 }
                 if (options.height) {
                     this.height = options.height;
@@ -6926,11 +6930,11 @@ function program2(depth0,data) {
         },
 
         sortDates : function(rows) {
-            // rows.sort(function(a,b){
-            //     var d1 = new Date(a.v[0]).getTime();
-            //     var d2 = new Date(b.v[0]).getTime();
-            //     return d1 > d2 ? 1 : -1;
-            // });
+            rows.sort(function(a,b){
+                var d1 = new Date(a.v[0]).getTime();
+                var d2 = new Date(b.v[0]).getTime();
+                return d1 > d2 ? 1 : -1;
+            });
             return rows;
         },
 
@@ -7047,9 +7051,6 @@ function program2(depth0,data) {
                 }
             }
 
-            // sort dates
-            this.results.rows = this.sortDates(this.results.rows);
-
             if (nVariate) {
                 // make sure we only have three columns
                 this.standardizeData();
@@ -7057,10 +7058,12 @@ function program2(depth0,data) {
                 this.$el.find("#metrics").show();
             } else {
                 this.$el.find("#metrics").hide();
+                this.sortDates(this.results.rows);
             }
 
             // get data
             var hashMap = {};
+
             for (i=1; i<this.results.cols.length; i++) {
                 if (! toRemove.includes(i)) {
 
@@ -7134,18 +7137,37 @@ function program2(depth0,data) {
                     dataset.push(arr);
                 }
             } else {
-                for (i=1; i<this.results.cols.length; i++) {
-                    if (! toRemove.includes(i)) {
-                        arr = [];
-                        for (ix=0; ix<this.results.rows.length; ix++) {
-                            var obj = {
-                                "date" : this.results.rows[ix].v[0],
-                                "value" : this.results.rows[ix].v[i]
-                            };
-                            arr.push(obj);
+                // make sure a value is available for every day (standard timeseries)
+                if (! nVariate) {
+                    for (i=1; i<this.results.cols.length; i++) {
+                        /* Date Results */
+                        if (this.results.rows[0]) {
+                            var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
+                            var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
+                            for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+                                if (! toRemove.includes(i)) {
+                                    var date = currentDay.format('YYYY-MM-DD');
+                                    var dataExists = false;
+                                    var obj = {
+                                        "date" : date
+                                    };
+                                    for (ix=0; ix<this.results.rows.length; ix++) {
+                                        if (this.results.rows[ix].v[0] === date) {
+                                            dataExists = true;
+                                            obj.value = this.results.rows[ix].v[1];
+                                        }
+                                    }
+                                    if (dataExists === false && this.fillMissingDataValues) {
+                                        obj.value = 0;
+                                        arr.push(obj);
+                                    } else if (dataExists) {
+                                        arr.push(obj);
+                                    }
+                                }
+                            }
+                            arr = MG.convert.date(arr, 'date');
+                            dataset.push(arr);
                         }
-                        arr = MG.convert.date(arr, 'date');
-                        dataset.push(arr);
                     }
                 }
             }
