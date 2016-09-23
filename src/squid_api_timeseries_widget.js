@@ -105,6 +105,8 @@
                     area: false,
                     y_accessor: 'value',
                     animate_on_load: false,
+                    missing_is_hidden: true,
+                    missing_is_hidden_accessor: 'dead',
                     legend_target: this.renderLegend,
                     colors: this.colorPalette,
                     after_brushing: function(brush) {
@@ -277,7 +279,7 @@
                             } else {
                                 dim += " / " + this.results.rows[i].v[ix];
                             }
-                        } else if (typeof(this.results.rows[i].v[ix]) === "number") {
+                        } else if (typeof(this.results.rows[i].v[ix]) === "number" || this.results.rows[i].v[ix] === null) {
                             metricVals.push(this.results.rows[i].v[ix]);
                         }
                     }
@@ -443,7 +445,7 @@
                                         }
                                     }
                                     if (dataExists === false && this.fillMissingDataValues) {
-                                        obj.value = 0;
+                                        obj.value = null;
                                         arr.push(obj);
                                     } else if (dataExists) {
                                         arr.push(obj);
