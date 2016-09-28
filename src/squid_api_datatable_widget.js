@@ -49,6 +49,10 @@
             }
 
             if (this.model) {
+                this.listenTo(this.model, 'change:error', function() {
+                    console.log("DEBUG:"+"DataTable error change : "+this.model.get("error"));
+                    me.render();
+                });
                 this.listenTo(this.model, 'change:status', function() {
                     console.log("DEBUG:"+"DataTable status change : "+this.model.get("status"));
                     me.render();
