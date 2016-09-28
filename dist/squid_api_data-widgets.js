@@ -2239,9 +2239,9 @@ function program2(depth0,data) {
                         .html(function(d) {
                             var str = d.name;
                             if (d.orderDirection === "ASC") {
-                                str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
-                            } else if (d.orderDirection === "DESC") {
                                 str = str + " " + "<span class='sort-direction'>&#xffec;</span>";
+                            } else if (d.orderDirection === "DESC") {
+                                str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
                             }
                             return str;
                         })
