@@ -427,6 +427,7 @@
                 // make sure a value is available for every day (standard timeseries)
                 if (! nVariate) {
                     for (i=1; i<this.results.cols.length; i++) {
+                        arr = [];
                         /* Date Results */
                         if (this.results.rows[0]) {
                             var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
@@ -441,7 +442,7 @@
                                     for (ix=0; ix<this.results.rows.length; ix++) {
                                         if (this.results.rows[ix].v[0] === date) {
                                             dataExists = true;
-                                            obj.value = this.results.rows[ix].v[1];
+                                            obj.value = this.results.rows[ix].v[i];
                                         }
                                     }
                                     if (dataExists === false && this.fillMissingDataValues) {
