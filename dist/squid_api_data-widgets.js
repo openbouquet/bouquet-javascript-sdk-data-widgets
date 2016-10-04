@@ -5248,6 +5248,7 @@ function program2(depth0,data) {
             this.config.on("change:domain", this.fetchMetrics, this);
             this.filters.on("change:selection", this.render, this);
             this.status.on("change:status", this.statusUpdate, this);
+            this.status.on("change:configReady", this.statusUpdate, this);
 
             /* close popover when clicked outside */
             $('body').on('click', function (e) {
@@ -5262,7 +5263,7 @@ function program2(depth0,data) {
         },
 
         statusUpdate: function() {
-            if (this.status.get("status") === "RUNNING") {
+            if (this.status.get("status") === "RUNNING" || this.status.get("configReady") === false) {
                 this.$el.find("button").attr("disabled", true);
             } else {
                 this.$el.find("button").attr("disabled", false);
@@ -5306,8 +5307,6 @@ function program2(depth0,data) {
                             }
                         }
                     }
-
-                    me.render();
                 });
             }
         },
