@@ -2243,15 +2243,15 @@ function program2(depth0,data) {
                             if (d.orderDirection) {
                                 if (d.dataType === "NUMBER" || (d.extendedType && d.extendedType.name === "int4")) {
                                     if (d.orderDirection === "ASC") {
-                                        str = str + " " + "<span class='sort-direction'>" + upArrow + "</span>";
-                                    } else if (d.orderDirection === "DESC") {
                                         str = str + " " + "<span class='sort-direction'>" + downArrow + "</span>";
+                                    } else if (d.orderDirection === "DESC") {
+                                        str = str + " " + "<span class='sort-direction'>" + upArrow + "</span>";
                                     }
                                 } else {
                                     if (d.orderDirection === "ASC") {
-                                        str = str + " " + "<span class='sort-direction'>" + downArrow + "</span>";
-                                    } else if (d.orderDirection === "DESC") {
                                         str = str + " " + "<span class='sort-direction'>" + upArrow + "</span>";
+                                    } else if (d.orderDirection === "DESC") {
+                                        str = str + " " + "<span class='sort-direction'>" + downArrow + "</span>";
                                     }
                                 }
                             }
