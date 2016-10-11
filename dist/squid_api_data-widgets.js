@@ -2241,7 +2241,7 @@ function program2(depth0,data) {
                             var upArrow = "&#xffea;";
                             var downArrow = "&#xffec;";
                             if (d.orderDirection) {
-                                if (d.dataType === "NUMBER" || (d.extendedType && d.extendedType.name === "int4")) {
+                                if (d.dataType === "NUMBER" || (d.extendedType && d.extendedType.name === "int4") || (d.extendedType && d.extendedType.name === "int8")) {
                                     if (d.orderDirection === "ASC") {
                                         str = str + " " + "<span class='sort-direction'>" + upArrow + "</span>";
                                     } else if (d.orderDirection === "DESC") {
