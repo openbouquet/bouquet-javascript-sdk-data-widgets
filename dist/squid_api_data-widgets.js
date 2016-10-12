@@ -1647,6 +1647,7 @@ function program2(depth0,data) {
         afterRender: null,
 
         initialize: function(options) {
+            this.status = squid_api.model.status;
 
             if (options) {
                 // setup options
@@ -1681,6 +1682,15 @@ function program2(depth0,data) {
             }
             this.listenTo(this.config, "change:selection", this.render);
             this.listenTo(this.config, "change:currentAnalysis", this.render);
+            this.listenTo(this.status, "change", this.enable);
+        },
+
+        enable: function() {
+            if (this.status.get("status") == "RUNNING") {
+                this.$el.find("button").prop("disabled", true);
+            } else {
+                this.$el.find("button").prop("disabled", false);
+            }
         },
 
         setModel: function(model) {
