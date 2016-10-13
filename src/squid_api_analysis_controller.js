@@ -161,7 +161,10 @@
             if (this.pagination) {
                 a.setParameter("maxResults", this.config.get("maxResults") || 10, silent);
                 var configStartIndex = this.config.get("startIndex") || 0;
-                var startIndexChange = (a.getParameter("startIndex") !== configStartIndex);
+                var startIndexChange = false;
+                if (a.getParameter("startIndex") !== null) {
+                    startIndexChange = (a.getParameter("startIndex") !== configStartIndex);
+                }
                 if (startIndexChange) {
                     // update if pagination changed
                     if (a.get("id") && (a.get("id").analysisJobId)) {
