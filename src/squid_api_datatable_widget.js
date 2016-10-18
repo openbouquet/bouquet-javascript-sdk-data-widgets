@@ -705,7 +705,7 @@
                         if (me.metricCols) {
                             if (me.metricCols.indexOf(i) === -1 && me.compareCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
                                 if (me.model.get("results") && me.model.get("results").cols[i] && me.model.get("results").cols[i].extendedType) {
-                                    if (me.model.get("results").cols[i].extendedType.name !== "date") {
+                                    if (me.model.get("results").cols[i].extendedType.name !== "date" && me.model.get("results").cols[i].extendedType.name !== "timestamp") {
                                         str += " dimension";
                                     }
                                 }
