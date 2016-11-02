@@ -53,7 +53,7 @@
         },
 
         enable: function() {
-            if (this.status.get("status") == "RUNNING") {
+            if (this.status.get("status") === "RUNNING") {
                 this.$el.find("button").prop("disabled", true);
             } else {
                 this.$el.find("button").prop("disabled", false);

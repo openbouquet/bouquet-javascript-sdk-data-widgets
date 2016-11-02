@@ -83,11 +83,13 @@
                 yValues: []
             };
 
+
             // check to see if we only display totals
             var onlyMetrics = true;
             for (i=0; i<cols.length; i++) {
                 if (cols[i].role !== "DATA") {
                     onlyMetrics = false;
+                    domainIndex = i;
                 }
             }
 
@@ -114,17 +116,13 @@
                     var xAxis1;
                     for (ix=0; ix<row.length; ix++) {
                         var item1 = row[ix];
-                        if (typeof(item1) === "string") {
+                        if (cols[ix].role === "DOMAIN" && item1) {
                             if (yAxis1.length === 0) {
                                 yAxis1 += item1;
                             } else {
                                 yAxis1 += " / " + item1;
                             }
-                        } else if (typeof(item1) === "number") {
-                            xAxis1 = item1;
-                            barData.xValues.push(item1);
-                            break;
-                        } else if (item1 === null) {
+                        } else if (cols[ix].role === "DATA" || item1 === null) {
                             xAxis1 = item1;
                             barData.xValues.push(item1);
                             break;

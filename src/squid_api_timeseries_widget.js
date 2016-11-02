@@ -155,7 +155,7 @@
             } else {
                 // default number formatter
                 if (d3) {
-                    this.format = d3.format(",.2f");
+                    this.format = d3.format(",.f");
                 } else {
                     this.format = function(f){
                         return f;
@@ -273,13 +273,13 @@
                     var dim = "";
                     var metricVals = [];
                     for (ix=1; ix<this.results.rows[i].v.length; ix++) {
-                        if (typeof(this.results.rows[i].v[ix]) === "string") {
+                    	if (this.results.cols[ix].role === "DOMAIN" && this.results.rows[i].v[ix]) {
                             if (dim.length === 0) {
                                 dim += this.results.rows[i].v[ix];
                             } else {
                                 dim += " / " + this.results.rows[i].v[ix];
                             }
-                        } else if (typeof(this.results.rows[i].v[ix]) === "number" || this.results.rows[i].v[ix] === null) {
+                        } else if (this.results.cols[ix].role === "DATA" || this.results.rows[i].v[ix] === null) {
                             metricVals.push(this.results.rows[i].v[ix]);
                         }
                     }
@@ -434,13 +434,13 @@
                             var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
                             for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
                                 if (! toRemove.includes(i)) {
-                                    var date = currentDay.format('YYYY-MM-DD');
+                                    var currentDate = currentDay.format('YYYY-MM-DD');
                                     var dataExists = false;
                                     var obj = {
-                                        "date" : date
+                                        "date" : currentDate
                                     };
                                     for (ix=0; ix<this.results.rows.length; ix++) {
-                                        if (this.results.rows[ix].v[0] === date) {
+                                        if (this.results.rows[ix].v[0] === currentDate) {
                                             dataExists = true;
                                             obj.value = this.results.rows[ix].v[i];
                                         }

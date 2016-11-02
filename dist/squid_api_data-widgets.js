@@ -1382,11 +1382,13 @@ function program2(depth0,data) {
                 yValues: []
             };
 
+
             // check to see if we only display totals
             var onlyMetrics = true;
             for (i=0; i<cols.length; i++) {
                 if (cols[i].role !== "DATA") {
                     onlyMetrics = false;
+                    domainIndex = i;
                 }
             }
 
@@ -1413,17 +1415,13 @@ function program2(depth0,data) {
                     var xAxis1;
                     for (ix=0; ix<row.length; ix++) {
                         var item1 = row[ix];
-                        if (typeof(item1) === "string") {
+                        if (cols[ix].role === "DOMAIN" && item1) {
                             if (yAxis1.length === 0) {
                                 yAxis1 += item1;
                             } else {
                                 yAxis1 += " / " + item1;
                             }
-                        } else if (typeof(item1) === "number") {
-                            xAxis1 = item1;
-                            barData.xValues.push(item1);
-                            break;
-                        } else if (item1 === null) {
+                        } else if (cols[ix].role === "DATA" || item1 === null) {
                             xAxis1 = item1;
                             barData.xValues.push(item1);
                             break;
@@ -1689,7 +1687,7 @@ function program2(depth0,data) {
         },
 
         enable: function() {
-            if (this.status.get("status") == "RUNNING") {
+            if (this.status.get("status") === "RUNNING") {
                 this.$el.find("button").prop("disabled", true);
             } else {
                 this.$el.find("button").prop("disabled", false);
@@ -6899,7 +6897,7 @@ function program2(depth0,data) {
             } else {
                 // default number formatter
                 if (d3) {
-                    this.format = d3.format(",.2f");
+                    this.format = d3.format(",.f");
                 } else {
                     this.format = function(f){
                         return f;
@@ -7017,13 +7015,13 @@ function program2(depth0,data) {
                     var dim = "";
                     var metricVals = [];
                     for (ix=1; ix<this.results.rows[i].v.length; ix++) {
-                        if (typeof(this.results.rows[i].v[ix]) === "string") {
+                    	if (this.results.cols[ix].role === "DOMAIN" && this.results.rows[i].v[ix]) {
                             if (dim.length === 0) {
                                 dim += this.results.rows[i].v[ix];
                             } else {
                                 dim += " / " + this.results.rows[i].v[ix];
                             }
-                        } else if (typeof(this.results.rows[i].v[ix]) === "number" || this.results.rows[i].v[ix] === null) {
+                        } else if (this.results.cols[ix].role === "DATA" || this.results.rows[i].v[ix] === null) {
                             metricVals.push(this.results.rows[i].v[ix]);
                         }
                     }
@@ -7178,13 +7176,13 @@ function program2(depth0,data) {
                             var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
                             for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
                                 if (! toRemove.includes(i)) {
-                                    var date = currentDay.format('YYYY-MM-DD');
+                                    var currentDate = currentDay.format('YYYY-MM-DD');
                                     var dataExists = false;
                                     var obj = {
-                                        "date" : date
+                                        "date" : currentDate
                                     };
                                     for (ix=0; ix<this.results.rows.length; ix++) {
-                                        if (this.results.rows[ix].v[0] === date) {
+                                        if (this.results.rows[ix].v[0] === currentDate) {
                                             dataExists = true;
                                             obj.value = this.results.rows[ix].v[i];
                                         }
