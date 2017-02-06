@@ -724,19 +724,28 @@
                         		offset=0;
                         	}
                         }
+                        var rolCol;
                         if (rollups) {
                             if ((rollupSummaryIndex !== null) && (i === rollupSummaryIndex)) {
-                                if (parseInt(this.parentNode.__data__.v[0]) === 1) {
-                                    // this is a total (grouped) line
-                                    text = this.parentNode.__data__.v[rollupColIndex];
+                                if (parseInt(this.parentNode.__data__.v[0]) >= 1) {
+                                	rolCol = rollupColIndex;
+                                	text = "";
+                                	if (parseInt(this.parentNode.__data__.v[0]) > 1) {
+                                		rolCol = rollups[parseInt(this.parentNode.__data__.v[0])-1].col + 1;
+                                		text = "Total for ";
+                                	}
+                                	text = text + this.parentNode.__data__.v[rolCol];
                                 }
                             } else if (i === 1){
-                                if (parseInt(this.parentNode.__data__.v[0]) === 1) {
+                                if (parseInt(this.parentNode.__data__.v[0]) >= 1) {
+                                	rolCol = rollupColIndex;
+                                	if (parseInt(this.parentNode.__data__.v[0]) > 1) {
+                                		rolCol = rollups[parseInt(this.parentNode.__data__.v[0])-1].col + 1;
+                                	}
                                     // this is a total line
-                                    text = "Total for "+data.results.cols[rollupColIndex].name;
+                                    text = "Total for "+data.results.cols[rolCol].name;
                                 }
-                            }
-                            if (i === 2) {
+                            } else  if (i === 2) {
                                 if ((parseInt(this.parentNode.__data__.v[0]) === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
                                     text = "Total";
                                 }
