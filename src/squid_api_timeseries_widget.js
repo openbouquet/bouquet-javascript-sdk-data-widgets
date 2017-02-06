@@ -20,6 +20,7 @@
         renderTo: ".squid-api-data-widgets-timeseries-widget #widget",
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
         reRunMessage: "Please manually refresh your analysis",
+        fillMissingDataValues: null,
         timeUnitSelector: null,
         legendState: {},
 
@@ -77,6 +78,9 @@
                 if (options.staleMessage) {
                     this.staleMessage = options.staleMessage;
                 }
+                if (options.fillMissingDataValues) {
+                    this.fillMissingDataValues = options.fillMissingDataValues;
+                }
                 if (options.height) {
                     this.height = options.height;
                 }
@@ -101,6 +105,8 @@
                     area: false,
                     y_accessor: 'value',
                     animate_on_load: false,
+                    missing_is_hidden: true,
+                    missing_is_hidden_accessor: 'dead',
                     legend_target: this.renderLegend,
                     colors: this.colorPalette,
                     after_brushing: function(brush) {
@@ -149,7 +155,7 @@
             } else {
                 // default number formatter
                 if (d3) {
-                    this.format = d3.format(",.0f");
+                    this.format = d3.format(",.f");
                 } else {
                     this.format = function(f){
                         return f;
@@ -267,13 +273,13 @@
                     var dim = "";
                     var metricVals = [];
                     for (ix=1; ix<this.results.rows[i].v.length; ix++) {
-                        if (typeof(this.results.rows[i].v[ix]) === "string") {
+                    	if (this.results.cols[ix].role === "DOMAIN" && this.results.rows[i].v[ix]) {
                             if (dim.length === 0) {
                                 dim += this.results.rows[i].v[ix];
                             } else {
                                 dim += " / " + this.results.rows[i].v[ix];
                             }
-                        } else if (typeof(this.results.rows[i].v[ix]) === "number") {
+                        } else if (this.results.cols[ix].role === "DATA" || this.results.rows[i].v[ix] === null) {
                             metricVals.push(this.results.rows[i].v[ix]);
                         }
                     }
@@ -332,9 +338,6 @@
                 }
             }
 
-            // sort dates
-            this.results.rows = this.sortDates(this.results.rows);
-
             if (nVariate) {
                 // make sure we only have three columns
                 this.standardizeData();
@@ -342,10 +345,12 @@
                 this.$el.find("#metrics").show();
             } else {
                 this.$el.find("#metrics").hide();
+                this.sortDates(this.results.rows);
             }
 
             // get data
             var hashMap = {};
+
             for (i=1; i<this.results.cols.length; i++) {
                 if (! toRemove.includes(i)) {
 
@@ -405,13 +410,6 @@
                         keys.push(key);
                     }
                 }
-                if (! compare) {
-                    // sort legend alphabetically
-                    legend.sort();
-                    // sort hashMap alphabetically
-                    keys.sort();
-                }
-
                 for (i=0; i<keys.length; i++) {
                     arr = [];
                     for (var date in hashMap[keys[i]]) {
@@ -426,18 +424,38 @@
                     dataset.push(arr);
                 }
             } else {
-                for (i=1; i<this.results.cols.length; i++) {
-                    if (! toRemove.includes(i)) {
+                // make sure a value is available for every day (standard timeseries)
+                if (! nVariate) {
+                    for (i=1; i<this.results.cols.length; i++) {
                         arr = [];
-                        for (ix=0; ix<this.results.rows.length; ix++) {
-                            var obj = {
-                                "date" : this.results.rows[ix].v[0],
-                                "value" : this.results.rows[ix].v[i]
-                            };
-                            arr.push(obj);
+                        /* Date Results */
+                        if (this.results.rows[0]) {
+                            var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
+                            var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
+                            for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+                                if (! toRemove.includes(i)) {
+                                    var currentDate = currentDay.format('YYYY-MM-DD');
+                                    var dataExists = false;
+                                    var obj = {
+                                        "date" : currentDate
+                                    };
+                                    for (ix=0; ix<this.results.rows.length; ix++) {
+                                        if (this.results.rows[ix].v[0] === currentDate) {
+                                            dataExists = true;
+                                            obj.value = this.results.rows[ix].v[i];
+                                        }
+                                    }
+                                    if (dataExists === false && this.fillMissingDataValues) {
+                                        obj.value = null;
+                                        arr.push(obj);
+                                    } else if (dataExists) {
+                                        arr.push(obj);
+                                    }
+                                }
+                            }
+                            arr = MG.convert.date(arr, 'date');
+                            dataset.push(arr);
                         }
-                        arr = MG.convert.date(arr, 'date');
-                        dataset.push(arr);
                     }
                 }
             }
@@ -511,15 +529,21 @@
             this.renderTemplate(false);
 
             if (status === "PENDING") {
-                this.$el.html(this.template({"staleMessage" : this.staleMessage}));
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").show();
+                var chartChildren = this.$el.find("#chart_container").children();
+                for (i=0; i<chartChildren.length; i++) {
+                    if ($(chartChildren[i]).is("#re-run")) {
+                        $(chartChildren[i]).show();
+                    } else {
+                        $(chartChildren[i]).hide();
+                    }
+                }
             }
             if (status === "RUNNING") {
                 this.$el.find(".sq-loading").show();
             }
             if (status === "DONE") {
                 this.renderTemplate(true);
+
                 // additional timeserie analysis views
                 if (this.yearSwitcherView){
                     this.renderAdditionalView(this.yearSwitcherView, this.$el.find("#yearswitcher"));
@@ -531,24 +555,10 @@
                 var data = this.getData();
                 this.results = data.results;
 
-                if (data.done && this.results && ! this.model.get("error")) {
-                    this.renderGraphic();
-                } else {
-                    var chartChildren = this.$el.find("#chart_container").children();
-                    if (this.model.get("error")) {
-                        if (this.model.get("error").enableRerun) {
-                            for (i=0; i<chartChildren.length; i++) {
-                                if ($(chartChildren[i]).is("#re-run")) {
-                                    $(chartChildren[i]).show();
-                                } else {
-                                    $(chartChildren[i]).hide();
-                                }
-                            }
-                        } else {
-                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
-                        }
-                    }
+                if (data.done && this.model.get("error")) {
+                    this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                 }
+                this.renderGraphic();
             }
         },
 

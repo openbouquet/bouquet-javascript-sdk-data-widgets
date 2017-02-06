@@ -11,8 +11,10 @@
         barView : null,
         timeView : null,
         displayOnly : null,
+        afterRender: null,
 
         initialize: function(options) {
+            this.status = squid_api.model.status;
 
             if (options) {
                 // setup options
@@ -29,6 +31,9 @@
                 if (options.displayOnly) {
                     this.displayOnly = options.displayOnly;
                 }
+                if (options.afterRender) {
+                    this.afterRender = options.afterRender;
+                }
 
                 this.tableView = options.tableView;
                 this.barView = options.barView;
@@ -39,11 +44,20 @@
             if (this.model) {
                 this.listenTo(this.model,"change", this.render);
             }
-
             if (!this.config) {
                 this.config = squid_api.model.config;
             }
             this.listenTo(this.config, "change:selection", this.render);
+            this.listenTo(this.config, "change:currentAnalysis", this.render);
+            this.listenTo(this.status, "change", this.enable);
+        },
+
+        enable: function() {
+            if (this.status.get("status") === "RUNNING") {
+                this.$el.find("button").prop("disabled", true);
+            } else {
+                this.$el.find("button").prop("disabled", false);
+            }
         },
 
         setModel: function(model) {
@@ -133,6 +147,10 @@
             }
 
             this.$el.html(this.template(data));
+
+            if (this.afterRender) {
+                this.afterRender.call(this);
+            }
 
             return this;
         }

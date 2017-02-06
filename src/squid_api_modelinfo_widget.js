@@ -6,6 +6,7 @@
     var View = Backbone.View.extend({
 
         template: template,
+        descriptionAvailable: false,
         popoverOptions: {
             placement: function (context, source) {
                 var position = $(source).offset();
@@ -30,13 +31,39 @@
         internalTemplate: null,
 
         initialize: function() {
+            var me = this;
             this.config = squid_api.model.config;
             this.filters = squid_api.model.filters;
+            this.status = squid_api.model.status;
 
             this.internalTemplate = squid_api.template.squid_api_modelinfo_internal_widget;
 
+            this.config.on("change:bookmark", function() {
+                me.descriptionAvailable = false;
+            });
             this.config.on("change:domain", this.fetchMetrics, this);
             this.filters.on("change:selection", this.render, this);
+            this.status.on("change:status", this.statusUpdate, this);
+            this.status.on("change:configReady", this.statusUpdate, this);
+
+            /* close popover when clicked outside */
+            $('body').on('click', function (e) {
+                me.$el.find("[data-toggle='popover']").each(function() {
+                    //the 'is' for buttons that trigger popups
+                    //the 'has' for icons within a button that triggers a popup
+                    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                        $(this).popover('hide');
+                    }
+                });
+            });
+        },
+
+        statusUpdate: function() {
+            if (this.status.get("status") === "RUNNING" || this.status.get("configReady") === false) {
+                this.$el.find("button").attr("disabled", true);
+            } else {
+                this.$el.find("button").attr("disabled", false);
+            }
         },
 
         getMetrics: function() {
@@ -71,10 +98,11 @@
                                 "name": metrics.at(m).get("name"),
                                 "description": metrics.at(m).get("description")
                             });
+                            if (metrics.at(m).get("description")) {
+                                me.descriptionAvailable = true;
+                            }
                         }
                     }
-
-                    me.render();
                 });
             }
         },
@@ -110,54 +138,64 @@
                                     "name": facets[f].name,
                                     "description": facets[f].dimension.description
                                 });
+                                if (facets[f].dimension.description) {
+                                    this.descriptionAvailable = true;
+                                }
                             }
                         }
 
                         // sort dimensions
-                        this.dimensions.sort(function(a, b){
-                            if(a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
-                            if(a.name.toLowerCase() > b.name.toLowerCase())  { return 1; }
-                            return 0;
-                        });
+                        if (this.dimensions) {
+                            this.dimensions.sort(function(a, b){
+                                if(a.name.toLowerCase() < b.name.toLowerCase()) {
+                                    return -1;
+                                }
+                                if(a.name.toLowerCase() > b.name.toLowerCase()) {
+                                    return 1;
+                                }
+                                return 0;
+                            });
+                        }
 
                         // sort metrics
-                        this.metrics.sort(function(a, b){
-                            if(a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
-                            if(a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
-                            return 0;
-                        });
-
+                        if (this.metrics) {
+                            this.metrics.sort(function(a, b){
+                                if(a.name.toLowerCase() < b.name.toLowerCase()) {
+                                    return -1;
+                                }
+                                if(a.name.toLowerCase() > b.name.toLowerCase()) {
+                                    return 1;
+                                }
+                                return 0;
+                            });
+                        }
+                        
                         var jsonData = {
                             dimensions: this.dimensions,
                             metrics: this.metrics
                         };
 
-                        // print base template
-                        this.$el.html(this.template());
+                        if (this.descriptionAvailable) {
+                            // print base template
+                            this.$el.html(this.template());
 
-                        // set popup html content
-                        me.popoverOptions.content = me.internalTemplate(jsonData);
+                            // set popup html content
+                            me.popoverOptions.content = me.internalTemplate(jsonData);
 
-                        // initialize popover
-                        me.$el.find("[data-toggle='popover']").popover(me.popoverOptions);
+                            // initialize popover
+                            me.$el.find("[data-toggle='popover']").popover(me.popoverOptions);
 
-                        // remove max-width
-                        me.$el.find("[data-toggle='popover']").on("show.bs.popover", function(){
-                            me.$el.find("[data-toggle='popover']").data("bs.popover").tip().css({"max-width": "inherit"});
-                        });
-
-                        /*
-                            close popover when clicked outside
-                        */
-                        $('body').on('click', function (e) {
-                            me.$el.find("[data-toggle='popover']").each(function() {
-                                //the 'is' for buttons that trigger popups
-                                //the 'has' for icons within a button that triggers a popup
-                                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                                    $(this).popover('hide');
-                                }
+                            // remove max-width
+                            me.$el.find("[data-toggle='popover']").on("show.bs.popover", function(){
+                                me.$el.find("[data-toggle='popover']").data("bs.popover").tip().css({"max-width": "inherit"});
                             });
-                        });
+                            me.$el.find("[data-toggle='popover']").on("hidden.bs.popover", function(e){
+                                // prevent clicking twice to open bootstrap popover
+                                $(e.target).data("bs.popover").inState.click = false;
+                            });
+                        } else {
+                            this.$el.empty();
+                        }
                     }
                 }
             }

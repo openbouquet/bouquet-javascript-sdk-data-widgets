@@ -13,7 +13,7 @@ function program1(depth0,data) {
   }
 
   buffer += "<div id=\"bar_chart\" class=\"squid-api-data-widgets-bar-chart\">\n    <div id=\"re-run\" style=\"";
-  stack1 = helpers.unless.call(depth0, (depth0 && depth0.enableRerun), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  stack1 = helpers.unless.call(depth0, (depth0 && depth0.isInCache), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\">\n        <div class=\"reactiveMessage\">\n            <span>\n                <i class=\"fa fa-refresh\"></i><br>\n                Please manually refresh your analysis\n            </span>\n        </div>\n    </div>\n</div>\n";
   return buffer;
@@ -254,7 +254,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"squid-api-export-scheduler-widget\">\r\n	<button class=\"btn btn-default\">Schedule <i class=\"fa fa-clock-o\"></i></button>\r\n</div>\r\n";
+  return "<div class=\"squid-api-export-scheduler-widget\">\r\n	<button class=\"btn btn-default\" disabled>Schedule <i class=\"fa fa-clock-o\"></i></button>\r\n</div>\r\n";
   });
 
 this["squid_api"]["template"]["squid_api_export_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -732,10 +732,10 @@ function program3(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6\">\n        <h4>Dimensions</h4>\n        <table class=\"table table-condensed dimensions\">\n          <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n              ";
+  buffer += "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6 nopadding\">\n        <h4>Dimensions</h4>\n        <table class=\"table table-condensed dimensions\">\n        <thead>\n        <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n        </thead>\n              ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.dimensions), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </table>\n    </div>\n    <div class=\"col-md-6\">\n        <h4>Metrics</h4>\n        <table class=\"table table-condensed metrics\">\n            <tr>\n              <th>Name</th>\n              <th>Description</th>\n            </tr>\n                ";
+  buffer += "\n        </table>\n    </div>\n    <div class=\"col-md-6 nopadding\">\n        <h4>Metrics</h4>\n        <table class=\"table table-condensed metrics\">\n            <thead> \n             <tr>\n                <th>Name</th>\n                <th>Description</th>\n            </tr>\n            </thead>\n                ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.metrics), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        </table>\n    </div>\n</div>\n";
@@ -1123,6 +1123,8 @@ function program2(depth0,data) {
         analysis : null,
         config : null,
         pagination: null,
+        autoRefresh: null,
+        ignoreConfigChange: null,
 
         initialize : function(options) {
             var me = this;
@@ -1148,6 +1150,12 @@ function program2(depth0,data) {
                 if (options.afterInitializedCallback) {
                     this.afterInitializedCallback = options.afterInitializedCallback;
                 }
+                if (options.autoRefresh) {
+                    this.autoRefresh = options.autoRefresh;
+                }
+                if (options.ignoreConfigChange) {
+                    this.ignoreConfigChange = options.ignoreConfigChange;
+                }
             }
 
             if (!this.config) {
@@ -1161,45 +1169,50 @@ function program2(depth0,data) {
             });
 
             // controller
-            this.listenTo(this.config, "change", function() {
-                var refreshNeeded = false;
-                if (this.config.hasChanged("project")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("domain")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("chosenDimensions")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("chosenMetrics")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("limit")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("rollups")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("orderBy")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("selection")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("startIndex")) {
-                    refreshNeeded = true;
-                }
-                if (this.config.hasChanged("timeUnit")) {
-                    refreshNeeded = true;
-                }
-                if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
-                    this.refreshAnalysis();
-                }
-            });
+            if (! this.ignoreConfigChange) {
+                this.listenTo(this.config, "change", function() {
+                    var refreshNeeded = false;
+                    if (this.config.hasChanged("project")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("domain")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("chosenDimensions")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("chosenMetrics")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("limit")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("rollups")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("orderBy")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("selection")) {
+                        refreshNeeded = true;
+                    }   
+                    if (this.config.hasChanged("startIndex")) {
+                        refreshNeeded = true;
+                    }
+                    if (this.config.hasChanged("timeUnit")) {
+                        refreshNeeded = true;
+                    }
+                    if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
+                        this.refreshAnalysis();
+                    }
+                });
+            }
 
             if (this.afterInitializedCallback) {
                 this.afterInitializedCallback.call(this);
+            }
+            if (this.autoRefresh) {
+                this.refreshAnalysis();
             }
         },
 
@@ -1261,12 +1274,16 @@ function program2(depth0,data) {
             });
             changed = changed || a.hasChanged();
             if (this.pagination) {
-                a.setParameter("maxResults", this.config.get("maxResults"), silent);
-                var startIndexChange = (a.getParameter("startIndex") !== this.config.get("startIndex"));
+                a.setParameter("maxResults", this.config.get("maxResults") || 10, silent);
+                var configStartIndex = this.config.get("startIndex") || 0;
+                var startIndexChange = false;
+                if (a.getParameter("startIndex") !== null) {
+                    startIndexChange = (a.getParameter("startIndex") !== configStartIndex);
+                }
                 if (startIndexChange) {
                     // update if pagination changed
                     if (a.get("id") && (a.get("id").analysisJobId)) {
-                        a.setParameter("startIndex", this.config.get("startIndex"), silent);
+                        a.setParameter("startIndex", configStartIndex, silent);
                         squid_api.compute(a);
                     }
                 }
@@ -1365,11 +1382,13 @@ function program2(depth0,data) {
                 yValues: []
             };
 
+
             // check to see if we only display totals
             var onlyMetrics = true;
             for (i=0; i<cols.length; i++) {
                 if (cols[i].role !== "DATA") {
                     onlyMetrics = false;
+                    domainIndex = i;
                 }
             }
 
@@ -1391,19 +1410,20 @@ function program2(depth0,data) {
                 }
             } else {
                 for (i=0; i<rows.length; i++) {
-                    var item1 = rows[i].v;
+                    var row = rows[i].v;
                     var yAxis1 = "";
                     var xAxis1;
-                    for (ix=0; ix<item1.length; ix++) {
-                        if (typeof(item1[ix]) === "string") {
+                    for (ix=0; ix<row.length; ix++) {
+                        var item1 = row[ix];
+                        if (cols[ix].role === "DOMAIN" && item1) {
                             if (yAxis1.length === 0) {
-                                yAxis1 += item1[ix];
+                                yAxis1 += item1;
                             } else {
-                                yAxis1 += " / " + item1[ix];
+                                yAxis1 += " / " + item1;
                             }
-                        } else if (typeof(item1[ix]) === "number") {
-                            xAxis1 = item1[ix];
-                            barData.xValues.push(item1[ix]);
+                        } else if (cols[ix].role === "DATA" || item1 === null) {
+                            xAxis1 = item1;
+                            barData.xValues.push(item1);
                             break;
                         }
                     }
@@ -1447,14 +1467,10 @@ function program2(depth0,data) {
         },
 
         renderBase: function(done) {
-            var error = this.model.get("error");
-            var enableRerun;
-            if (error) {
-                enableRerun = error.enableRerun;
-            }
+            var isInCache = this.model.get("status") === "PENDING";
             this.$el.html(this.template({
                 done: done,
-                enableRerun: enableRerun
+                isInCache: isInCache
             }));
         },
 
@@ -1464,7 +1480,7 @@ function program2(depth0,data) {
             var status = this.model.get("status");
             var error = this.model.get("error");
 
-            if (data.done && ! error) {
+            if (data.results && data.done && ! error) {
 
                 // Print Template
                 this.renderBase(true);
@@ -1489,13 +1505,7 @@ function program2(depth0,data) {
                     ySpacing = 45;
 
                 // Set A max / min height
-                var height;
-
-                if (barData.values.length < 5) {
-                    height = 200;
-                } else {
-                    height = 500;
-                }
+                var height = (barData.values.length) * 50;
 
                 // To make the chart fit (Width)
                 xScale = d3.scale.linear()
@@ -1571,6 +1581,7 @@ function program2(depth0,data) {
                             .style('fill', tempColor);
                     })
                     .transition()
+                        // available callback options (to check)
                         .attr('width', function(d) {
                             return xScale(d[1]);
                         })
@@ -1634,8 +1645,10 @@ function program2(depth0,data) {
         barView : null,
         timeView : null,
         displayOnly : null,
+        afterRender: null,
 
         initialize: function(options) {
+            this.status = squid_api.model.status;
 
             if (options) {
                 // setup options
@@ -1652,6 +1665,9 @@ function program2(depth0,data) {
                 if (options.displayOnly) {
                     this.displayOnly = options.displayOnly;
                 }
+                if (options.afterRender) {
+                    this.afterRender = options.afterRender;
+                }
 
                 this.tableView = options.tableView;
                 this.barView = options.barView;
@@ -1662,11 +1678,20 @@ function program2(depth0,data) {
             if (this.model) {
                 this.listenTo(this.model,"change", this.render);
             }
-
             if (!this.config) {
                 this.config = squid_api.model.config;
             }
             this.listenTo(this.config, "change:selection", this.render);
+            this.listenTo(this.config, "change:currentAnalysis", this.render);
+            this.listenTo(this.status, "change", this.enable);
+        },
+
+        enable: function() {
+            if (this.status.get("status") === "RUNNING") {
+                this.$el.find("button").prop("disabled", true);
+            } else {
+                this.$el.find("button").prop("disabled", false);
+            }
         },
 
         setModel: function(model) {
@@ -1757,6 +1782,10 @@ function program2(depth0,data) {
 
             this.$el.html(this.template(data));
 
+            if (this.afterRender) {
+                this.afterRender.call(this);
+            }
+
             return this;
         }
     });
@@ -1816,10 +1845,26 @@ function program2(depth0,data) {
             }
 
             if (this.model) {
-                this.listenTo(this.model, 'change:status', this.render);
-                this.listenTo(this.model, 'change:facets', this.render);
-                this.listenTo(this.model, 'change:metricList', this.render);
-                this.listenTo(this.model, 'change:orderBy', this.render);
+                this.listenTo(this.model, 'change:error', function() {
+                    console.log("DEBUG:"+"DataTable error change : "+this.model.get("error"));
+                    me.render();
+                });
+                this.listenTo(this.model, 'change:status', function() {
+                    console.log("DEBUG:"+"DataTable status change : "+this.model.get("status"));
+                    me.render();
+                });
+                this.listenTo(this.model, 'change:facets', function() {
+                    console.log("DEBUG:"+"DataTable facets change : "+this.model.get("facets"));
+                    me.render();
+                });
+                this.listenTo(this.model, 'change:metricList', function() {
+                    console.log("DEBUG:"+"DataTable metricList change : "+this.model.get("metricList"));
+                    me.render();
+                });
+                this.listenTo(this.model, 'change:orderBy', function() {
+                    console.log("DEBUG:"+"DataTable orderBy change : "+this.model.get("orderBy"));
+                    me.render();
+                });
             }
 
             // setup options
@@ -1908,29 +1953,30 @@ function program2(depth0,data) {
 
         events : ({
             "click thead th" : function(event) {
+                if ($(event.currentTarget).attr("aria-describedby")) {
+                    $(event.currentTarget).tooltip("destroy");
+                }
+
                 if (this.ordering) {
-                    var originType = $(event.currentTarget).attr("origin-type");
-                    if (originType !== "COMPARETO") {
-                        var orderBy = this.config.get("orderBy");
-                        var expressionValue = $(event.currentTarget).attr("data-content");
-                        var obj = {"expression" : {"value" : expressionValue}};
-                        if (orderBy) {
-                            if (orderBy[0]) {
-                                if (orderBy[0].expression) {
-                                    if (orderBy[0].expression.value === expressionValue) {
-                                        if ($(event.currentTarget).hasClass("ASC")) {
-                                            obj.direction = "DESC";
-                                        } else {
-                                            obj.direction = "ASC";
-                                        }
-                                    } else {
+                    var orderBy = this.config.get("orderBy");
+                    var expressionValue = $(event.currentTarget).attr("data-content");
+                    var obj = {"expression" : {"value" : expressionValue}};
+                    if (orderBy) {
+                        if (orderBy[0]) {
+                            if (orderBy[0].expression) {
+                                if (orderBy[0].expression.value === expressionValue) {
+                                    if ($(event.currentTarget).hasClass("ASC")) {
                                         obj.direction = "DESC";
+                                    } else {
+                                        obj.direction = "ASC";
                                     }
+                                } else {
+                                    obj.direction = "DESC";
                                 }
                             }
                         }
-                        this.config.set("orderBy", [obj]);
                     }
+                    this.config.set("orderBy", [obj]);
                 }
             },
             "click td.dimension" : function(event) {
@@ -1984,116 +2030,120 @@ function program2(depth0,data) {
         },
 
         displayTableHeader : function(selector) {
+            var r = Math.random();
             var me = this;
-            var i;
-            var metrics;
-            var domain = this.config.get("domain");
-
-            if (domain) {
-                if (! me.headerInformation || this.currentDomain !== domain) {
-                    this.currentDomain = this.config.get("domain");
-                    var parentId = this.config.get("domain");
-                    return squid_api.getCustomer().then(function(customer) {
-                        return customer.get("projects").load(me.config.get("project")).then(function(project) {
-                            return project.get("domains").load(parentId).then(function(domain) {
-                                return domain.get("metrics").load().then(function(metrics) {
-                                    var arr = [];
-                                    for(i=0; i<metrics.size(); i++) {
-                                        arr.push(metrics.models[i].toJSON());
-                                    }
-                                    me.domainMetrics = arr;
-                                    me.headerInformation = true;
-                                    me.displayTableHeader();
-                                });
-                            });
+            this.currentDomain = this.config.get("domain");
+            var parentId = this.config.get("domain");
+            return squid_api.getCustomer().then(function(customer) {
+                return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    return project.get("domains").load(parentId).then(function(domain) {
+                        return domain.get("metrics").load().then(function(metrics) {
+                            console.log("DEBUG:"+"metrics loaded : displayTableHeader "+r);
+                            var arr = [];
+                            for(i=0; i<metrics.size(); i++) {
+                                arr.push(metrics.models[i].toJSON());
+                            }
+                            me.displayTableHeaderStep2(selector, arr, r);
                         });
                     });
-                } else  {
-                    var columns = [];
-                    var originalColumns;//unaltered by rollup splice
-                    var invalidSelection = false;
-                    var status = this.model.get("status");
+                });
+            });
+        },
+        
+        displayTableHeaderStep2 : function(selector, domainMetrics, r) {
+            console.log("DEBUG:"+"displayTableHeader start "+r);
+            var me = this;
+            var i;
+            var domain = this.config.get("domain");
+            var metrics;
+            if (domain) {
+                var columns = [];
+                var originalColumns;//unaltered by rollup splice
+                var invalidSelection = false;
+                var status = this.model.get("status");
 
-                    var analysis = this.model;
-                    // in case of a multi-analysis model
-                    if (analysis.get("analyses")) {
-                      analysis = analysis.get("analyses")[0];
+                var analysis = this.model;
+                // in case of a multi-analysis model
+                if (analysis.get("analyses")) {
+                  analysis = analysis.get("analyses")[0];
+                }
+                var results = analysis.get("results");
+                var rollups;
+                if (results && status !== "PENDING" && status !== "RUNNING") {
+                    // Analysis computed : use results columns
+                    columns = results.cols;
+
+                    // init rollups
+                    rollups = analysis.get("rollups");
+                    if (rollups && (rollups.length ===0)) {
+                        rollups = this.rollups = null;
                     }
-                    var results = analysis.get("results");
-                    var rollups;
-                    if (results && status !== "PENDING" && status !== "RUNNING") {
-                        // Analysis computed : use results columns
-                        columns = results.cols;
-
-                        // init rollups
-                        rollups = analysis.get("rollups");
-                        if (rollups && (rollups.length ===0)) {
-                            rollups = this.rollups = null;
+                    originalColumns = columns;
+                } else {
+                    // Analysis not computed yet : use analysis definition
+                    if (this.filters.get("selection")) {
+                        var obj;
+                        var facets = this.model.get("facets");
+                        if (facets) {
+                            for (i=0; i<facets.length; i++) {
+                                obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value) || {};
+                                if (obj) {
+                                    obj.dataType = "STRING";
+                                    columns.push(obj);
+                                } else {
+                                    // impossible to get column data from selection
+                                    invalidSelection = true;
+                                    console.error("ERROR:"+"displayTableHeader invalidSelection");
+                                }
+                            }
                         }
-                        originalColumns = columns;
-                    } else {
-                        // Analysis not computed yet : use analysis definition
-                        if (this.filters.get("selection")) {
-                            var obj;
-                            var facets = this.model.get("facets");
-                            if (facets) {
-                                for (i=0; i<facets.length; i++) {
-                                    obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value) || {};
+                        metrics = this.model.get("metricList");
+                        if (metrics) {
+                            if (metrics.length === 0) {
+                                metrics = squid_api.model.config.get("chosenMetrics");
+                            }
+                        }
+                        if (metrics) {
+                            var metric;
+                            for (i=0; i<metrics.length; i++) {
+                                metric = metrics[i];
+                                if (metrics[i].id) {
+                                    for (ix=0; ix<domainMetrics.length; ix++) {
+                                        if (metrics[i].id.metricId === domainMetrics[ix].oid) {
+                                            metrics[i].name = domainMetrics[ix].name;
+                                        }
+                                    }
+                                    obj = squid_api.utils.find(domainMetrics, "oid", metrics[i].id.metricId) || {};
                                     if (obj) {
-                                        obj.dataType = "STRING";
+                                        obj.dataType = "NUMBER";
                                         columns.push(obj);
                                     } else {
                                         // impossible to get column data from selection
                                         invalidSelection = true;
                                     }
+                                } else {
+                                    obj = {
+                                            "id" : null,
+                                            "name" : metrics[i].name,
+                                            "dataType" : "NUMBER"
+                                    };
+                                    columns.push(obj);
                                 }
-                            }
-                            metrics = this.model.get("metricList");
-                            if (metrics) {
-                                if (metrics.length === 0) {
-                                    metrics = squid_api.model.config.get("chosenMetrics");
-                                }
-                            }
-                            if (metrics) {
-                                var metric;
-                                for (i=0; i<metrics.length; i++) {
-                                    metric = metrics[i];
-                                    if (metrics[i].id) {
-                                        for (ix=0; ix<me.domainMetrics.length; ix++) {
-                                            if (metrics[i].id.metricId === me.domainMetrics[ix].oid) {
-                                                metrics[i].name = me.domainMetrics[ix].name;
-                                            }
-                                        }
-                                        obj = squid_api.utils.find(me.domainMetrics, "oid", metrics[i].id.metricId) || {};
-                                        if (obj) {
-                                            obj.dataType = "NUMBER";
-                                            columns.push(obj);
-                                        } else {
-                                            // impossible to get column data from selection
-                                            invalidSelection = true;
-                                        }
-                                    } else {
-                                        obj = {
-                                                "id" : null,
-                                                "name" : metrics[i].name,
-                                                "dataType" : "NUMBER"
-                                        };
-                                        columns.push(obj);
-                                    }
-                                }
-                            }
-                            if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
-                                originalColumns = columns.slice();
-                                columns.splice(this.config.get("rollups")[0].col, 1);
-                            } else {
-                                originalColumns = columns;
                             }
                         }
+                        if (this.config.get("rollups") && Array.isArray(this.config.get("rollups")) && this.config.get("rollups").length>0 && this.rollupSummaryColumn >= 0 && status !== "DONE") {
+                            originalColumns = columns.slice();
+                            columns.splice(this.config.get("rollups")[0].col, 1);
+                        } else {
+                            originalColumns = columns;
+                        }
                     }
+                }
 
-                    var orderBy = this.model.get("orderBy");
-                    if (orderBy) {
-                        // add orderBy direction
+                var orderBy = this.model.get("orderBy");
+                if (orderBy) {
+                    // add orderBy direction
+                    if (columns) {
                         for (col=0; col<columns.length; col++) {
                             if (columns[col]) {
                                 columns[col].orderDirection = undefined;
@@ -2117,41 +2167,44 @@ function program2(depth0,data) {
                             }
                         }
                     }
+                }
 
-                    var rollupColIndex = null;
-                    var rollupSummaryIndex = null;
-                    if (rollups) {
-                        if ((rollups.length>0)) {
-                            if (rollups.length>1 && rollups[0].col === -1) {
-                                rollupColIndex = rollups[1].col + 1;
-                            } else {
-                                rollupColIndex = rollups[0].col + 1;
-                            }
-                        }
-                        if (this.config.get("rollups") && this.rollupSummaryColumn >= 0) {
-                            rollupSummaryIndex = this.rollupSummaryColumn + 1;
+                var rollupColIndex = null;
+                var rollupSummaryIndex = null;
+                if (rollups) {
+                    if ((rollups.length>0)) {
+                        if (rollups.length>1 && rollups[0].col === -1) {
+                            rollupColIndex = rollups[1].col + 1;
+                        } else {
+                            rollupColIndex = rollups[0].col + 1;
                         }
                     }
-                    me = this;
-                    // header
-                    d3.select(selector).select("thead tr").selectAll("th").remove();
+                    if (this.config.get("rollups") && this.rollupSummaryColumn >= 0) {
+                        rollupSummaryIndex = this.rollupSummaryColumn + 1;
+                    }
+                }
+                me = this;
+                
+                // header
+                d3.select(selector).select("thead tr").selectAll("th").remove();
 
-                    // set compare col
-                    this.compareCols = [];
-                    this.metricCols = [];
-                    this.dateCols = [];
-                    this.firstMeasure = -1;
+                // set compare col
+                this.compareCols = [];
+                this.metricCols = [];
+                this.dateCols = [];
+                this.firstMeasure = -1;
+                if (columns) {
                     for (i=0; i<columns.length; i++) {
                         if (columns[i].originType === "COMPARETO") {
                             this.compareCols.push(i);
                             if (this.firstMeasure === -1 || this.firstMeasure>i) {
-                            	this.firstMeasure = i;
+                                this.firstMeasure = i;
                             }
                         }
                         if (columns[i].role === "DATA") {
                             this.metricCols.push(i);
                             if (this.firstMeasure === -1 || this.firstMeasure>i) {
-                            	this.firstMeasure = i;
+                                this.firstMeasure = i;
                             }
                         }
                         if (columns[i].extendedType) {
@@ -2160,126 +2213,142 @@ function program2(depth0,data) {
                             }
                         }
                     }
+                }
 
-                    if (!invalidSelection) {
-                        d3.select(selector).select("thead tr").selectAll("th")
-                            .data(columns)
-                            .enter().append("th")
-                            .attr("class", function(d, i) {
-                                var str = "";
-                                if (rollups) {
-                                    if (i === 0) {
-                                        // hide grouping column
-                                        str = str + "hide " + d.dataType;
-                                    } else if (( rollupSummaryIndex !== null) && (i === rollupColIndex)) {
-                                        // hide rollup column
-                                        str = str + "hide " + d.dataType;
-                                    } else {
-                                        str = str + d.dataType;
-                                    }
-                                }
-                                if (d.orderDirection) {
-                                    str = str + " " + d.orderDirection;
-                                }
-                                if (me.compareCols) {
-                                    if (me.compareCols.length > 0) {
-                                        if (me.compareCols.indexOf(i) > -1) {
-                                            str += " compareTo";
-                                        } else if (me.metricCols.indexOf(i) > -1) {
-                                            str += " compare";
-                                        }
-                                    }
-                                }
-                                return str;
-                            })
-                            .html(function(d) {
-                                var str = d.name;
-                                if (d.orderDirection === "ASC") {
-                                    str = str + " " + "<span class='sort-direction'>&#xffec;</span>";
-                                } else if (d.orderDirection === "DESC") {
-                                    str = str + " " + "<span class='sort-direction'>&#xffea;</span>";
-                                }
-                                return str;
-                            })
-                            .attr("data-role", function(d) {
-                                return d.role;
-                            })
-                            .attr("origin-type", function(d) {
-                                return d.originType;
-                            })
-                            .attr("data-content", function(d) {
-                                if (d.definition) {
-                                    return d.definition;
+                if (!invalidSelection && columns) {
+                    console.info("DEBUG:"+"displayTableHeader D3, cols :"+columns.length);
+                    d3.select(selector).select("thead tr").selectAll("th")
+                        .data(columns)
+                        .enter().append("th")
+                        .attr("class", function(d, i) {
+                            var str = "";
+                            if (rollups) {
+                                if (i === 0) {
+                                    // hide grouping column
+                                    str = str + "hide " + d.dataType;
+                                } else if (( rollupSummaryIndex !== null) && (i === rollupColIndex)) {
+                                    // hide rollup column
+                                    str = str + "hide " + d.dataType;
                                 } else {
-                                    return d.id;
+                                    str = str + d.dataType;
                                 }
-                            });
+                            }
+                            if (d.orderDirection) {
+                                str = str + " " + d.orderDirection;
+                            }
+                            if (me.compareCols) {
+                                if (me.compareCols.length > 0) {
+                                    if (me.compareCols.indexOf(i) > -1) {
+                                        str += " compareTo";
+                                    } else if (me.metricCols.indexOf(i) > -1) {
+                                        str += " compare";
+                                    }
+                                }
+                            }
+                            return str;
+                        })
+                        .html(function(d) {
+                            var str = d.name;
+                            var upArrow = "&#xffea;";
+                            var downArrow = "&#xffec;";
+                            if (d.orderDirection) {
+                                if (d.dataType === "NUMBER" || (d.extendedType && d.extendedType.name === "int4") || (d.extendedType && d.extendedType.name === "int8")) {
+                                    if (d.orderDirection === "ASC") {
+                                        str = str + " " + "<span class='sort-direction'>" + upArrow + "</span>";
+                                    } else if (d.orderDirection === "DESC") {
+                                        str = str + " " + "<span class='sort-direction'>" + downArrow + "</span>";
+                                    }
+                                } else {
+                                    if (d.orderDirection === "ASC") {
+                                        str = str + " " + "<span class='sort-direction'>" + upArrow + "</span>";
+                                    } else if (d.orderDirection === "DESC") {
+                                        str = str + " " + "<span class='sort-direction'>" + downArrow + "</span>";
+                                    }
+                                }
+                            }
+                            
+                            return str;
+                        })
+                        .attr("data-role", function(d) {
+                            return d.role;
+                        })
+                        .attr("origin-type", function(d) {
+                            return d.originType;
+                        })
+                        .attr("data-content", function(d) {
+                            if (d.definition) {
+                                return d.definition;
+                            } else {
+                                return d.id;
+                            }
+                        });
 
-                        // add class if more than 10 columns
-                        if (this.$el.find("thead th").length > 10) {
-                            this.$el.find("table").addClass("many-columns");
-                        } else {
-                            this.$el.find("table").removeClass("many-columns");
-                        }
+                    // add class if more than 10 columns
+                    if (this.$el.find("thead th").length > 10) {
+                        this.$el.find("table").addClass("many-columns");
+                    } else {
+                        this.$el.find("table").removeClass("many-columns");
+                    }
 
-                        // add tooltips on metrics / compare columns
-                        var headerCols = this.$el.find("thead th");
-                        squid_api.getCustomer().then(function(customer) {
-                            return customer.get("projects").load(me.config.get("project")).then(function(project) {
-                                return project.get("domains").load(me.config.get("domain")).then(function(domain) {
-			                        for (ix=0; ix<headerCols.length; ix++) {
-			                            var column = $(headerCols[ix]);
-			
-			                            var role = column.attr("data-role");
-			                            var originType = column.attr("origin-type");
-			                            var id = column.attr("data-content");
-			
-			                            var options = {
-			                                position: {
-			                                    my: "center bottom",
-			                                    at: "center top+5",
-			                                }
-			                            };
-			
-			                            if (role === "DATA" && originType !== "COMPARETO") {
-			                                // metric
-			                                metrics = domain.get("metrics");
-			                                var metricItem = metrics.findWhere({"definition" : id});
-			                                var metricItemDescription = "";
-			                                if (metricItem) {
-			                                    metricItemDescription = metricItem.get("description");
-			                                }
-			                                column.attr("title", metricItemDescription);
-			                                column.tooltip(options);
-			                            } else if (originType === "COMPARETO") {
-			                                // compare column
-			                                results = squid_api.model.filters.get("results");
-			                                if (results) {
-			                                    var compareTo = results.compareTo;
-			                                    if (compareTo) {
-			                                        if (compareTo[0]) {
-			                                            if (compareTo[0].selectedItems[0]) {
-			                                                var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
-			                                                var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
-			                                                column.attr("title", "metric comparaison on period " + lowerBound + " to " + upperBound);
-			                                            }
-			                                        }
-			                                    }
-			                                }
-			                                column.tooltip(options);
-			                            } else {
-			                                column.tooltip(options);
-			                            }
-			                        }
-                                });
+                    // add tooltips on metrics / compare columns
+                    var headerCols = this.$el.find("thead th");
+                    squid_api.getCustomer().then(function(customer) {
+                        return customer.get("projects").load(me.config.get("project")).then(function(project) {
+                            return project.get("domains").load(me.config.get("domain")).then(function(domain) {
+                                for (ix=0; ix<headerCols.length; ix++) {
+                                    var column = $(headerCols[ix]);
+
+                                    var role = column.attr("data-role");
+                                    var originType = column.attr("origin-type");
+                                    var id = column.attr("data-content");
+
+                                    var options = {
+                                            position: {
+                                                my: "center bottom",
+                                                at: "center top+5",
+                                            }
+                                    };
+
+                                    if (role === "DATA" && originType !== "COMPARETO") {
+                                        // metric
+                                        metrics = domain.get("metrics");
+                                        var metricItem = metrics.findWhere({"definition" : id});
+                                        var metricItemDescription = "";
+                                        if (metricItem) {
+                                            metricItemDescription = metricItem.get("description");
+                                        }
+                                        column.attr("title", metricItemDescription);
+                                        column.tooltip(options);
+                                    } else if (originType === "COMPARETO") {
+                                        // compare column
+                                        results = squid_api.model.filters.get("results");
+                                        if (results) {
+                                            var compareTo = results.compareTo;
+                                            if (compareTo) {
+                                                if (compareTo[0]) {
+                                                    if (compareTo[0].selectedItems[0]) {
+                                                        var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
+                                                        var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
+                                                        column.attr("title", "metric comparaison on period " + lowerBound + " to " + upperBound);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        column.tooltip(options);
+                                    } else {
+                                        column.tooltip(options);
+                                    }
+                                }
                             });
                         });
-                    }
+                    });
                 }
             }
+            console.log("DEBUG:"+"displayTableHeader end "+r);
         },
 
         displayTableContent : function(selector) {
+            console.log("DEBUG:"+"displayTableContent start");
             var me = this;
 
             var analysis = this.model;
@@ -2359,9 +2428,6 @@ function program2(depth0,data) {
                                         }
                                     }
                                 }
-                                if (typeof v === "number" && toRound) {
-                                    v = this.d3Formatter(Math.round(parseFloat(v) * 100) / 100);
-                                }
                             }
                             newRow.v.push(v);
                         }
@@ -2369,6 +2435,7 @@ function program2(depth0,data) {
                     }
                 }
 
+                console.log("DEBUG:"+"displayTableContent D3");
                 // Rows
                 d3.select(selector).select("tbody").selectAll("tr").remove();
                 var tr = d3.select(selector).select("tbody").selectAll("tr")
@@ -2433,7 +2500,11 @@ function program2(depth0,data) {
                         }
                         if (me.metricCols) {
                             if (me.metricCols.indexOf(i) === -1 && me.compareCols.indexOf(i) === -1 && me.dateCols.indexOf(i) === -1) {
-                                str += " dimension";
+                                if (me.model.get("results") && me.model.get("results").cols[i] && me.model.get("results").cols[i].extendedType) {
+                                    if (me.model.get("results").cols[i].extendedType.name !== "date" && me.model.get("results").cols[i].extendedType.name !== "timestamp") {
+                                        str += " dimension";
+                                    }
+                                }
                             } else {
                                 str += " measure";
                             }
@@ -2449,19 +2520,28 @@ function program2(depth0,data) {
                         		offset=0;
                         	}
                         }
+                        var rolCol;
                         if (rollups) {
                             if ((rollupSummaryIndex !== null) && (i === rollupSummaryIndex)) {
-                                if (parseInt(this.parentNode.__data__.v[0]) === 1) {
-                                    // this is a total (grouped) line
-                                    text = this.parentNode.__data__.v[rollupColIndex];
+                                if (parseInt(this.parentNode.__data__.v[0]) >= 1) {
+                                	rolCol = rollupColIndex;
+                                	text = "";
+                                	if (parseInt(this.parentNode.__data__.v[0]) > 1) {
+                                		rolCol = rollups[parseInt(this.parentNode.__data__.v[0])-1].col + 1;
+                                		text = "Total for ";
+                                	}
+                                	text = text + this.parentNode.__data__.v[rolCol];
                                 }
                             } else if (i === 1){
-                                if (parseInt(this.parentNode.__data__.v[0]) === 1) {
+                                if (parseInt(this.parentNode.__data__.v[0]) >= 1) {
+                                	rolCol = rollupColIndex;
+                                	if (parseInt(this.parentNode.__data__.v[0]) > 1) {
+                                		rolCol = rollups[parseInt(this.parentNode.__data__.v[0])-1].col + 1;
+                                	}
                                     // this is a total line
-                                    text = "Total for "+data.results.cols[rollupColIndex].name;
+                                    text = "Total for "+data.results.cols[rolCol].name;
                                 }
-                            }
-                            if (i === 2) {
+                            } else  if (i === 2) {
                                 if ((parseInt(this.parentNode.__data__.v[0]) === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
                                     text = "Total";
                                 }
@@ -2502,6 +2582,14 @@ function program2(depth0,data) {
             }
         },
 
+        show: function() {
+            this.$el.show();
+        },
+
+        hide: function() {
+            this.$el.hide();
+        },
+
         render : function() {
             if (this.el) {
                 var selector = "#"+this.el.id+" .sq-table";
@@ -2531,11 +2619,7 @@ function program2(depth0,data) {
                         if (analysis.get("analyses")) {
                             analysis = analysis.get("analyses")[0];
                         }
-                        if (this.model.get("error").enableRerun) {
-                            this.$el.find("#re-run").show();
-                        } else {
-                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
-                        }
+                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                     }
                 }
 
@@ -2556,6 +2640,8 @@ function program2(depth0,data) {
                     this.$el.find(".sq-loading").hide();
                     this.$el.find("#stale").show();
                     this.$el.find("#error").html("");
+                    this.$el.find("#table-container").show();
+                    this.$el.find("#re-run").show();
                 }
             }
 
@@ -4099,6 +4185,7 @@ function program2(depth0,data) {
         filters : null,
         config : null,
         onChangeHandler : null,
+        autoInit: null,
         timeFacetDef : [],
 
         initialize: function(options) {
@@ -4112,10 +4199,17 @@ function program2(depth0,data) {
 
             if (options) {
                 this.onChangeHandler = options.onChangeHandler;
+                if (options.autoInit) {
+                    this.autoInit = options.autoInit;
+                }
             }
 
             // check for new filter selection made by config update
             this.listenTo(this.config, 'change:selection', this.initFilters);
+
+            if (this.autoInit) {
+                this.initFilters();
+            }
         },
 
         initFilters : function() {
@@ -4154,7 +4248,7 @@ function program2(depth0,data) {
                         var facets = sel.facets;
                         for (var i = 0; i < facets.length; i++) {
                             var facet = facets[i];
-                            if (facet.dimension.type === "CONTINUOUS" && facet.dimension.valueType === "DATE") {
+                            if (facet.dimension.valueType === "DATE") {
                                 timeFacets.push(facet);
                             }
                         }
@@ -4191,7 +4285,7 @@ function program2(depth0,data) {
             if (!timeFacet) {
                 // pick the first time facet
                 for (i=0; i<timeFacets.length; i++) {
-                    if (timeFacets[i].dimension.valueType === "DATE" && timeFacets[i].dimension.type === "CONTINUOUS"  && ! timeFacets[i].error) {
+                    if (timeFacets[i].dimension.valueType === "DATE" && timeFacets[i].dimension.type === "CONTINUOUS" && ! timeFacets[i].error) {
                         timeFacet = timeFacets[i];
                         break;
                     }
@@ -4273,6 +4367,8 @@ function program2(depth0,data) {
         format : null,
 
         initialize : function(options) {
+            var me = this;
+
             if (this.model) {
                 this.model.on('change', this.render, this);
             }
@@ -4285,15 +4381,24 @@ function program2(depth0,data) {
             if (options.format) {
                 this.format = options.format;
             } else {
-                // default number formatter
                 if (d3) {
-                    this.format = d3.format(",.0f");
+                    this.d3Formatter = d3.format(",");
+                }
+                // default number formatter
+                if (this.d3Formatter) {
+                    this.format = function(f){
+                        if (isNaN(f)) {
+                            return f;
+                        } else {
+                            return me.d3Formatter(f);
+                        }
+                    };
                 } else {
                     this.format = function(f){
-                        return f;
+                    return f;
                     };
                 }
-            }
+            }   
         },
 
         setModel : function(model) {
@@ -4326,10 +4431,10 @@ function program2(depth0,data) {
                         var col = cols[i];
                         if (col.originType === "USER") {
                             var kpi = {};
-                            kpi.value = this.format(values[i]);
+                            kpi.value = (typeof values[i] === "number") ? this.d3Formatter(Math.round(parseFloat(values[i]) * 100) / 100) : this.format(values[i]);
                             var compareIndex = compareMap[col.id];
                             if (compareIndex) {
-                                kpi.compareToValue = this.format(values[compareIndex]);
+                                kpi.compareToValue = (typeof values[i] === "number") ? this.d3Formatter(Math.round(parseFloat(values[compareIndex]) * 100) / 100) : this.format(values[compareIndex]);
                             }
                             kpi.unit = "";
                             kpi.name = col.name;
@@ -5138,6 +5243,7 @@ function program2(depth0,data) {
     var View = Backbone.View.extend({
 
         template: template,
+        descriptionAvailable: false,
         popoverOptions: {
             placement: function (context, source) {
                 var position = $(source).offset();
@@ -5162,13 +5268,39 @@ function program2(depth0,data) {
         internalTemplate: null,
 
         initialize: function() {
+            var me = this;
             this.config = squid_api.model.config;
             this.filters = squid_api.model.filters;
+            this.status = squid_api.model.status;
 
             this.internalTemplate = squid_api.template.squid_api_modelinfo_internal_widget;
 
+            this.config.on("change:bookmark", function() {
+                me.descriptionAvailable = false;
+            });
             this.config.on("change:domain", this.fetchMetrics, this);
             this.filters.on("change:selection", this.render, this);
+            this.status.on("change:status", this.statusUpdate, this);
+            this.status.on("change:configReady", this.statusUpdate, this);
+
+            /* close popover when clicked outside */
+            $('body').on('click', function (e) {
+                me.$el.find("[data-toggle='popover']").each(function() {
+                    //the 'is' for buttons that trigger popups
+                    //the 'has' for icons within a button that triggers a popup
+                    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                        $(this).popover('hide');
+                    }
+                });
+            });
+        },
+
+        statusUpdate: function() {
+            if (this.status.get("status") === "RUNNING" || this.status.get("configReady") === false) {
+                this.$el.find("button").attr("disabled", true);
+            } else {
+                this.$el.find("button").attr("disabled", false);
+            }
         },
 
         getMetrics: function() {
@@ -5203,10 +5335,11 @@ function program2(depth0,data) {
                                 "name": metrics.at(m).get("name"),
                                 "description": metrics.at(m).get("description")
                             });
+                            if (metrics.at(m).get("description")) {
+                                me.descriptionAvailable = true;
+                            }
                         }
                     }
-
-                    me.render();
                 });
             }
         },
@@ -5242,54 +5375,64 @@ function program2(depth0,data) {
                                     "name": facets[f].name,
                                     "description": facets[f].dimension.description
                                 });
+                                if (facets[f].dimension.description) {
+                                    this.descriptionAvailable = true;
+                                }
                             }
                         }
 
                         // sort dimensions
-                        this.dimensions.sort(function(a, b){
-                            if(a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
-                            if(a.name.toLowerCase() > b.name.toLowerCase())  { return 1; }
-                            return 0;
-                        });
+                        if (this.dimensions) {
+                            this.dimensions.sort(function(a, b){
+                                if(a.name.toLowerCase() < b.name.toLowerCase()) {
+                                    return -1;
+                                }
+                                if(a.name.toLowerCase() > b.name.toLowerCase()) {
+                                    return 1;
+                                }
+                                return 0;
+                            });
+                        }
 
                         // sort metrics
-                        this.metrics.sort(function(a, b){
-                            if(a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
-                            if(a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
-                            return 0;
-                        });
-
+                        if (this.metrics) {
+                            this.metrics.sort(function(a, b){
+                                if(a.name.toLowerCase() < b.name.toLowerCase()) {
+                                    return -1;
+                                }
+                                if(a.name.toLowerCase() > b.name.toLowerCase()) {
+                                    return 1;
+                                }
+                                return 0;
+                            });
+                        }
+                        
                         var jsonData = {
                             dimensions: this.dimensions,
                             metrics: this.metrics
                         };
 
-                        // print base template
-                        this.$el.html(this.template());
+                        if (this.descriptionAvailable) {
+                            // print base template
+                            this.$el.html(this.template());
 
-                        // set popup html content
-                        me.popoverOptions.content = me.internalTemplate(jsonData);
+                            // set popup html content
+                            me.popoverOptions.content = me.internalTemplate(jsonData);
 
-                        // initialize popover
-                        me.$el.find("[data-toggle='popover']").popover(me.popoverOptions);
+                            // initialize popover
+                            me.$el.find("[data-toggle='popover']").popover(me.popoverOptions);
 
-                        // remove max-width
-                        me.$el.find("[data-toggle='popover']").on("show.bs.popover", function(){
-                            me.$el.find("[data-toggle='popover']").data("bs.popover").tip().css({"max-width": "inherit"});
-                        });
-
-                        /*
-                            close popover when clicked outside
-                        */
-                        $('body').on('click', function (e) {
-                            me.$el.find("[data-toggle='popover']").each(function() {
-                                //the 'is' for buttons that trigger popups
-                                //the 'has' for icons within a button that triggers a popup
-                                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                                    $(this).popover('hide');
-                                }
+                            // remove max-width
+                            me.$el.find("[data-toggle='popover']").on("show.bs.popover", function(){
+                                me.$el.find("[data-toggle='popover']").data("bs.popover").tip().css({"max-width": "inherit"});
                             });
-                        });
+                            me.$el.find("[data-toggle='popover']").on("hidden.bs.popover", function(e){
+                                // prevent clicking twice to open bootstrap popover
+                                $(e.target).data("bs.popover").inState.click = false;
+                            });
+                        } else {
+                            this.$el.empty();
+                        }
                     }
                 }
             }
@@ -6627,6 +6770,7 @@ function program2(depth0,data) {
         renderTo: ".squid-api-data-widgets-timeseries-widget #widget",
         renderLegend: ".squid-api-data-widgets-timeseries-widget #legend",
         reRunMessage: "Please manually refresh your analysis",
+        fillMissingDataValues: null,
         timeUnitSelector: null,
         legendState: {},
 
@@ -6684,6 +6828,9 @@ function program2(depth0,data) {
                 if (options.staleMessage) {
                     this.staleMessage = options.staleMessage;
                 }
+                if (options.fillMissingDataValues) {
+                    this.fillMissingDataValues = options.fillMissingDataValues;
+                }
                 if (options.height) {
                     this.height = options.height;
                 }
@@ -6708,6 +6855,8 @@ function program2(depth0,data) {
                     area: false,
                     y_accessor: 'value',
                     animate_on_load: false,
+                    missing_is_hidden: true,
+                    missing_is_hidden_accessor: 'dead',
                     legend_target: this.renderLegend,
                     colors: this.colorPalette,
                     after_brushing: function(brush) {
@@ -6756,7 +6905,7 @@ function program2(depth0,data) {
             } else {
                 // default number formatter
                 if (d3) {
-                    this.format = d3.format(",.0f");
+                    this.format = d3.format(",.f");
                 } else {
                     this.format = function(f){
                         return f;
@@ -6874,13 +7023,13 @@ function program2(depth0,data) {
                     var dim = "";
                     var metricVals = [];
                     for (ix=1; ix<this.results.rows[i].v.length; ix++) {
-                        if (typeof(this.results.rows[i].v[ix]) === "string") {
+                    	if (this.results.cols[ix].role === "DOMAIN" && this.results.rows[i].v[ix]) {
                             if (dim.length === 0) {
                                 dim += this.results.rows[i].v[ix];
                             } else {
                                 dim += " / " + this.results.rows[i].v[ix];
                             }
-                        } else if (typeof(this.results.rows[i].v[ix]) === "number") {
+                        } else if (this.results.cols[ix].role === "DATA" || this.results.rows[i].v[ix] === null) {
                             metricVals.push(this.results.rows[i].v[ix]);
                         }
                     }
@@ -6939,9 +7088,6 @@ function program2(depth0,data) {
                 }
             }
 
-            // sort dates
-            this.results.rows = this.sortDates(this.results.rows);
-
             if (nVariate) {
                 // make sure we only have three columns
                 this.standardizeData();
@@ -6949,10 +7095,12 @@ function program2(depth0,data) {
                 this.$el.find("#metrics").show();
             } else {
                 this.$el.find("#metrics").hide();
+                this.sortDates(this.results.rows);
             }
 
             // get data
             var hashMap = {};
+
             for (i=1; i<this.results.cols.length; i++) {
                 if (! toRemove.includes(i)) {
 
@@ -7012,13 +7160,6 @@ function program2(depth0,data) {
                         keys.push(key);
                     }
                 }
-                if (! compare) {
-                    // sort legend alphabetically
-                    legend.sort();
-                    // sort hashMap alphabetically
-                    keys.sort();
-                }
-
                 for (i=0; i<keys.length; i++) {
                     arr = [];
                     for (var date in hashMap[keys[i]]) {
@@ -7033,18 +7174,38 @@ function program2(depth0,data) {
                     dataset.push(arr);
                 }
             } else {
-                for (i=1; i<this.results.cols.length; i++) {
-                    if (! toRemove.includes(i)) {
+                // make sure a value is available for every day (standard timeseries)
+                if (! nVariate) {
+                    for (i=1; i<this.results.cols.length; i++) {
                         arr = [];
-                        for (ix=0; ix<this.results.rows.length; ix++) {
-                            var obj = {
-                                "date" : this.results.rows[ix].v[0],
-                                "value" : this.results.rows[ix].v[i]
-                            };
-                            arr.push(obj);
+                        /* Date Results */
+                        if (this.results.rows[0]) {
+                            var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
+                            var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
+                            for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+                                if (! toRemove.includes(i)) {
+                                    var currentDate = currentDay.format('YYYY-MM-DD');
+                                    var dataExists = false;
+                                    var obj = {
+                                        "date" : currentDate
+                                    };
+                                    for (ix=0; ix<this.results.rows.length; ix++) {
+                                        if (this.results.rows[ix].v[0] === currentDate) {
+                                            dataExists = true;
+                                            obj.value = this.results.rows[ix].v[i];
+                                        }
+                                    }
+                                    if (dataExists === false && this.fillMissingDataValues) {
+                                        obj.value = null;
+                                        arr.push(obj);
+                                    } else if (dataExists) {
+                                        arr.push(obj);
+                                    }
+                                }
+                            }
+                            arr = MG.convert.date(arr, 'date');
+                            dataset.push(arr);
                         }
-                        arr = MG.convert.date(arr, 'date');
-                        dataset.push(arr);
                     }
                 }
             }
@@ -7118,15 +7279,21 @@ function program2(depth0,data) {
             this.renderTemplate(false);
 
             if (status === "PENDING") {
-                this.$el.html(this.template({"staleMessage" : this.staleMessage}));
-                this.$el.find(".sq-loading").hide();
-                this.$el.find("#stale").show();
+                var chartChildren = this.$el.find("#chart_container").children();
+                for (i=0; i<chartChildren.length; i++) {
+                    if ($(chartChildren[i]).is("#re-run")) {
+                        $(chartChildren[i]).show();
+                    } else {
+                        $(chartChildren[i]).hide();
+                    }
+                }
             }
             if (status === "RUNNING") {
                 this.$el.find(".sq-loading").show();
             }
             if (status === "DONE") {
                 this.renderTemplate(true);
+
                 // additional timeserie analysis views
                 if (this.yearSwitcherView){
                     this.renderAdditionalView(this.yearSwitcherView, this.$el.find("#yearswitcher"));
@@ -7138,24 +7305,10 @@ function program2(depth0,data) {
                 var data = this.getData();
                 this.results = data.results;
 
-                if (data.done && this.results && ! this.model.get("error")) {
-                    this.renderGraphic();
-                } else {
-                    var chartChildren = this.$el.find("#chart_container").children();
-                    if (this.model.get("error")) {
-                        if (this.model.get("error").enableRerun) {
-                            for (i=0; i<chartChildren.length; i++) {
-                                if ($(chartChildren[i]).is("#re-run")) {
-                                    $(chartChildren[i]).show();
-                                } else {
-                                    $(chartChildren[i]).hide();
-                                }
-                            }
-                        } else {
-                            this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
-                        }
-                    }
+                if (data.done && this.model.get("error")) {
+                    this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
                 }
+                this.renderGraphic();
             }
         },
 

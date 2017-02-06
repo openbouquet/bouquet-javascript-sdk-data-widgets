@@ -83,11 +83,13 @@
                 yValues: []
             };
 
+
             // check to see if we only display totals
             var onlyMetrics = true;
             for (i=0; i<cols.length; i++) {
                 if (cols[i].role !== "DATA") {
                     onlyMetrics = false;
+                    domainIndex = i;
                 }
             }
 
@@ -109,19 +111,20 @@
                 }
             } else {
                 for (i=0; i<rows.length; i++) {
-                    var item1 = rows[i].v;
+                    var row = rows[i].v;
                     var yAxis1 = "";
                     var xAxis1;
-                    for (ix=0; ix<item1.length; ix++) {
-                        if (typeof(item1[ix]) === "string") {
+                    for (ix=0; ix<row.length; ix++) {
+                        var item1 = row[ix];
+                        if (cols[ix].role === "DOMAIN" && item1) {
                             if (yAxis1.length === 0) {
-                                yAxis1 += item1[ix];
+                                yAxis1 += item1;
                             } else {
-                                yAxis1 += " / " + item1[ix];
+                                yAxis1 += " / " + item1;
                             }
-                        } else if (typeof(item1[ix]) === "number") {
-                            xAxis1 = item1[ix];
-                            barData.xValues.push(item1[ix]);
+                        } else if (cols[ix].role === "DATA" || item1 === null) {
+                            xAxis1 = item1;
+                            barData.xValues.push(item1);
                             break;
                         }
                     }
@@ -165,14 +168,10 @@
         },
 
         renderBase: function(done) {
-            var error = this.model.get("error");
-            var enableRerun;
-            if (error) {
-                enableRerun = error.enableRerun;
-            }
+            var isInCache = this.model.get("status") === "PENDING";
             this.$el.html(this.template({
                 done: done,
-                enableRerun: enableRerun
+                isInCache: isInCache
             }));
         },
 
@@ -182,7 +181,7 @@
             var status = this.model.get("status");
             var error = this.model.get("error");
 
-            if (data.done && ! error) {
+            if (data.results && data.done && ! error) {
 
                 // Print Template
                 this.renderBase(true);
@@ -207,13 +206,7 @@
                     ySpacing = 45;
 
                 // Set A max / min height
-                var height;
-
-                if (barData.values.length < 5) {
-                    height = 200;
-                } else {
-                    height = 500;
-                }
+                var height = (barData.values.length) * 50;
 
                 // To make the chart fit (Width)
                 xScale = d3.scale.linear()
@@ -289,6 +282,7 @@
                             .style('fill', tempColor);
                     })
                     .transition()
+                        // available callback options (to check)
                         .attr('width', function(d) {
                             return xScale(d[1]);
                         })
