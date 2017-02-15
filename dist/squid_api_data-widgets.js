@@ -2545,6 +2545,10 @@ function program2(depth0,data) {
                                 if ((parseInt(this.parentNode.__data__.v[0]) === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
                                     text = "Total";
                                 }
+                            } else if (this.parentNode && parseInt(this.parentNode.__data__.v[0]) === 1) {
+                            	if (i >= me.firstMeasure && me.model.get("hideRollupTotal") === true) {
+                            		text = "";
+                                }
                             }
                         } else if (offset>0) {
                         	text = this.parentNode.__data__.v[i - offset];
