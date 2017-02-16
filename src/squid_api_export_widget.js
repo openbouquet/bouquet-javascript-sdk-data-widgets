@@ -532,6 +532,7 @@
             $(this.viewPort).find('[name="format"]').click(
                 function(event) {
                     me.clickedFormat(event);
+                    me.trigger("change:format");
                 });
             $(this.viewPort).find('[name="compression"]')
             .click(function(event) {
