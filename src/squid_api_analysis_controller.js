@@ -88,6 +88,10 @@
                         refreshNeeded = true;
                     }
                     if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
+                    	if (this.config.hasChanged("startIndex") === false) {
+                    		this.config.set("pageIndex",0, {silent: true});
+                    		this.config.set("startIndex",0);
+                    	}
                         this.refreshAnalysis();
                     }
                 });
