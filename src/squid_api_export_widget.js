@@ -83,6 +83,9 @@
             if (options.popupDialogClass) {
                 this.popupDialogClass = options.popupDialogClass;
             }
+            if (options.selectedFormatIndex) {
+            	this.selectedFormatIndex = options.selectedFormatIndex;
+            }
             if (options.buttonLabel) {
                 this.buttonLabel = options.buttonLabel;
             }
@@ -194,6 +197,13 @@
                 if (this.formats[i].format === t.value) {
                     this.selectedFormatIndex = i;
                 }
+            }
+            if (t.value === "xlsx") {
+            	$(this.viewPort).find('input[name="compression"]').prop('disabled', true);
+            	this.compression = false;
+            } else {
+            	$(this.viewPort).find('input[name="compression"]').prop('disabled', false);
+            	this.compression = (t.checked);
             }
             this.refreshViewSqlUrl();
             if(this.materializeDatasetsView === true) {
@@ -538,6 +548,14 @@
             .click(function(event) {
                 me.clickedCompression(event);
             });
+
+            if (selectedFormat.format === "xlsx") {
+            	$(this.viewPort).find('input[name="compression"]').prop('disabled', true);
+            	this.compression = false;
+            } else {
+            	$(this.viewPort).find('input[name="compression"]').prop('disabled', false);
+            	this.compression = (t.checked);
+            }
 
             $(this.viewPort).find("#download").click(function() {
                 me.download();
