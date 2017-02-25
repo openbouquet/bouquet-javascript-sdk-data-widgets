@@ -13,6 +13,17 @@ rect text {
     color: #ffffff;
 }
 
+.bar-chart-tooltip {
+	position: absolute;
+    padding: 0px 5px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    background: white;
+    opacity: 0;
+}
+
+
 .squid-api-data-widgets-bar-chart .reactiveMessage {
     width: 100%;
     background: #f8f8f8;

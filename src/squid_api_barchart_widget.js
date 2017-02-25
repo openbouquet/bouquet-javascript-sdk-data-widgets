@@ -78,61 +78,55 @@
         barDataValues: function(cols, rows) {
             // Set up base object + arrays
             var barData = {
+                series: [],
                 values: [],
-                xValues: [],
-                yValues: []
+                labels: []
             };
 
 
+            barData.series.push("Current");
             // check to see if we only display totals
             var onlyMetrics = true;
+            var hasCompare = false;
             for (i=0; i<cols.length; i++) {
                 if (cols[i].role !== "DATA") {
                     onlyMetrics = false;
                     domainIndex = i;
                 }
+                if (cols[i].originType === "COMPARETO") {
+                	hasCompare = true;
+                    barData.series.push("Compare");
+                }
             }
 
             // store bar data
-            if (onlyMetrics) {
-                // only show metric totals
-                for (i=0; i<cols.length; i++) {
-                    var col = cols[i];
-                    var yAxis = col.name + " Total";
-                    if (col.originType === "COMPARETO") {
-                        yAxis += " (compare)";
-                    }
-                    for (ix=0; ix<rows.length; ix++) {
-                        var xAxis = rows[ix].v[i];
-                        barData.xValues.push(xAxis);
-                        barData.yValues.push(yAxis);
-                        barData.values.push([yAxis, xAxis]);
-                    }
-                }
-            } else {
-                for (i=0; i<rows.length; i++) {
-                    var row = rows[i].v;
-                    var yAxis1 = "";
-                    var xAxis1;
-                    for (ix=0; ix<row.length; ix++) {
-                        var item1 = row[ix];
-                        if (cols[ix].role === "DOMAIN" && item1) {
-                            if (yAxis1.length === 0) {
-                                yAxis1 += item1;
-                            } else {
-                                yAxis1 += " / " + item1;
-                            }
-                        } else if (cols[ix].role === "DATA" || item1 === null) {
-                            xAxis1 = item1;
-                            barData.xValues.push(item1);
-                            break;
+            for (i=0; i<rows.length; i++) {
+                var row = rows[i].v;
+                var yAxis1 = "";
+                var xAxis1;
+                for (ix=0; ix<row.length; ix++) {
+                    var item1 = row[ix];
+                    if (cols[ix].role === "DOMAIN" && item1) {
+                        if (yAxis1.length === 0) {
+                            yAxis1 += item1;
+                        } else {
+                            yAxis1 += " / " + item1;
                         }
+                    } else if (cols[ix].role === "DATA" || item1 === null) {
+                        xAxis1 = item1;
+                        barData.values.push(item1);
+                        if (hasCompare) {
+                            barData.values.push(row[ix+1]);
+                        }
+                        if (onlyMetrics) {
+                        	yAxis1 = cols[ix].name;
+                        }
+                        break;
                     }
-                    barData.yValues.push(yAxis1);
-                    barData.values.push([yAxis1, xAxis1]);
+                    
                 }
+                barData.labels.push(yAxis1);
             }
-
             return barData;
         },
 
@@ -175,6 +169,30 @@
             }));
         },
 
+        wrap: function(text, width) {
+      	  text.each(function() {
+      	    var text = d3.select(this),
+      	        words = text.text().split(/\s+/).reverse(),
+      	        word,
+      	        line = [],
+      	        lineNumber = 0,
+      	        lineHeight = 1.1, // ems
+      	        y = text.attr("y"),
+      	        dy = parseFloat(text.attr("dy")),
+      	        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+      	    while (word = words.pop()) {
+      	      line.push(word);
+      	      tspan.text(line.join(" "));
+      	      if (tspan.node().getComputedTextLength() > width) {
+      	        line.pop();
+      	        tspan.text(line.join(" "));
+      	        line = [word];
+      	        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+      	      }
+      	    }
+      	  });
+      	},
+
         render: function() {
             var me = this;
             var data = this.getData();
@@ -183,138 +201,125 @@
 
             if (data.results && data.done && ! error) {
 
-                // Print Template
+                //ToolTip Declaration
+                var tooltip = d3.select('body').append('div')
+                	.classed("bar-chart-tooltip" ,true);
+               // Print Template
                 this.renderBase(true);
 
                 // Obtain Bar Chart Data
-                var barData = this.barDataValues(data.results.cols, data.results.rows);
-
-                //Calculate largest value / width of screen
-                var maxValue = Math.max.apply(Math, barData.xValues);
-                var screenWidth = this.$el.find("#bar_chart").width();
-
-                //ToolTip Declaration
-                var tooltip = d3.select('body').append('div')
-                    .style('position', 'absolute')
-                    .style('padding', '0 10px')
-                    .style('background', 'white')
-                    .style('opacity', 0);
+                var data = this.barDataValues(data.results.cols, data.results.rows);
 
                 // Pre definitions for the bar chart
-                var width = screenWidth,
-                    barHeight = 30;
-                    ySpacing = 45;
+                var chartWidth       = this.$el.find("#bar_chart").width(),
+                	barHeight        = 20,
+                	groupHeight      = barHeight * data.series.length,
+                	gapBetweenGroups = 10,
+                	spaceForLabels   = 250;
+                
+                chartWidth = chartWidth - spaceForLabels;
+                
+             // Color scale
+                var color = d3.scale.category20();
+                var chartHeight = barHeight * data.values.length + gapBetweenGroups * data.labels.length;
 
-                // Set A max / min height
-                var height = (barData.values.length) * 50;
+                var x = d3.scale.linear()
+                    .domain([0, d3.max(data.values)])
+                    .range([0, chartWidth]);
 
-                // To make the chart fit (Width)
-                xScale = d3.scale.linear()
-                    .domain([0, maxValue])
-                    .range([0, width - 205]);
+                var y = d3.scale.ordinal()
+                    .domain(data.labels)
+                    .rangePoints([0, chartHeight]);
 
                 var xAxis = d3.svg.axis()
-                    .scale(xScale)
-                    .orient('bottom');
+                	.scale(x)
+                	.orient('bottom');
 
-                // To make the chart fit (Height)
-                var yScale = d3.scale.ordinal()
-                    .domain(barData.yValues)
-                    .rangePoints([0, height]);
-
-                //Define Y axis
                 var yAxis = d3.svg.axis()
-                    .scale(yScale)
-                    .orient("left")
-                    .ticks(10);
+                	.scale(y)
+                    .ticks(10)
+                    .orient("left");
 
-                // Bar Chart
+                // Specify the chart area and dimensions
                 var chart = d3.select("#bar_chart")
                     .append("svg")
-                    .attr("width", width)
-                    .attr("height", height)
+                    .attr("width", chartWidth + spaceForLabels)
+                    .attr("height", chartHeight)
                     .attr("style", "overflow: visible;")
                     .append("g")
                     .attr("class", "chart");
 
-                // Append data container
-                var bar = chart.selectAll("div")
-                    .data(barData.values)
-                    .enter().append("g")
-                    .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+	                // Create bars
+	                var bar = chart.selectAll("g")
+	                    .data(data.values)
+	                    .enter().append("g")
+	                    .attr("transform", function(d, i) {
+	                      return "translate(" + spaceForLabels + "," + (i * barHeight + gapBetweenGroups * (0.5 + Math.floor(i/data.series.length))) + ")";
+	                    });
+	
+	                // Create rectangles of the correct width
+	                bar.append("rect")
+	                    .attr("fill", function(d,i) { return color(i % data.series.length); })
+	                    .attr("class", "bar")
+	                    .attr("width", x)
+	                    .attr("height", barHeight - 1)
+	                    .on('mouseover', function(d, i) {
+	                    	var tooltipText = "";
+	                    	var currentIdx = i -  i % data.series.length;
+	                    	for (t=0; t< data.series.length; t++) {
+	                    		tooltipText += "<div>" + data.series[t] + " : " + me.format(data.values[currentIdx + t]) + "</div>";
+	                    	}
+	                        tooltip.transition()
+	                        	.style('opacity', 1);
+	                        tooltip.html(tooltipText)
+	                            .style('left', (d3.event.pageX - 35) + 'px')
+	                            .style('top',  (d3.event.pageY - (30 * data.series.length)) + 'px');
+	                        tempColor = this.style.fill;
+	                        d3.select(this)
+	                            .style('opacity', 1)
+	                            .style('fill', '#1aadcf');
+	                        })
+	                    .on('mouseout', function() {
+	                        tooltip.html("");
+	                        d3.select(this)
+	                            .style('opacity', 1)
+	                            .style('fill', tempColor);
+	                    })
+	                    .transition()
+                        	// available callback options (to check)
+                        	.attr('width', function(d) {
+                        		return x(d);
+                        	})
+                        	.delay(function(d, i) {
+                        		return i * 20;
+                        	})
+                        	.duration(1000)
+                        	.ease('bounce')
+	                  ;
 
-                // Bar Rectangles with Tooltips / Transition on load
-                bar.append("rect")
-                    .attr("y", function(d, i) {
-                        return i*15;
-                    })
-                    .attr("x", function() {
-                        return 150;
-                    })
-                    .attr("width", function() {
-                        return 0;
-                    })
-                    .attr('fill', function(d) {
-                        var color = "#1f77b4";
-                        if (d[0].includes("(compare)")) {
-                            /* BRIGHTEN */
-                            var parentColor = this.parentElement.previousSibling.firstChild.getAttributeNode("fill").value;
-                            color = d3.hsl(parentColor).brighter().toString();
-                        }
-                        return color;
-                    })
-                    .attr("height", barHeight)
-                    .on('mouseover', function(d) {
-                        tooltip.transition()
-                            .style('opacity', 1);
-                        tooltip.html(d[0] + " - " + me.format(d[1]))
-                            .style('left', (d3.event.pageX - 35) + 'px')
-                            .style('top',  (d3.event.pageY - 30) + 'px');
-                        tempColor = this.style.fill;
-                        d3.select(this)
-                            .style('opacity', 1)
-                            .style('fill', '#1aadcf');
-                        })
-                    .on('mouseout', function() {
-                        tooltip.html("");
-                        d3.select(this)
-                            .style('opacity', 1)
-                            .style('fill', tempColor);
-                    })
-                    .transition()
-                        // available callback options (to check)
-                        .attr('width', function(d) {
-                            return xScale(d[1]);
-                        })
-                        .delay(function(d, i) {
-                            return i * 20;
-                        })
-                        .duration(1000)
-                        .ease('bounce');
-
-                    // xAxis (Starting 200px from left)
+	                // xAxis (Starting 200px from left)
                     xAxis = d3.select("#bar_chart svg")
                         .append("g")
                         .attr('class', 'axis')
-                        .attr('width', width)
+                        .attr('width', chartWidth)
                         .attr('x', 400)
-                        .attr('transform', 'translate(150,' + (height - 1) + ')')
+                        .attr('transform', 'translate('+spaceForLabels+',' + (chartHeight - 1) + ')')
                         .call(xAxis);
 
                     // yAxis (Starting 150px from right)
                     var yAxisAppend = d3.select("#bar_chart svg")
                         .append("g")
                         .attr('class', 'axis')
-                        .attr('height', height)
-                        .attr('transform', 'translate(150,0)')
+                        .attr('height', chartHeight)
+                        .attr('transform', 'translate('+spaceForLabels+',0)')
                         .call(yAxis)
                         .selectAll(".tick");
 
                     // Y aXis label spacing
                     yAxisAppend.attr("transform", function(d, i) {
-                        return "translate(0," + (15 + (i * ySpacing)) + ")";
+                        return "translate(0," + (-1 + gapBetweenGroups/2 + barHeight/2*data.series.length + (i * (barHeight * data.series.length + gapBetweenGroups))) + ")";
                     });
-                } else {
+            	} else {
                     // Print Template
                     this.renderBase(false);
                 }
