@@ -1408,8 +1408,6 @@ function program2(depth0,data) {
 
 			if (onlyMetrics) {
 				barData.title = "KPIs";
-			} else {
-				barData.title = cols[1].name;
 			}
 			// store bar data
 			for (i=0; i<rows.length; i++) {
@@ -1432,6 +1430,8 @@ function program2(depth0,data) {
 						}
 						if (onlyMetrics) {
 							yAxis1 = cols[ix].name;
+						} else {
+							barData.title = cols[ix].name;
 						}
 						barData.labels.push(yAxis1);
 						if (!hasCompare) {
