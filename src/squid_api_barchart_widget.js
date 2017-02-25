@@ -131,6 +131,9 @@
 							yAxis1 = cols[ix].name;
 						}
 						barData.labels.push(yAxis1);
+						if (!hasCompare) {
+							break;
+						}
 						ix++;
 					}
 
