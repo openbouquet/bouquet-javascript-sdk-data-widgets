@@ -80,7 +80,8 @@
 			var barData = {
 					series: [],
 					values: [],
-					labels: []
+					labels: [],
+					title: ""
 			};
 
 
@@ -98,9 +99,15 @@
 				if (cols[i].originType === "COMPARETO") {
 					hasCompare = true;
 					barData.series.push("Compare");
+					break;
 				}
 			}
 
+			if (onlyMetrics) {
+				barData.title = "KPIs";
+			} else {
+				barData.title = cols[1].name;
+			}
 			// store bar data
 			for (i=0; i<rows.length; i++) {
 				var row = rows[i].v;
@@ -123,11 +130,11 @@
 						if (onlyMetrics) {
 							yAxis1 = cols[ix].name;
 						}
-						break;
+						barData.labels.push(yAxis1);
+						ix++;
 					}
 
 				}
-				barData.labels.push(yAxis1);
 			}
 			return barData;
 		},
@@ -233,7 +240,8 @@
 				groupHeight      = barHeight * data.series.length,
 				gapBetweenGroups = 10,
 				spaceForLabels   = 250,
-				spaceForAxis	 = 10;
+				spaceForAxis	 = 20
+				spaceForTitle	 = 20;
 
 				chartWidth = chartWidth - spaceForLabels;
 
@@ -263,10 +271,19 @@
 				var chart = d3.select("#bar_chart")
 				.append("svg")
 				.attr("width", chartWidth)
-				.attr("height", chartHeight + spaceForAxis)
+				.attr("height", chartHeight + spaceForAxis + spaceForTitle)
 				.attr("style", "overflow: visible;")
 				.append("g")
-				.attr("class", "chart");
+				.attr("class", "chart")
+				.attr("transform","translate(0,"+spaceForTitle+")");
+
+				d3.select("svg")
+				.append("text")
+		        .attr("x", (spaceForLabels + chartWidth / 2))             
+		        .attr("y", (14))
+		        .attr("text-anchor", "middle")  
+		        .style("font-size", "16px") 
+		        .text(data.title)
 
 				// Create bars
 				var bar = chart.selectAll("g")
@@ -322,7 +339,7 @@
 				.attr('class', 'axis')
 				.attr('width', chartWidth)
 				.attr('x', 400)
-				.attr('transform', 'translate('+spaceForLabels+', ' + (chartHeight - 1) + ')')
+				.attr('transform', 'translate('+spaceForLabels+', ' + (chartHeight - 1 + spaceForTitle) + ')')
 				.call(xAxis);
 
 				// yAxis (Starting 150px from right)
@@ -330,7 +347,7 @@
 				.append("g")
 				.attr('class', 'axis')
 				.attr('height', chartHeight)
-				.attr('transform', 'translate('+spaceForLabels+',0)')
+				.attr('transform', 'translate('+spaceForLabels+','+spaceForTitle+')')
 				.call(yAxis)
 				;
 
