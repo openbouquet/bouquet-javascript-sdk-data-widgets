@@ -1507,7 +1507,7 @@ function program2(depth0,data) {
 				y = text.attr("y"),
 				dy = parseFloat(text.attr("dy")),
 				tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
-				while (word = words.pop()) {
+				while ((word = words.pop())) {
 					if (lineNumber<2) {
 						line.push(word);
 						tspan.text(line.join(" "));
@@ -1618,7 +1618,7 @@ function program2(depth0,data) {
 				
 				d3.select("#bar_chart svg").attr("width", chartWidth)
 				.attr("height", chartHeight + spaceForAxis + spaceForTitle)
-				.attr("style", "overflow: visible;")
+				.attr("style", "overflow: visible;");
 
 
 				d3.select("svg")
