@@ -1288,6 +1288,7 @@ function program2(depth0,data) {
                     // update if pagination changed
                     if (a.get("id") && (a.get("id").analysisJobId)) {
                         a.setParameter("startIndex", configStartIndex, silent);
+                        this.onChangeHandler(a);
                         squid_api.compute(a);
                     }
                 }
@@ -7158,169 +7159,170 @@ function program2(depth0,data) {
             var compare = false;
             var toRemove = [];
 
-            // see if multiple dimensions exist
-            for (var col=1; col<this.results.cols.length; col++) {
-                if (this.results.cols[col].role === "DOMAIN") {
-                    nVariate = true;
-                    var selection = this.config.get("selection");
-                    if (selection) {
-                        var facets = selection.facets;
-                        for (var f=0; f<facets.length; f++) {
-                            if (facets[f].id === this.results.cols[col].definition && this.results.cols[col].extendedType.name === "DATE") {
-                                nVariate = false;
-                                this.standardizeData(col);
-                            }
-                        }
-                    }
-                }
-                // if metrics are present, filter the display data
-                if (metrics) {
-                    if (! metrics.includes(this.results.cols[col].id)) {
-                        toRemove.push(col);
-                    }
-                }
+            if (this.results && this.results.cols) {
+	            // see if multiple dimensions exist
+	            for (var col=1; col<this.results.cols.length; col++) {
+	                if (this.results.cols[col].role === "DOMAIN") {
+	                    nVariate = true;
+	                    var selection = this.config.get("selection");
+	                    if (selection) {
+	                        var facets = selection.facets;
+	                        for (var f=0; f<facets.length; f++) {
+	                            if (facets[f].id === this.results.cols[col].definition && this.results.cols[col].extendedType.name === "DATE") {
+	                                nVariate = false;
+	                                this.standardizeData(col);
+	                            }
+	                        }
+	                    }
+	                }
+	                // if metrics are present, filter the display data
+	                if (metrics) {
+	                    if (! metrics.includes(this.results.cols[col].id)) {
+	                        toRemove.push(col);
+	                    }
+	                }
+	            }
+	
+	            if (nVariate) {
+	                // make sure we only have three columns
+	                this.standardizeData();
+	                // show metrics
+	                this.$el.find("#metrics").show();
+	            } else {
+	                this.$el.find("#metrics").hide();
+	                this.sortDates(this.results.rows);
+	            }
+	
+	            // get data
+	            var hashMap = {};
+	
+	            for (i=1; i<this.results.cols.length; i++) {
+	                if (! toRemove.includes(i)) {
+	
+	                    if (nVariate) {
+	                        // obtain legend names from results
+	                        for (ix1=0; ix1<this.results.rows.length; ix1++) {
+	                            if (this.results.rows[ix1].v[1] !== null) {
+	                                if ($.inArray(this.results.rows[ix1].v[1], legend) < 0) {
+	                                    // store unique legend items
+	                                    legend.push(this.results.rows[ix1].v[1]);
+	                                }
+	                                // create hashMap
+	                                var i1 = this.results.rows[ix1].v[0];
+	                                var i2 = this.results.rows[ix1].v[1];
+	                                var i3 = this.results.rows[ix1].v[2];
+	                                var i4 = this.results.rows[ix1].v[3];
+	                                if (hashMap[i2]) {
+	                                    hashMap[i2][i1] = i3;
+	                                } else {
+	                                    hashMap[i2] = {};
+	                                    hashMap[i2][i1] = i3;
+	                                }
+	                                if (i4) {
+	                                    compare = true;
+	                                    // if compare exists
+	                                    if (hashMap[i2 + " (compare)"]) {
+	                                        hashMap[i2 + " (compare)"][i1] = i4;
+	                                    } else {
+	                                        hashMap[i2 + " (compare)"] = {};
+	                                        hashMap[i2 + " (compare)"][i1] = i4;
+	                                        // store unique compare legend items
+	                                        legend.push(i2 + " (compare)");
+	                                    }
+	                                }
+	                            }
+	                        }
+	                    } else {
+	                        if (this.results.cols[i].originType === "COMPARETO") {
+	                            compare = true;
+	                        }
+	                        legend.push(this.results.cols[i].name);
+	                    }
+	                }
+	            }
+	
+	            if (compare) {
+	                this.configuration.colors = this.colorPaletteCompare;
+	            } else {
+	                this.configuration.colors = this.colorPalette;
+	            }
+	
+	            var arr = [];
+	            if (nVariate) {
+	                var keys = [];
+	                for (var key in hashMap) {
+	                    if (hashMap.hasOwnProperty(key)) {
+	                        keys.push(key);
+	                    }
+	                }
+	                for (i=0; i<keys.length; i++) {
+	                    arr = [];
+	                    for (var date in hashMap[keys[i]]) {
+	                        /*jshint forin: false */
+	                        var obj1 = {
+	                            "date" : date,
+	                            "value": hashMap[keys[i]][date]
+	                        };
+	                        arr.push(obj1);
+	                    }
+	                    arr = MG.convert.date(arr, 'date');
+	                    dataset.push(arr);
+	                }
+	            } else {
+	                // make sure a value is available for every day (standard timeseries)
+	                if (! nVariate) {
+	                    for (i=1; i<this.results.cols.length; i++) {
+	                        arr = [];
+	                        /* Date Results */
+	                        if (this.results.rows[0]) {
+	                            var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
+	                            var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
+	                            for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+	                                if (! toRemove.includes(i)) {
+	                                    var currentDate = currentDay.format('YYYY-MM-DD');
+	                                    var dataExists = false;
+	                                    var obj = {
+	                                        "date" : currentDate
+	                                    };
+	                                    for (ix=0; ix<this.results.rows.length; ix++) {
+	                                        if (this.results.rows[ix].v[0] === currentDate) {
+	                                            dataExists = true;
+	                                            obj.value = this.results.rows[ix].v[i];
+	                                        }
+	                                    }
+	                                    if (dataExists === false && this.fillMissingDataValues) {
+	                                        obj.value = null;
+	                                        arr.push(obj);
+	                                    } else if (dataExists) {
+	                                        arr.push(obj);
+	                                    }
+	                                }
+	                            }
+	                            arr = MG.convert.date(arr, 'date');
+	                            dataset.push(arr);
+	                        }
+	                    }
+	                }
+	            }
+	
+	            // set width
+	            this.configuration.width = $(this.renderTo).width();
+	
+	            // set legend & data
+	            if (legend.length === 0) {
+	                this.configuration.chart_type = 'missing-data';
+	            } else {
+	                delete this.configuration.chart_type;
+	                this.configuration.legend = legend;
+	                this.configuration.data = dataset;
+	            }
+	
+	            // empty timeseries div
+	            $(this.renderTo).empty();
+	
+	            // reinitialize timeseries
+	            MG.data_graphic(this.configuration);
             }
-
-            if (nVariate) {
-                // make sure we only have three columns
-                this.standardizeData();
-                // show metrics
-                this.$el.find("#metrics").show();
-            } else {
-                this.$el.find("#metrics").hide();
-                this.sortDates(this.results.rows);
-            }
-
-            // get data
-            var hashMap = {};
-
-            for (i=1; i<this.results.cols.length; i++) {
-                if (! toRemove.includes(i)) {
-
-                    if (nVariate) {
-                        // obtain legend names from results
-                        for (ix1=0; ix1<this.results.rows.length; ix1++) {
-                            if (this.results.rows[ix1].v[1] !== null) {
-                                if ($.inArray(this.results.rows[ix1].v[1], legend) < 0) {
-                                    // store unique legend items
-                                    legend.push(this.results.rows[ix1].v[1]);
-                                }
-                                // create hashMap
-                                var i1 = this.results.rows[ix1].v[0];
-                                var i2 = this.results.rows[ix1].v[1];
-                                var i3 = this.results.rows[ix1].v[2];
-                                var i4 = this.results.rows[ix1].v[3];
-                                if (hashMap[i2]) {
-                                    hashMap[i2][i1] = i3;
-                                } else {
-                                    hashMap[i2] = {};
-                                    hashMap[i2][i1] = i3;
-                                }
-                                if (i4) {
-                                    compare = true;
-                                    // if compare exists
-                                    if (hashMap[i2 + " (compare)"]) {
-                                        hashMap[i2 + " (compare)"][i1] = i4;
-                                    } else {
-                                        hashMap[i2 + " (compare)"] = {};
-                                        hashMap[i2 + " (compare)"][i1] = i4;
-                                        // store unique compare legend items
-                                        legend.push(i2 + " (compare)");
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        if (this.results.cols[i].originType === "COMPARETO") {
-                            compare = true;
-                        }
-                        legend.push(this.results.cols[i].name);
-                    }
-                }
-            }
-
-            if (compare) {
-                this.configuration.colors = this.colorPaletteCompare;
-            } else {
-                this.configuration.colors = this.colorPalette;
-            }
-
-            var arr = [];
-            if (nVariate) {
-                var keys = [];
-                for (var key in hashMap) {
-                    if (hashMap.hasOwnProperty(key)) {
-                        keys.push(key);
-                    }
-                }
-                for (i=0; i<keys.length; i++) {
-                    arr = [];
-                    for (var date in hashMap[keys[i]]) {
-                        /*jshint forin: false */
-                        var obj1 = {
-                            "date" : date,
-                            "value": hashMap[keys[i]][date]
-                        };
-                        arr.push(obj1);
-                    }
-                    arr = MG.convert.date(arr, 'date');
-                    dataset.push(arr);
-                }
-            } else {
-                // make sure a value is available for every day (standard timeseries)
-                if (! nVariate) {
-                    for (i=1; i<this.results.cols.length; i++) {
-                        arr = [];
-                        /* Date Results */
-                        if (this.results.rows[0]) {
-                            var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
-                            var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
-                            for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
-                                if (! toRemove.includes(i)) {
-                                    var currentDate = currentDay.format('YYYY-MM-DD');
-                                    var dataExists = false;
-                                    var obj = {
-                                        "date" : currentDate
-                                    };
-                                    for (ix=0; ix<this.results.rows.length; ix++) {
-                                        if (this.results.rows[ix].v[0] === currentDate) {
-                                            dataExists = true;
-                                            obj.value = this.results.rows[ix].v[i];
-                                        }
-                                    }
-                                    if (dataExists === false && this.fillMissingDataValues) {
-                                        obj.value = null;
-                                        arr.push(obj);
-                                    } else if (dataExists) {
-                                        arr.push(obj);
-                                    }
-                                }
-                            }
-                            arr = MG.convert.date(arr, 'date');
-                            dataset.push(arr);
-                        }
-                    }
-                }
-            }
-
-            // set width
-            this.configuration.width = $(this.renderTo).width();
-
-            // set legend & data
-            if (legend.length === 0) {
-                this.configuration.chart_type = 'missing-data';
-            } else {
-                delete this.configuration.chart_type;
-                this.configuration.legend = legend;
-                this.configuration.data = dataset;
-            }
-
-            // empty timeseries div
-            $(this.renderTo).empty();
-
-            // reinitialize timeseries
-            MG.data_graphic(this.configuration);
-
             // manipulation time
             console.log("timeseries manipulation time: " + (new Date().getTime() - start) + " ms");
         },

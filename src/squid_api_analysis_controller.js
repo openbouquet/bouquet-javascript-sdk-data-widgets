@@ -173,6 +173,7 @@
                     // update if pagination changed
                     if (a.get("id") && (a.get("id").analysisJobId)) {
                         a.setParameter("startIndex", configStartIndex, silent);
+                        this.onChangeHandler(a);
                         squid_api.compute(a);
                     }
                 }
