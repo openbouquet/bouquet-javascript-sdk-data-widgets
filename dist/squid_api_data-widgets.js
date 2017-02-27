@@ -1496,23 +1496,23 @@ function program2(depth0,data) {
 		},
 
 		wrap: function(text, width, me) {
+			x = 9;
 			text.each(function() {
 				var text = d3.select(this),
 				words = text.text().split(/\s+/).reverse(),
 				word,
 				line = [],
 				lineNumber = 0,
-				x = -9,
 				lineHeight = 1.1, // ems
 				y = text.attr("y"),
 				dy = parseFloat(text.attr("dy")),
-				tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
+				tspan = text.text(null).append("tspan").attr("x", (-x)).attr("y", y).attr("dy", dy + "em");
 				while ((word = words.pop())) {
 					if (lineNumber<2) {
 						line.push(word);
 						tspan.text(line.join(" "));
 						me.maxLength = Math.max(me.maxLength, tspan.node().getComputedTextLength());
-						if (tspan.node().getComputedTextLength() > width + x) {
+						if (tspan.node().getComputedTextLength() > width - x) {
 							line.pop();
 							if (lineNumber === 1) {
 								lineNumber++;
@@ -1521,7 +1521,7 @@ function program2(depth0,data) {
 							} else {
 								tspan.text(line.join(" "));
 								line = [word];
-								tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+								tspan = text.append("tspan").attr("x", (-x)).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
 							}
 						}
 					}
@@ -1533,7 +1533,7 @@ function program2(depth0,data) {
 					});
 				} 
 			});
-			me.maxLength = Math.round(Math.min(me.maxLength,width));
+			me.maxLength = Math.round(Math.min(me.maxLength + x,width));
 		},
 
 		render: function() {
