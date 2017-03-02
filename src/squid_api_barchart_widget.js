@@ -127,7 +127,7 @@
 						} else {
 							yAxis1 += " / " + item1;
 						}
-						offset = 1;
+						offset++;
 					} else if (cols[ix].role === "DATA" || item1 === null) {
 						xAxis1 = item1;
 						barData.values.push(item1);
