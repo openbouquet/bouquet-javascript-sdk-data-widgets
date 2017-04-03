@@ -233,26 +233,11 @@
             return this;
         },
 
-        displayTableHeader : function(selector) {
+        displayTableHeader : function(selector, arr) {
             var r = Math.random();
             var me = this;
-            this.currentDomain = this.config.get("domain");
-            var parentId = this.config.get("domain");
-            return squid_api.getCustomer().then(function(customer) {
-                return customer.get("projects").load(me.config.get("project")).then(function(project) {
-                    return project.get("domains").load(parentId).then(function(domain) {
-                        return domain.get("metrics").load().then(function(metrics) {
-                            console.log("DEBUG:"+"metrics loaded : displayTableHeader "+r);
-                            var arr = [];
-                            for(i=0; i<metrics.size(); i++) {
-                                arr.push(metrics.models[i].toJSON());
-                            }
-                            me.displayTableHeaderStep2(selector, arr, r);
-                        });
-                    });
-                });
-            });
-        },
+            me.displayTableHeaderStep2(selector, arr, r);
+       },
         
         displayTableHeaderStep2 : function(selector, domainMetrics, r) {
             console.log("DEBUG:"+"displayTableHeader start "+r);
@@ -801,56 +786,71 @@
         render : function() {
             if (this.el) {
                 var selector = "#"+this.el.id+" .sq-table";
+                var me = this;
+                this.currentDomain = this.config.get("domain");
+                var parentId = this.config.get("domain");
 
-                // display table header
-                this.displayTableHeader(selector);
+                squid_api.getCustomer().then(function(customer) {
+                    customer.get("projects").load(me.config.get("project")).then(function(project) {
+                    	project.get("domains").load(parentId).then(function(domain) {
+                            domain.get("metrics").load().then(function(metrics) {
+                                // display table header
+                                var arr = [];
+                                for(i=0; i<metrics.size(); i++) {
+                                    arr.push(metrics.models[i].toJSON());
+                                }
+                                me.displayTableHeader(selector, arr);
 
-                if (this.model.get("status") === "DONE") {
-                    this.$el.find("#total").show();
-                    this.$el.find(".sq-loading").hide();
-                    this.$el.find("#stale").hide();
-                    this.$el.find("#re-run").hide();
-                    this.$el.find(".sort-direction").show();
-                    this.$el.find("#table-container").show();
+                                if (me.model.get("status") === "DONE") {
+                                    me.$el.find("#total").show();
+                                    me.$el.find(".sq-loading").hide();
+                                    me.$el.find("#stale").hide();
+                                    me.$el.find("#re-run").hide();
+                                    me.$el.find(".sort-direction").show();
+                                    me.$el.find("#table-container").show();
 
-                    if (!this.model.get("error")) {
-                        // display results
-                        this.displayTableContent(selector);
-                        if (this.paging) {
-                            this.paginationView.render();
-                            this.$el.find("#pagination").show();
-                        }
-                        this.$el.find("#error").html("");
-                    } else {
-                        var analysis = this.model;
-                        // in case of a multi-analysis model
-                        if (analysis.get("analyses")) {
-                            analysis = analysis.get("analyses")[0];
-                        }
-                        this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
-                    }
-                }
+                                    if (!me.model.get("error")) {
+                                        // display results
+                                        me.displayTableContent(selector);
+                                        if (me.paging) {
+                                            me.paginationView.render();
+                                            me.$el.find("#pagination").show();
+                                        }
+                                        me.$el.find("#error").html("");
+                                    } else {
+                                        var analysis = me.model;
+                                        // in case of a multi-analysis model
+                                        if (analysis.get("analyses")) {
+                                            analysis = analysis.get("analyses")[0];
+                                        }
+                                        me.$el.find("#error").html("<div id='error'>" + me.model.get("error").message + "</div>");
+                                    }
+                                }
 
-                if (this.model.get("status") === "RUNNING") {
-                    // computing in progress
-                    this.$el.find(".sq-loading").show();
-                    this.$el.find("#stale").hide();
-                    this.$el.find(".sort-direction").show();
-                    this.$el.find("#error").html("");
-                    this.$el.find("#table-container").hide();
-                }
+                                if (me.model.get("status") === "RUNNING") {
+                                    // computing in progress
+                                    me.$el.find(".sq-loading").show();
+                                    me.$el.find("#stale").hide();
+                                    me.$el.find(".sort-direction").show();
+                                    me.$el.find("#error").html("");
+                                    me.$el.find("#table-container").hide();
+                                }
 
-                if (this.model.get("status") === "PENDING") {
-                    // refresh needed
-                    d3.select(selector).select("tbody").selectAll("tr").remove();
-                    this.$el.find("#pagination").hide();
-                    this.$el.find("#total").hide();
-                    this.$el.find(".sq-loading").hide();
-                    this.$el.find("#stale").show();
-                    this.$el.find("#error").html("");
-                    this.$el.find("#table-container").show();
-                    this.$el.find("#re-run").show();
-                }
+                                if (me.model.get("status") === "PENDING") {
+                                    // refresh needed
+                                    d3.select(selector).select("tbody").selectAll("tr").remove();
+                                    me.$el.find("#pagination").hide();
+                                    me.$el.find("#total").hide();
+                                    me.$el.find(".sq-loading").hide();
+                                    me.$el.find("#stale").show();
+                                    me.$el.find("#error").html("");
+                                    me.$el.find("#table-container").show();
+                                    me.$el.find("#re-run").show();
+                                }
+                            });
+                        });
+                    });
+                });
             }
 
             return this;
