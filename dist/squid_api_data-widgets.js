@@ -4228,7 +4228,7 @@ function program2(depth0,data) {
             	this.compression = false;
             } else {
             	$(this.viewPort).find('input[name="compression"]').prop('disabled', false);
-            	this.compression = (t.checked);
+            	//this.compression = (t.checked);
             }
 
             $(this.viewPort).find("#download").click(function() {
