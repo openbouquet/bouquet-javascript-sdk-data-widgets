@@ -175,7 +175,7 @@
                             metrics: this.metrics
                         };
 
-                        if (this.descriptionAvailable) {
+                        if (me.descriptionAvailable) {
                             // print base template
                             this.$el.html(this.template());
 
@@ -191,7 +191,10 @@
                             });
                             me.$el.find("[data-toggle='popover']").on("hidden.bs.popover", function(e){
                                 // prevent clicking twice to open bootstrap popover
-                                $(e.target).data("bs.popover").inState.click = false;
+                            	var inStateClick = $(e.target).data("bs.popover");
+                                if (inStateClick && inStateClick.inState && inStateClick.inState.click) {
+                                	inStateClick.inState.click = false;
+                                }
                             });
                         } else {
                             this.$el.empty();

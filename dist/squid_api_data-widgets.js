@@ -2660,61 +2660,63 @@ function program2(depth0,data) {
                 squid_api.getCustomer().then(function(customer) {
                     customer.get("projects").load(me.config.get("project")).then(function(project) {
                     	project.get("domains").load(parentId).then(function(domain) {
-                            domain.get("metrics").load().then(function(metrics) {
-                                // display table header
-                                var arr = [];
-                                for(i=0; i<metrics.size(); i++) {
-                                    arr.push(metrics.models[i].toJSON());
-                                }
-                                me.displayTableHeader(selector, arr);
-
-                                if (me.model.get("status") === "DONE") {
-                                    me.$el.find("#total").show();
-                                    me.$el.find(".sq-loading").hide();
-                                    me.$el.find("#stale").hide();
-                                    me.$el.find("#re-run").hide();
-                                    me.$el.find(".sort-direction").show();
-                                    me.$el.find("#table-container").show();
-
-                                    if (!me.model.get("error")) {
-                                        // display results
-                                        me.displayTableContent(selector);
-                                        if (me.paging) {
-                                            me.paginationView.render();
-                                            me.$el.find("#pagination").show();
-                                        }
-                                        me.$el.find("#error").html("");
-                                    } else {
-                                        var analysis = me.model;
-                                        // in case of a multi-analysis model
-                                        if (analysis.get("analyses")) {
-                                            analysis = analysis.get("analyses")[0];
-                                        }
-                                        me.$el.find("#error").html("<div id='error'>" + me.model.get("error").message + "</div>");
-                                    }
-                                }
-
-                                if (me.model.get("status") === "RUNNING") {
-                                    // computing in progress
-                                    me.$el.find(".sq-loading").show();
-                                    me.$el.find("#stale").hide();
-                                    me.$el.find(".sort-direction").show();
-                                    me.$el.find("#error").html("");
-                                    me.$el.find("#table-container").hide();
-                                }
-
-                                if (me.model.get("status") === "PENDING") {
-                                    // refresh needed
-                                    d3.select(selector).select("tbody").selectAll("tr").remove();
-                                    me.$el.find("#pagination").hide();
-                                    me.$el.find("#total").hide();
-                                    me.$el.find(".sq-loading").hide();
-                                    me.$el.find("#stale").show();
-                                    me.$el.find("#error").html("");
-                                    me.$el.find("#table-container").show();
-                                    me.$el.find("#re-run").show();
-                                }
-                            });
+                            if (domain.get("metrics")) {
+	                            domain.get("metrics").load().then(function(metrics) {
+	                                // display table header
+	                                var arr = [];
+	                                for(i=0; i<metrics.size(); i++) {
+	                                    arr.push(metrics.models[i].toJSON());
+	                                }
+	                                me.displayTableHeader(selector, arr);
+	
+	                                if (me.model.get("status") === "DONE") {
+	                                    me.$el.find("#total").show();
+	                                    me.$el.find(".sq-loading").hide();
+	                                    me.$el.find("#stale").hide();
+	                                    me.$el.find("#re-run").hide();
+	                                    me.$el.find(".sort-direction").show();
+	                                    me.$el.find("#table-container").show();
+	
+	                                    if (!me.model.get("error")) {
+	                                        // display results
+	                                        me.displayTableContent(selector);
+	                                        if (me.paging) {
+	                                            me.paginationView.render();
+	                                            me.$el.find("#pagination").show();
+	                                        }
+	                                        me.$el.find("#error").html("");
+	                                    } else {
+	                                        var analysis = me.model;
+	                                        // in case of a multi-analysis model
+	                                        if (analysis.get("analyses")) {
+	                                            analysis = analysis.get("analyses")[0];
+	                                        }
+	                                        me.$el.find("#error").html("<div id='error'>" + me.model.get("error").message + "</div>");
+	                                    }
+	                                }
+	
+	                                if (me.model.get("status") === "RUNNING") {
+	                                    // computing in progress
+	                                    me.$el.find(".sq-loading").show();
+	                                    me.$el.find("#stale").hide();
+	                                    me.$el.find(".sort-direction").show();
+	                                    me.$el.find("#error").html("");
+	                                    me.$el.find("#table-container").hide();
+	                                }
+	
+	                                if (me.model.get("status") === "PENDING") {
+	                                    // refresh needed
+	                                    d3.select(selector).select("tbody").selectAll("tr").remove();
+	                                    me.$el.find("#pagination").hide();
+	                                    me.$el.find("#total").hide();
+	                                    me.$el.find(".sq-loading").hide();
+	                                    me.$el.find("#stale").show();
+	                                    me.$el.find("#error").html("");
+	                                    me.$el.find("#table-container").show();
+	                                    me.$el.find("#re-run").show();
+	                                }
+	                            });
+                            }
                         });
                     });
                 });
@@ -5506,7 +5508,7 @@ function program2(depth0,data) {
                             metrics: this.metrics
                         };
 
-                        if (this.descriptionAvailable) {
+                        if (me.descriptionAvailable) {
                             // print base template
                             this.$el.html(this.template());
 
@@ -5522,7 +5524,10 @@ function program2(depth0,data) {
                             });
                             me.$el.find("[data-toggle='popover']").on("hidden.bs.popover", function(e){
                                 // prevent clicking twice to open bootstrap popover
-                                $(e.target).data("bs.popover").inState.click = false;
+                            	var inStateClick = $(e.target).data("bs.popover");
+                                if (inStateClick && inStateClick.inState && inStateClick.inState.click) {
+                                	inStateClick.inState.click = false;
+                                }
                             });
                         } else {
                             this.$el.empty();
