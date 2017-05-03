@@ -198,12 +198,13 @@
                     this.selectedFormatIndex = i;
                 }
             }
+            var input = $(this.viewPort).find('input[name="compression"]');
             if (t.value === "xlsx") {
-            	$(this.viewPort).find('input[name="compression"]').prop('disabled', true);
+            	input.parent().hide();
             	this.compression = false;
             } else {
-            	$(this.viewPort).find('input[name="compression"]').prop('disabled', false);
-            	this.compression = (t.checked);
+            	input.parent().show();
+            	this.compression = (input[0].checked);
             }
             this.refreshViewSqlUrl();
             if(this.materializeDatasetsView === true) {
@@ -464,7 +465,7 @@
                     "materializeDatasetsView" : this.materializeDatasetsView,
                     "data-target" : this.renderTo,
                     "formats": formatsDisplay,
-                    "displayCompression" : this.displayCompression,
+                    "displayCompression" : (this.displayCompression),
                     "compression": (this.compression),
                     "curl": curl,
                     "curlFileName" : curlFileName,
@@ -550,10 +551,10 @@
             });
 
             if (selectedFormat.format === "xlsx") {
-            	$(this.viewPort).find('input[name="compression"]').prop('disabled', true);
+            	$(this.viewPort).find('input[name="compression"]').parent().hide();
             	this.compression = false;
             } else {
-            	$(this.viewPort).find('input[name="compression"]').prop('disabled', false);
+            	$(this.viewPort).find('input[name="compression"]').parent().show();
             	//this.compression = (t.checked);
             }
 

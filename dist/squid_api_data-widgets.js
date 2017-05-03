@@ -265,7 +265,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n		<div class=\"panel panel-default filter-panel\">\r\n			<div class=\"panel-heading\">\r\n				<button type=\"button\" class=\"close\" data-toggle=\"collapse\" \r\n				data-target=\"";
+  buffer += "\r\n		<div class=\"panel panel-default filter-panel\">\r\n			<div class=\"panel-heading\">\r\n				<button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n				data-target=\"";
   if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -306,7 +306,7 @@ function program6(depth0,data) {
   buffer += "\r\n			<div style=\"display: inline-block;\">\r\n				<span class=\"type\">\r\n					<label>Compression: </label> <input type=\"checkbox\" name=\"compression\" ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.compression), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "> <span class=\"type-name\">gzip</span>\r\n				</span>\r\n			</div>\r\n			";
+  buffer += "/> <span class=\"type-name\">gzip</span>\r\n				</span>\r\n			</div>\r\n			";
   return buffer;
   }
 
@@ -395,7 +395,7 @@ function program18(depth0,data) {
   buffer += "<div class=\"squid-api-data-widgets-export-widget\">\r\n	<div class=\"download-wrapper\">\r\n		";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n		<div class=\"download-formats\">\r\n			<label>Format: </label> \r\n			";
+  buffer += "\r\n		<div class=\"download-formats\">\r\n			<label>Format: </label>\r\n			";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.formats), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\r\n			";
@@ -423,7 +423,7 @@ function program18(depth0,data) {
   buffer += "\r\n		<form id=\"download-form\" style=\"visibility: hidden;\"></form>\r\n	</div>\r\n	";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInPopup), {hash:{},inverse:self.noop,fn:self.program(18, program18, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</div>\r\n\r\n";
+  buffer += "\r\n</div>\r\n";
   return buffer;
   });
 
@@ -3874,12 +3874,13 @@ function program2(depth0,data) {
                     this.selectedFormatIndex = i;
                 }
             }
+            var input = $(this.viewPort).find('input[name="compression"]');
             if (t.value === "xlsx") {
-            	$(this.viewPort).find('input[name="compression"]').prop('disabled', true);
+            	input.parent().hide();
             	this.compression = false;
             } else {
-            	$(this.viewPort).find('input[name="compression"]').prop('disabled', false);
-            	this.compression = (t.checked);
+            	input.parent().show();
+            	this.compression = (input[0].checked);
             }
             this.refreshViewSqlUrl();
             if(this.materializeDatasetsView === true) {
@@ -4140,7 +4141,7 @@ function program2(depth0,data) {
                     "materializeDatasetsView" : this.materializeDatasetsView,
                     "data-target" : this.renderTo,
                     "formats": formatsDisplay,
-                    "displayCompression" : this.displayCompression,
+                    "displayCompression" : (this.displayCompression),
                     "compression": (this.compression),
                     "curl": curl,
                     "curlFileName" : curlFileName,
@@ -4226,10 +4227,10 @@ function program2(depth0,data) {
             });
 
             if (selectedFormat.format === "xlsx") {
-            	$(this.viewPort).find('input[name="compression"]').prop('disabled', true);
+            	$(this.viewPort).find('input[name="compression"]').parent().hide();
             	this.compression = false;
             } else {
-            	$(this.viewPort).find('input[name="compression"]').prop('disabled', false);
+            	$(this.viewPort).find('input[name="compression"]').parent().show();
             	//this.compression = (t.checked);
             }
 
