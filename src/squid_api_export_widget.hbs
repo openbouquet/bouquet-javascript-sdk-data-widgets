@@ -3,7 +3,7 @@
 		{{#if displayInAccordion}}
 		<div class="panel panel-default filter-panel">
 			<div class="panel-heading">
-				<button type="button" class="close" data-toggle="collapse" 
+				<button type="button" class="close" data-toggle="collapse"
 				data-target="{{data-target}}" data-clavier="true" aria-hidden="true" aria-expanded="false">
 					<i class="glyphicon glyphicon-chevron-up"></i>
 				</button>
@@ -13,7 +13,7 @@
 				<button type="button" class="close" data-toggle="collapse" data-target="{{data-target}}" data-clavier="true" aria-expanded="false"></button>
 		{{/if}}
 		<div class="download-formats">
-			<label>Format: </label> 
+			<label>Format: </label>
 			{{#each formats}}
 			<span class="type">
 				<input type="radio" name="format" value="{{format}}" {{#if selected}}checked{{/if}}> <span class="type-name">{{format}}</span>
@@ -22,7 +22,7 @@
 			{{#if displayCompression}}
 			<div style="display: inline-block;">
 				<span class="type">
-					<label>Compression: </label> <input type="checkbox" name="compression" {{#if compression}}checked{{/if}}> <span class="type-name">gzip</span>
+					<label>Compression: </label> <input type="checkbox" name="compression" {{#if compression}}checked{{/if}}/> <span class="type-name">gzip</span>
 				</span>
 			</div>
 			{{/if }}
@@ -74,4 +74,3 @@
 	<button type="button" class="btn popup-trigger form-control">{{buttonLabel}} <i class="fa fa-download"></i></button>
 	{{/if}}
 </div>
-
