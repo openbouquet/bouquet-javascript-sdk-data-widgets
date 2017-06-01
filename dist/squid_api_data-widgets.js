@@ -3891,7 +3891,9 @@ function program2(depth0,data) {
             	this.compression = false;
             } else {
             	input.parent().show();
-            	this.compression = (input[0].checked);
+            	if (input.length>0) {
+            		this.compression = (input[0].checked);
+            	}
             }
             this.refreshViewSqlUrl();
             if(this.materializeDatasetsView === true) {
