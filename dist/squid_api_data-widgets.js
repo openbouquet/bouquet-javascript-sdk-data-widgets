@@ -2587,10 +2587,12 @@ function program2(depth0,data) {
                                 		text = "Total for ";
                                 	}
                                 	text = text + this.parentNode.__data__.v[rolCol];
+                                } else if ((parseInt(this.parentNode.__data__.v[0]) === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
+                                	text = "Grant Total";
                                 }
                             } else if (i === 1){
+                            	rolCol = rollupColIndex;
                                 if (parseInt(this.parentNode.__data__.v[0]) >= 1) {
-                                	rolCol = rollupColIndex;
                                 	if (parseInt(this.parentNode.__data__.v[0]) > 1) {
                                 		rolCol = rollups[parseInt(this.parentNode.__data__.v[0])-1].col + 1;
                                 	}
@@ -2599,7 +2601,7 @@ function program2(depth0,data) {
                                 }
                             } else  if (i === 2) {
                                 if ((parseInt(this.parentNode.__data__.v[0]) === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
-                                    text = "Total";
+                                    text = "Grant Total";
                                 }
                             } else if (this.parentNode && parseInt(this.parentNode.__data__.v[0]) === 1) {
                             	if (i >= me.firstMeasure && me.model.get("hideRollupTotal") === true) {

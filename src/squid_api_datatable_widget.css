@@ -40,14 +40,14 @@
 }
 
 #squid-api-data-widgets-data-table table tr.total-column {
-    background: #4d4d4d;
+    background: #737373;
     color: #fff;
-    font-size: 16px;
 }
 
 #squid-api-data-widgets-data-table table tr.total-column td {
     border: 0px;
-    font-size: 18px;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 #squid-api-data-widgets-data-table table tr.group {
