@@ -1445,6 +1445,9 @@ function program2(depth0,data) {
 						} else {
 							barData.title = cols[ix].name;
 						}
+						if (yAxis1) {
+							yAxis1 = yAxis1.trim();
+						}
 						barData.labels.push(yAxis1);
 						if (!hasCompare) {
 							break;
