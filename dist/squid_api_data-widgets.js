@@ -68,7 +68,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.reRunMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.reRunMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\r\n		</span></div>\r\n		<span>\r\n	</div>\r\n	<div class=\"footer\">\r\n		<div id=\"total\">\r\n			Showing <span id=\"count-entries\"></span> of <span id=\"total-entries\"></span> entries\r\n		</div>\r\n		<div id=\"pagination\"></div>\r\n	</div>\r\n</div>\r\n";
+    + "\r\n		</span></div>\r\n		<span>\r\n	</div>\r\n	<div class=\"footer\">\r\n		<blockquote id=\"total\">\r\n			Showing <span id=\"count-entries\"></span> of <span id=\"total-entries\"></span> entries\r\n		</blockquote>\r\n		<blockquote id=\"no-data\">\r\n			No data found\r\n		</blockquote>\r\n		<div id=\"pagination\"></div>\r\n	</div>\r\n</div>\r\n";
   return buffer;
   });
 
@@ -2612,9 +2612,16 @@ function program2(depth0,data) {
                         return text;
                     });
 
+                if (results.totalSize>0) {
                 // display total
-                this.$el.find("#count-entries").html(""+ (results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length));
-                this.$el.find("#total-entries").html(""+results.totalSize);
+                	this.$el.find("#total").show();
+                	this.$el.find("#no-data").hide();
+                	this.$el.find("#count-entries").html(""+ (results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length));
+                	this.$el.find("#total-entries").html(""+results.totalSize);
+                } else {
+                	this.$el.find("#total").hide();
+                	this.$el.find("#no-data").show();
+               } 
             }
         },
         
@@ -2631,6 +2638,8 @@ function program2(depth0,data) {
                 "staleMessage" : this.staleMessage,
                 "reRunMessage" : this.reRunMessage
             }));
+        	this.$el.find("#total").hide();
+        	this.$el.find("#no-data").hide();
             this.$el.find(".sq-loading").hide();
             if (this.paging) {
                 this.paginationView = new squid_api.view.PaginationView( {
@@ -2713,7 +2722,7 @@ function program2(depth0,data) {
 	                                    me.$el.find("#stale").show();
 	                                    me.$el.find("#error").html("");
 	                                    me.$el.find("#table-container").show();
-	                                    me.$el.find("#re-run").show();
+	                                    me.$el.find("#re-run").hide();
 	                                }
 	                            });
                             }
