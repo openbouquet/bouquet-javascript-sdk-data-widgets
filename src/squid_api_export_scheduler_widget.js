@@ -133,11 +133,11 @@
                             method: "GET",
                             url: url
                         });
-                        me.status.set("message", "you have manually triggered a job to run");
+                        me.status.set("message", "Your report is running");
                     },
                     "click .delete-job": function (event) {
                         var id = $(event.target).parents(".job-item").attr("data-attr");
-                        var r = confirm("Are you sure you want to delete this report?");
+                        var r = confirm("Are you sure you want to delete this schedule?");
                         if (r) {
                             var job = exportJobs.get(id);
                             job.destroy({
@@ -306,11 +306,9 @@
 
                     // manipulate data
                     values.customerId = squid_api.model.customer.get("id");
-                    values.userId = squid_api.model.login.get("userId");
+                    values.userId = squid_api.model.login.get("oid");
 
                     var emails = widget.formContent.getValue().emails; //Return an array with [old,values,new,values]
-                    // if length == 1 then new job
-                    // if length == 0 then I should keep the last one entered
                     if (id) {
                         // Take the new values assuming no deletion
                         emails = widget.formContent.getValue().emails.slice((((widget.formContent.getValue().emails.length - 1) / 2) + 1), widget.formContent.getValue().emails.length);
@@ -326,9 +324,10 @@
                         // EDIT aka PUT /jobs/:id
                         var job = exportJobs.get(id);
                         job.attributes.emails = values.emails;
-                        job.set(values);
+                        job.unset("errors",{silent: true});
+                        job.set(values, {silent: false});
                         job.save({}, {
-                            success: function() {
+                            success: function(model) {
                                 me.status.unset("message");
                                 var msg = "";
                                 if (model.get("errors")) {
@@ -353,17 +352,6 @@
                         values.state = config;
                     
                         // Getting the accountID (shared code with PQ Counter)
-                        var accountID = 0;
-                        var facets = config.selection.facets;
-                        for (var i = 0; i < facets.length; i++) {
-                            if (facets[i] && facets[i].selectedItems && facets[i].selectedItems.length === 1) {
-                                var selection = facets[i].selectedItems[0];
-                                if (selection.attributes && selection.attributes.accountID) {
-                                    accountID = selection.attributes.accountID.replace("accountID","");
-                                }
-                            }
-                        }
-                        values.accountID = accountID;
                         values.projectId = config.project;
                         values.bookmarkId = config.bookmark;
                         values.reportId = config.report; //Legacy
