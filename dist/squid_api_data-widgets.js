@@ -208,40 +208,58 @@ function program5(depth0,data) {
 this["squid_api"]["template"]["squid_api_export_scheduler_index_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1, helper;
+  var buffer = "", stack1, helper, options;
   buffer += "\n                <tr class=\"job-item\" data-attr=";
   if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + ">\n                    <td>";
-  if (helper = helpers.accountID) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.accountID); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  if (helper = helpers.reportName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.reportName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</td>\n                    <td>";
-  if (helper = helpers.reportId) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.reportId); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+    + "<div class=\"hidden\">";
+  if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</td>\n                    <td>"
+    + "</div></td>\n                    <td>\n                   		";
+  options={hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data}
+  if (helper = helpers.reportSelection) { stack1 = helper.call(depth0, options); }
+  else { helper = (depth0 && depth0.reportSelection); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
+  if (!helpers.reportSelection) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data}); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                    </td>\n                    <td>Format: "
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.report)),stack1 == null || stack1 === false ? stack1 : stack1.format)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td>\n                    <td>every "
+    + "<br>Months: "
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = (depth0 && depth0.report)),stack1 == null || stack1 === false ? stack1 : stack1.period)),stack1 == null || stack1 === false ? stack1 : stack1.length)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " last<br>Frequency: "
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.scheduling)),stack1 == null || stack1 === false ? stack1 : stack1.frequency)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " </td>\n                    <td>";
+    + "<br>Next Delivery: ";
   if (helper = helpers.nextExecutionDate) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.nextExecutionDate); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</td>\n                    <td>";
-  if (helper = helpers.emails) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.emails); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n                    <td><button class=\"btn btn-secondary run-job\"><i class=\"fa fa-play\"></i></button></td>\n                    <td><button class=\"btn btn-secondary edit-job\"><i class=\"fa fa-pencil-square-o\"></i></button></td>\n                    <td><button class=\"btn btn-secondary delete-job\"><i class=\"fa fa-trash-o\"></i></button></td>\n                </tr>\n            ";
+    + "</td>\n                    <td>\n                    	";
+  options={hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data}
+  if (helper = helpers.emails) { stack1 = helper.call(depth0, options); }
+  else { helper = (depth0 && depth0.emails); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
+  if (!helpers.emails) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data}); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n                    </td>\n                    <td><button class=\"btn btn-secondary run-job\"><i class=\"fa fa-play\"></i></button></td>\n                    <td><button class=\"btn btn-secondary edit-job\"><i class=\"fa fa-pencil-square-o\"></i></button></td>\n                    <td><button class=\"btn btn-secondary delete-job\"><i class=\"fa fa-trash-o\"></i></button></td>\n                </tr>\n            ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = "";
+  buffer += "\n                    	"
+    + escapeExpression((typeof depth0 === functionType ? depth0.apply(depth0) : depth0))
+    + "<br>\n                    	";
   return buffer;
   }
 
-  buffer += "<div class=\"squid-api-export-scheduler-index-view table-responsive\">\n    <button class=\"btn btn-default create-job\">create job</button>\n    <table class=\"table table-bordered table-striped table-hover\">\n        <thead>\n            <tr>\n                <th>Client Account</th>\n                <th>Report type</th>\n                <th>Format</th>\n                <th>Email Frequency</th>\n                <th>Next Delivery</th>\n                <th>Delivered to</th>\n                <th>Run Now</th>\n                <th>Edit</th>\n                <th>Delete</th>\n            </tr>\n        </thead>\n        <tbody>\n            ";
+  buffer += "<div class=\"squid-api-export-scheduler-index-view table-responsive\">\n    <button class=\"btn btn-default create-job\">New Schedule</button>\n    <table class=\"table table-bordered table-striped table-hover\">\n        <thead>\n            <tr>\n                <th class=\"col-xs-1\">Report</th>\n                <th class=\"col-xs-3\">Report Settings</th>\n                <th class=\"col-xs-3\">Schedule Settings</th>\n                <th class=\"col-xs-2\">Delivered to</th>\n                <th class=\"col-xs-1\">Run Now</th>\n                <th class=\"col-xs-1\">Edit</th>\n                <th class=\"col-xs-1\">Delete</th>\n            </tr>\n        </thead>\n        <tbody>\n            ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.jobs), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        </tbody>\n    </table>\n</div>\n";
@@ -254,7 +272,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"squid-api-export-scheduler-widget\">\r\n	<button class=\"btn btn-default\" disabled>Schedule <i class=\"fa fa-clock-o\"></i></button>\r\n</div>\r\n";
+  return "<div class=\"squid-api-export-scheduler-widget\">\r\n	<button class=\"btn btn-default\">Schedule <i class=\"fa fa-clock-o\"></i></button>\r\n</div>\r\n";
   });
 
 this["squid_api"]["template"]["squid_api_export_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -3316,7 +3334,10 @@ function program2(depth0,data) {
         schedulerApiUri: null,
         exportJobs: null,
         hiddenFields: null,
+        reportSelection: null,
+        scheduleName: null,
         widgetAccessible: false,
+        canCreate: false,
 
         initialize: function (options) {
             widget = this;
@@ -3333,6 +3354,12 @@ function program2(depth0,data) {
                 }
                 if (options.hiddenFields) {
                     this.hiddenFields = options.hiddenFields;
+                }
+                if (options.reportSelection) {
+                    this.reportSelection = options.reportSelection;
+                }
+                if (options.scheduleName) {
+                    this.scheduleName = options.scheduleName;
                 }
                 if (options.reports) {
                     this.reports = options.reports.get("items");
@@ -3433,14 +3460,17 @@ function program2(depth0,data) {
                     },
                     "click .delete-job": function (event) {
                         var id = $(event.target).parents(".job-item").attr("data-attr");
-                        var job = exportJobs.get(id);
-                        job.destroy({
-                            success: function () {
-                                me.status.set("message", "job successfully deleted");
-                            }
-                        });
-                        exportJobs.remove(job);
-                    }
+                        var r = confirm("Are you sure you want to delete this report?");
+                        if (r) {
+                            var job = exportJobs.get(id);
+                            job.destroy({
+                                success: function () {
+                                    me.status.set("message", "Schedule successfully deleted");
+                                }
+                            });
+                            exportJobs.remove(job);
+                       }
+                     }
                 },
 
                 render: function () {
@@ -3456,12 +3486,18 @@ function program2(depth0,data) {
                         if (job.nextExecutionDate) {
                             job.nextExecutionDate = moment(job.nextExecutionDate).format("DD-MM-YYYY");
                         }
+                        
                         jsonData.jobs.push(job);
                     }
                     this.$el.html(this.template(jsonData));
 
                     this.$el.find(".table").DataTable({
-                        paging: false
+                        paging: false,
+                        language: {
+                            searchPlaceholder: "Search all fields incl. Schedule Id",
+                            "emptyTable": "No report currently scheduled"
+                        },
+                        "autoWidth":true
                     });
 
                     return this;
@@ -3477,6 +3513,12 @@ function program2(depth0,data) {
             $(this.indexModal.el).addClass(this.modalElementClassName);
 
             $(this.indexModal.el).find(".modal-dialog").addClass("modal-lg");
+
+           	if (this.canCreate) {
+           		$(this.indexModal.el).find("button").show();
+        	} else {
+        		$(this.indexModal.el).find("button").hide();
+        	}
 
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
             Check to make sure it has been removed whenever it isn't displayed.
@@ -3504,20 +3546,21 @@ function program2(depth0,data) {
         	var me = this;
             this.getSchema().then(function (data) {
                 var modalHeader;
+                var reportName;
                 if (id) {
                     model = exportJobs.where({"_id": id})[0];
-                    modalHeader = model.get("reportName") + " scheduled usage report";
+                    reportName = model.get("reportName");
+                    modalHeader = reportName + " scheduled usage report";
                 } else {
                     model = new ExportJobModel();
 
                     var reportId = config.get("report");
-                    var reportName;
                     for (i = 0; i < widget.reports.length; i++) {
                         if (widget.reports[i].oid === reportId) {
-                            reportName = widget.reports[i].name;
+                        	reportName = widget.reports[i].name;
                         }
                     }
-                    modalHeader = "schedule a usage report for " + reportName;
+                    modalHeader = "Schedule a usage report for " + reportName;
                 }
                 // construct schema ignoring hidden fields
                 var schema = {};
@@ -3590,8 +3633,8 @@ function program2(depth0,data) {
 
                     var emails = widget.formContent.getValue().emails; //Return an array with [old,values,new,values]
                     // if length == 1 then new job
-                    // if lenght == 0 then I should keep the last one entered
-                    if (emails.length >1) {
+                    // if length == 0 then I should keep the last one entered
+                    if (id) {
                         // Take the new values assuming no deletion
                         emails = widget.formContent.getValue().emails.slice((((widget.formContent.getValue().emails.length - 1) / 2) + 1), widget.formContent.getValue().emails.length);
                         // computing the separator old new values using the first old value.
@@ -3599,6 +3642,7 @@ function program2(depth0,data) {
                             emails = widget.formContent.getValue().emails.slice(widget.formContent.getValue().emails.lastIndexOf(widget.formContent.getValue().emails[0]), widget.formContent.getValue().emails.length);
                         }
                     }
+
                     values.emails = emails;
 
                     if (id) {
@@ -3608,18 +3652,19 @@ function program2(depth0,data) {
                         job.set(values);
                         job.save({}, {
                             success: function() {
+                                me.status.unset("message");
                                 var msg = "";
                                 if (model.get("errors")) {
                                     var errors = model.get("errors");
                                     for (var x in errors) {
                                         if (errors[x].message) {
-                                            msg = msg + errors[x].message + "";
+                                            msg = msg + errors[x].message + "<br>";
                                         }
                                     }
                                 } else {
                                     exportJobs.add(model);
                                     $(formModal.el).trigger("hidden.bs.modal");
-                                    msg = msg + "job successfully modified";
+                                    msg = msg + "Schedule successfully modified";
                                 }
                                 me.status.set("message", msg);
                             }
@@ -3644,24 +3689,32 @@ function program2(depth0,data) {
                         values.accountID = accountID;
                         values.projectId = config.project;
                         values.bookmarkId = config.bookmark;
-                        values.reportId = config.report;
-
+                        values.reportId = config.report; //Legacy
+                        values.reportName = config.report;
+                        for (ix = 0; ix < me.reports.length; ix++) {
+                            if (me.reports[ix].oid === config.report) {
+                            	values.scheduleName = me.reports[ix].name;
+                            }
+                        }
+                        values.reportSelection = me.reportSelection(config);
+                        values.scheduleName = me.scheduleName(config);
+                        
                         var newJob = new ExportJobModel(values);
                         newJob.save({}, {
                             success: function (model) {
                                 var msg = "";
-
+                                me.status.unset("message");
                                 if (model.get("errors")) {
                                     var errors = model.get("errors");
                                     for (var x in errors) {
                                         if (errors[x].message) {
-                                            msg = msg + errors[x].message + "";
+                                            msg = msg + errors[x].message + "<br>";
                                         }
                                     }
                                 } else {
                                     exportJobs.add(model);
                                     $(formModal.el).trigger("hidden.bs.modal");
-                                    msg = msg + "job successfully saved";
+                                    msg = msg + "Schedule successfully created";
                                 }
                                 me.status.set("message", msg);
                             }
@@ -3680,7 +3733,7 @@ function program2(depth0,data) {
             if (this.widgetAccessible) {
                 this.$el.find("button").prop("visibility", 'visible');
             } else {
-                this.$el.find("button").prop("visibility", 'hidden');
+                this.$el.find("button").prop("visibility", 'visible');
             }
         }
     });

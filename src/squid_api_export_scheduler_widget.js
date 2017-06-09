@@ -11,7 +11,10 @@
         schedulerApiUri: null,
         exportJobs: null,
         hiddenFields: null,
+        reportSelection: null,
+        scheduleName: null,
         widgetAccessible: false,
+        canCreate: false,
 
         initialize: function (options) {
             widget = this;
@@ -28,6 +31,12 @@
                 }
                 if (options.hiddenFields) {
                     this.hiddenFields = options.hiddenFields;
+                }
+                if (options.reportSelection) {
+                    this.reportSelection = options.reportSelection;
+                }
+                if (options.scheduleName) {
+                    this.scheduleName = options.scheduleName;
                 }
                 if (options.reports) {
                     this.reports = options.reports.get("items");
@@ -128,14 +137,17 @@
                     },
                     "click .delete-job": function (event) {
                         var id = $(event.target).parents(".job-item").attr("data-attr");
-                        var job = exportJobs.get(id);
-                        job.destroy({
-                            success: function () {
-                                me.status.set("message", "job successfully deleted");
-                            }
-                        });
-                        exportJobs.remove(job);
-                    }
+                        var r = confirm("Are you sure you want to delete this report?");
+                        if (r) {
+                            var job = exportJobs.get(id);
+                            job.destroy({
+                                success: function () {
+                                    me.status.set("message", "Schedule successfully deleted");
+                                }
+                            });
+                            exportJobs.remove(job);
+                       }
+                     }
                 },
 
                 render: function () {
@@ -151,12 +163,18 @@
                         if (job.nextExecutionDate) {
                             job.nextExecutionDate = moment(job.nextExecutionDate).format("DD-MM-YYYY");
                         }
+                        
                         jsonData.jobs.push(job);
                     }
                     this.$el.html(this.template(jsonData));
 
                     this.$el.find(".table").DataTable({
-                        paging: false
+                        paging: false,
+                        language: {
+                            searchPlaceholder: "Search all fields incl. Schedule Id",
+                            "emptyTable": "No report currently scheduled"
+                        },
+                        "autoWidth":true
                     });
 
                     return this;
@@ -172,6 +190,12 @@
             $(this.indexModal.el).addClass(this.modalElementClassName);
 
             $(this.indexModal.el).find(".modal-dialog").addClass("modal-lg");
+
+           	if (this.canCreate) {
+           		$(this.indexModal.el).find("button").show();
+        	} else {
+        		$(this.indexModal.el).find("button").hide();
+        	}
 
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
             Check to make sure it has been removed whenever it isn't displayed.
@@ -199,20 +223,21 @@
         	var me = this;
             this.getSchema().then(function (data) {
                 var modalHeader;
+                var reportName;
                 if (id) {
                     model = exportJobs.where({"_id": id})[0];
-                    modalHeader = model.get("reportName") + " scheduled usage report";
+                    reportName = model.get("reportName");
+                    modalHeader = reportName + " scheduled usage report";
                 } else {
                     model = new ExportJobModel();
 
                     var reportId = config.get("report");
-                    var reportName;
                     for (i = 0; i < widget.reports.length; i++) {
                         if (widget.reports[i].oid === reportId) {
-                            reportName = widget.reports[i].name;
+                        	reportName = widget.reports[i].name;
                         }
                     }
-                    modalHeader = "schedule a usage report for " + reportName;
+                    modalHeader = "Schedule a usage report for " + reportName;
                 }
                 // construct schema ignoring hidden fields
                 var schema = {};
@@ -285,8 +310,8 @@
 
                     var emails = widget.formContent.getValue().emails; //Return an array with [old,values,new,values]
                     // if length == 1 then new job
-                    // if lenght == 0 then I should keep the last one entered
-                    if (emails.length >1) {
+                    // if length == 0 then I should keep the last one entered
+                    if (id) {
                         // Take the new values assuming no deletion
                         emails = widget.formContent.getValue().emails.slice((((widget.formContent.getValue().emails.length - 1) / 2) + 1), widget.formContent.getValue().emails.length);
                         // computing the separator old new values using the first old value.
@@ -294,6 +319,7 @@
                             emails = widget.formContent.getValue().emails.slice(widget.formContent.getValue().emails.lastIndexOf(widget.formContent.getValue().emails[0]), widget.formContent.getValue().emails.length);
                         }
                     }
+
                     values.emails = emails;
 
                     if (id) {
@@ -303,18 +329,19 @@
                         job.set(values);
                         job.save({}, {
                             success: function() {
+                                me.status.unset("message");
                                 var msg = "";
                                 if (model.get("errors")) {
                                     var errors = model.get("errors");
                                     for (var x in errors) {
                                         if (errors[x].message) {
-                                            msg = msg + errors[x].message + "";
+                                            msg = msg + errors[x].message + "<br>";
                                         }
                                     }
                                 } else {
                                     exportJobs.add(model);
                                     $(formModal.el).trigger("hidden.bs.modal");
-                                    msg = msg + "job successfully modified";
+                                    msg = msg + "Schedule successfully modified";
                                 }
                                 me.status.set("message", msg);
                             }
@@ -339,24 +366,32 @@
                         values.accountID = accountID;
                         values.projectId = config.project;
                         values.bookmarkId = config.bookmark;
-                        values.reportId = config.report;
-
+                        values.reportId = config.report; //Legacy
+                        values.reportName = config.report;
+                        for (ix = 0; ix < me.reports.length; ix++) {
+                            if (me.reports[ix].oid === config.report) {
+                            	values.scheduleName = me.reports[ix].name;
+                            }
+                        }
+                        values.reportSelection = me.reportSelection(config);
+                        values.scheduleName = me.scheduleName(config);
+                        
                         var newJob = new ExportJobModel(values);
                         newJob.save({}, {
                             success: function (model) {
                                 var msg = "";
-
+                                me.status.unset("message");
                                 if (model.get("errors")) {
                                     var errors = model.get("errors");
                                     for (var x in errors) {
                                         if (errors[x].message) {
-                                            msg = msg + errors[x].message + "";
+                                            msg = msg + errors[x].message + "<br>";
                                         }
                                     }
                                 } else {
                                     exportJobs.add(model);
                                     $(formModal.el).trigger("hidden.bs.modal");
-                                    msg = msg + "job successfully saved";
+                                    msg = msg + "Schedule successfully created";
                                 }
                                 me.status.set("message", msg);
                             }
@@ -375,7 +410,7 @@
             if (this.widgetAccessible) {
                 this.$el.find("button").prop("visibility", 'visible');
             } else {
-                this.$el.find("button").prop("visibility", 'hidden');
+                this.$el.find("button").prop("visibility", 'visible');
             }
         }
     });

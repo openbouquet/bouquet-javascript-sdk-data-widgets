@@ -356,6 +356,19 @@ Pagination
     font-size: 10px;
 }
 
+.squid-api-export-scheduler-index-view.table-responsive div.dataTables_filter {
+	width: 100%;
+}
+
+.squid-api-export-scheduler-index-view.table-responsive div.dataTables_filter label{
+	float: left;
+	width: 100%;
+	text-align:left;
+}
+
+.squid-api-export-scheduler-index-view.table-responsive div.dataTables_filter label input{
+	width: 70%
+}
 .squid-api-export-scheduler-index-view table td {
     max-width: 220px;
     text-overflow: ellipsis;
