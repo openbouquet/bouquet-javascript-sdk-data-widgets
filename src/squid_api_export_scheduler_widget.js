@@ -161,9 +161,9 @@
                         // format jsonData
                         var job = this.model.models[i].toJSON();
                         if (job.nextExecutionDate) {
-                            job.nextExecutionDate = moment(job.nextExecutionDate).format("DD-MM-YYYY");
+                            job.nextExecutionDate = moment(job.nextExecutionDate).format("YYYY-MM-DD");
                         }
-                        
+                        job.scheduling.frequency = job.scheduling.frequency.replace(/s$/,"");
                         jsonData.jobs.push(job);
                     }
                     this.$el.html(this.template(jsonData));
@@ -192,9 +192,9 @@
             $(this.indexModal.el).find(".modal-dialog").addClass("modal-lg");
 
            	if (this.canCreate) {
-           		$(this.indexModal.el).find("button").show();
+           		$(this.indexModal.el).find("button.create-job").show();
         	} else {
-        		$(this.indexModal.el).find("button").hide();
+        		$(this.indexModal.el).find("button.create-job").hide();
         	}
 
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
@@ -230,7 +230,7 @@
                     modalHeader = reportName + " scheduled usage report";
                 } else {
                     model = new ExportJobModel();
-
+                    model.set({"report":{"period":{"type":"monthly","length":"Previous month"},"format":"XLS"},"scheduling":{"frequency":"months"}});
                     var reportId = config.get("report");
                     for (i = 0; i < widget.reports.length; i++) {
                         if (widget.reports[i].oid === reportId) {
@@ -393,7 +393,7 @@
         render: function () {
             var html = this.template();
             this.$el.html(html);
-
+            this.status.unset("message");
             // activate / disactivate button
             if (this.widgetAccessible) {
                 this.$el.find("button").prop("visibility", 'visible');

@@ -233,9 +233,9 @@ function program1(depth0,data) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n                    </td>\n                    <td>Format: "
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.report)),stack1 == null || stack1 === false ? stack1 : stack1.format)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Months: "
+    + "<br>Usage period: "
     + escapeExpression(((stack1 = ((stack1 = ((stack1 = (depth0 && depth0.report)),stack1 == null || stack1 === false ? stack1 : stack1.period)),stack1 == null || stack1 === false ? stack1 : stack1.length)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " last<br>Frequency: "
+    + "<br>Frequency: Every "
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.scheduling)),stack1 == null || stack1 === false ? stack1 : stack1.frequency)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>Next Delivery: ";
   if (helper = helpers.nextExecutionDate) { stack1 = helper.call(depth0, {hash:{},data:data}); }
@@ -3484,9 +3484,9 @@ function program2(depth0,data) {
                         // format jsonData
                         var job = this.model.models[i].toJSON();
                         if (job.nextExecutionDate) {
-                            job.nextExecutionDate = moment(job.nextExecutionDate).format("DD-MM-YYYY");
+                            job.nextExecutionDate = moment(job.nextExecutionDate).format("YYYY-MM-DD");
                         }
-                        
+                        job.scheduling.frequency = job.scheduling.frequency.replace(/s$/,"");
                         jsonData.jobs.push(job);
                     }
                     this.$el.html(this.template(jsonData));
@@ -3515,9 +3515,9 @@ function program2(depth0,data) {
             $(this.indexModal.el).find(".modal-dialog").addClass("modal-lg");
 
            	if (this.canCreate) {
-           		$(this.indexModal.el).find("button").show();
+           		$(this.indexModal.el).find("button.create-job").show();
         	} else {
-        		$(this.indexModal.el).find("button").hide();
+        		$(this.indexModal.el).find("button.create-job").hide();
         	}
 
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
@@ -3553,7 +3553,7 @@ function program2(depth0,data) {
                     modalHeader = reportName + " scheduled usage report";
                 } else {
                     model = new ExportJobModel();
-
+                    model.set({"report":{"period":{"type":"monthly","length":"Previous month"},"format":"XLS"},"scheduling":{"frequency":"months"}});
                     var reportId = config.get("report");
                     for (i = 0; i < widget.reports.length; i++) {
                         if (widget.reports[i].oid === reportId) {
@@ -3716,7 +3716,7 @@ function program2(depth0,data) {
         render: function () {
             var html = this.template();
             this.$el.html(html);
-
+            this.status.unset("message");
             // activate / disactivate button
             if (this.widgetAccessible) {
                 this.$el.find("button").prop("visibility", 'visible');
