@@ -3553,7 +3553,11 @@ function program2(depth0,data) {
                     modalHeader = reportName + " scheduled usage report";
                 } else {
                     model = new ExportJobModel();
-                    model.set({"report":{"period":{"type":"monthly","length":"Previous month"},"format":"XLS"},"scheduling":{"frequency":"months"}});
+                    var email = "";
+                    if (squid_api.model.login && squid_api.model.login.get("email")) {
+                    	email = squid_api.model.login.get("email");
+                    }
+                    model.set({"report":{"period":{"type":"monthly","length":"Previous month"},"format":"XLS"},"scheduling":{"frequency":"months"},"emails":[email], "nextExecutionDate":moment().add(1,"day")});
                     var reportId = config.get("report");
                     for (i = 0; i < widget.reports.length; i++) {
                         if (widget.reports[i].oid === reportId) {
@@ -3573,9 +3577,13 @@ function program2(depth0,data) {
                         }
                         if (data[x].instance === "Date") {
                             schema[x].type = "Date";
+                            schema[x].yearStart = moment().get("year");
+                            schema[x].yearEnd = moment().get("year")+1;
                         } else if (data[x].instance === "Array") {
                             schema[x].type = "List";
                             schema[x].itemType = "Text";
+                            //schema[x].template = _.template('<div><div data-items></div><button type="button" data-action="add">Add Email</button></div>', null, Backbone.Form.templateSettings);
+                            schema[x].itemTemplate = _.template('<div><span data-editor></span><button type="button" data-action="remove"><i class="fa fa-trash-o"></i></button></div>', null, Backbone.Form.templateSettings);
                         } else {
                             if (data[x].enumValues) {
                                 schema[x].type = "Select";
@@ -3592,8 +3600,10 @@ function program2(depth0,data) {
 
                 widget.formContent = new Backbone.Form({
                     schema: schema,
-                    model: model
+                    model: model,
+                    idPrefix: null,
                 });
+                
 
                 var FormView = Backbone.View.extend({
                     initialize: function () {
