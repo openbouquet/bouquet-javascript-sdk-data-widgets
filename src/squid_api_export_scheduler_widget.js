@@ -259,12 +259,13 @@
                         } else if (data[x].instance === "Array") {
                             schema[x].type = "List";
                             schema[x].itemType = "Text";
+                            schema[x].addLabel = "Add Email";
                             //schema[x].template = _.template('<div><div data-items></div><button type="button" data-action="add">Add Email</button></div>', null, Backbone.Form.templateSettings);
                             schema[x].itemTemplate = _.template('<div><span data-editor></span><button type="button" data-action="remove"><i class="fa fa-trash-o"></i></button></div>', null, Backbone.Form.templateSettings);
                         } else {
-                            if (data[x].enumValues) {
+                            if (data[x].options.enumValues) {
                                 schema[x].type = "Select";
-                                schema[x].options = data[x].enumValues;
+                                schema[x].options = data[x].options.enumValues;
                             } else if (data[x].options.enum) {
                                 schema[x].type = "Select";
                                 schema[x].options = data[x].options.enum;

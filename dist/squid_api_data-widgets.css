@@ -437,6 +437,9 @@ div.modal-body div form div fieldset div div {
 div.modal-body div form div fieldset div div span {
 	width: 100%;
 }
+div.modal-body div form div fieldset div div span div#nextExecutionDate {
+	width: 100%; !important;
+}
 div.modal-body div form div fieldset div div div {
 	width: 0%;
 }
