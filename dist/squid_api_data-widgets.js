@@ -3515,9 +3515,9 @@ function program2(depth0,data) {
             $(this.indexModal.el).find(".modal-dialog").addClass("modal-lg");
 
            	if (this.canCreate) {
-           		$(this.indexModal.el).find("button.create-job").show();
+           		$(this.indexModal.el).find("button.create-job").prop('disabled', false);
         	} else {
-        		$(this.indexModal.el).find("button.create-job").hide();
+        		$(this.indexModal.el).find("button.create-job").prop('disabled', true);
         	}
 
             /* bootstrap doesn't remove modal from dom when clicking outside of it.
