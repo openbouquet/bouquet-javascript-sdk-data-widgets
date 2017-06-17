@@ -420,42 +420,45 @@ Pagination
     margin-right: 0px !important;
 }
 
-div.modal-body div form div fieldset div {
+div.modal-body>div>form>div>fieldset>div {
   	display: flex;
   	padding-bottom:5px;
 }
 
-div.modal-body div form div fieldset div label {
+div.modal-body>div>form>div>fieldset>div>label {
   	display: inline-flex;
-	width: 40%;
+	width: 20%;
 }
 
-div.modal-body div form div fieldset div div {
+div.modal-body>div>form>div>fieldset>div>div {
   	display: inline-flex;
-	width: 50%;
+	width: 80%;
 }
-div.modal-body div form div fieldset div div span {
-	width: 100%;
+div.modal-body>div>form>div>fieldset>div>div>div[data-error] {
+	width: 40%;
 }
-div.modal-body div form div fieldset div div span div#nextExecutionDate {
-	width: 100%; !important;
+div.modal-body>div>form>div>fieldset>div>div>span {
+	width: 60%;
 }
-div.modal-body div form div fieldset div div div {
+
+div.modal-body>div>form>div>fieldset>div>div>div {
 	width: 0%;
 }
-div#emails, div#emails div {
+div#emails, div#emails>div {
 	width: 100%;
   	display: block;
 }
-div#emails div div {
+div#emails>div>div {
 	width: 100%;
   	display: inline-flex;	
 }
 div#emails button {
 	margin: 0px 0px 0px 0px;	
 }
-
-div.modal-body div form div fieldset div div span div select {
+div#emails span {
+	width: 100%;
+}
+div.modal-body>div>form>div>fieldset>div>div>span>div>select {
   border: 1px solid #ccc;
   border-radius: 4px;
   height: 34px;
