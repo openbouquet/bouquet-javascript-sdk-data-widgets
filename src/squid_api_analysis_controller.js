@@ -89,10 +89,10 @@
                     }
                     if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
                     	if (this.config.hasChanged("startIndex") === false) {
+                    		this.config.set("startIndex",0, {silent: true});
                     		this.config.set("pageIndex",0, {silent: true});
-                    		this.config.set("startIndex",0);
                     	}
-                        this.refreshAnalysis();
+                        this.refreshAnalysis(true);
                     }
                 });
             }
@@ -169,7 +169,7 @@
                 if (a.getParameter("startIndex") !== null) {
                     startIndexChange = (a.getParameter("startIndex") !== configStartIndex);
                 }
-                if (startIndexChange) {
+                if (startIndexChange && (this.config.hasChanged("startIndex") && !this.config.hasChanged("selection"))) {
                     // update if pagination changed
                     if (a.get("id") && (a.get("id").analysisJobId)) {
                         a.setParameter("startIndex", configStartIndex, silent);
