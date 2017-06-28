@@ -229,7 +229,7 @@
 				if (id) {
 					model = exportJobs.where({"_id": id})[0];
 					reportName = model.get("reportName");
-					modalHeader = reportName + " scheduled usage report";
+					modalHeader = "Edit " + reportName + " Scheduled Usage Report";
 				} else {
 					model = new ExportJobModel();
 					var email = "";
@@ -243,7 +243,7 @@
 							reportName = widget.reports[i].name;
 						}
 					}
-					modalHeader = "Schedule a usage report for " + reportName;
+					modalHeader = "Create " + reportName + " Scheduled Usage Report";
 				}
 				// construct schema ignoring hidden fields
 				var schema = {};
