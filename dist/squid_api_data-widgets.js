@@ -2200,7 +2200,7 @@ function program2(depth0,data) {
 												dataType : "NUMBER",
 												name : metrics[i].name,
 												id : facets[i].value
-										}
+										};
 										columns.push(obj);
 									} else {
 										// impossible to get column data from selection
@@ -2303,13 +2303,13 @@ function program2(depth0,data) {
 				if (squid_api.model.config.has("hiddenTableColumns")) {
 					var hiddenTableColumns = squid_api.model.config.get("hiddenTableColumns");
 					for (i=0; i<hiddenTableColumns.length; i++) {
-			            for (j=0; j<columns.length; j++) {
-				            if (typeof columns[j].id !== "undefined" && columns[j].id.indexOf(hiddenTableColumns[i])!==-1) {
-					            columns.splice(j,1);
-					            break;
-				            }
-			            }
-		            }
+						for (j=0; j<columns.length; j++) {
+							if (typeof columns[j].id !== "undefined" && columns[j].id.indexOf(hiddenTableColumns[i])!==-1) {
+								columns.splice(j,1);
+								break;
+							}
+						}
+					}
 				}
 				if (!invalidSelection && columns) {
 					console.info("DEBUG:"+"displayTableHeader D3, cols :"+columns.length);
@@ -2483,12 +2483,12 @@ function program2(depth0,data) {
 					if (squid_api.model.config.has("hiddenTableColumns")) {
 						var hiddenTableColumns = squid_api.model.config.get("hiddenTableColumns");
 						for (i=0; i<hiddenTableColumns.length; i++) {
-				            for (j=0; j<results.cols.length; j++) {
-					            if (typeof results.cols[j].id !== "undefined" && results.cols[j].id.indexOf(hiddenTableColumns[i])!==-1) {
-						            hiddenIndices.push(j);
-					            }
-				            }
-			            }
+							for (j=0; j<results.cols.length; j++) {
+								if (typeof results.cols[j].id !== "undefined" && results.cols[j].id.indexOf(hiddenTableColumns[i])!==-1) {
+									hiddenIndices.push(j);
+								}
+							}
+						}
 						for (i=hiddenIndices.length-1; i>=0; i--) {
 							data.results.cols.splice(i,1);
 						}
