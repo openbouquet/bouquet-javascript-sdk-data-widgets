@@ -15,6 +15,7 @@
 		scheduleName: null,
 		widgetAccessible: false,
 		canCreate: false,
+		processData: null,
 
 		initialize: function (options) {
 			widget = this;
@@ -37,6 +38,9 @@
 				}
 				if (options.scheduleName) {
 					this.scheduleName = options.scheduleName;
+				}
+				if (options.processData) {
+					this.processData = options.processData;
 				}
 				if (options.reports) {
 					this.reports = options.reports.get("items");
@@ -244,6 +248,9 @@
 						}
 					}
 					modalHeader = "Create " + reportName + " Scheduled Usage Report";
+				}
+				if (me.processData) {
+					data = me.processData(data, model);
 				}
 				// construct schema ignoring hidden fields
 				var schema = {};

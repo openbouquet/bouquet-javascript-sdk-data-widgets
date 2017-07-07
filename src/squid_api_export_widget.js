@@ -190,6 +190,10 @@
             this.initialize();
         },
 
+        updateFormats : function(formats) {
+        	this.formats = formats;
+        },
+        
         clickedFormat : function (event) {
             var t = event.target;
             this.selectedFormatIndex = null;

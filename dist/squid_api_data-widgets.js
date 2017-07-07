@@ -3387,6 +3387,7 @@ function program2(depth0,data) {
 		scheduleName: null,
 		widgetAccessible: false,
 		canCreate: false,
+		processData: null,
 
 		initialize: function (options) {
 			widget = this;
@@ -3409,6 +3410,9 @@ function program2(depth0,data) {
 				}
 				if (options.scheduleName) {
 					this.scheduleName = options.scheduleName;
+				}
+				if (options.processData) {
+					this.processData = options.processData;
 				}
 				if (options.reports) {
 					this.reports = options.reports.get("items");
@@ -3616,6 +3620,9 @@ function program2(depth0,data) {
 						}
 					}
 					modalHeader = "Create " + reportName + " Scheduled Usage Report";
+				}
+				if (me.processData) {
+					data = me.processData(data, model);
 				}
 				// construct schema ignoring hidden fields
 				var schema = {};
@@ -4027,6 +4034,10 @@ function program2(depth0,data) {
             this.initialize();
         },
 
+        updateFormats : function(formats) {
+        	this.formats = formats;
+        },
+        
         clickedFormat : function (event) {
             var t = event.target;
             this.selectedFormatIndex = null;
