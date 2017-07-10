@@ -311,7 +311,7 @@
 										obj = {
 												dataType : "NUMBER",
 												name : metrics[i].name,
-												id : facets[i].value
+												id : metrics[i].value
 										};
 										columns.push(obj);
 									} else {
