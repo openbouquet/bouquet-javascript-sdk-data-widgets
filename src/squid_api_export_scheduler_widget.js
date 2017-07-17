@@ -362,7 +362,7 @@
 					 // the form is used in create and edit mode.
 					 var errors = widget.formContent.commit({ validate: true });
 					 var emails = widget.formContent.getValue().emails; //Return an array with [old,values,new,values]
-					 if (id) {
+					 if (typeof emails !== 'undefined' && emails.length>0) {
 						 // Take the new values assuming no deletion
 						 emails = widget.formContent.getValue().emails.slice((((widget.formContent.getValue().emails.length - 1) / 2) + 1), widget.formContent.getValue().emails.length);
 						 // computing the separator old new values using the first old value.
