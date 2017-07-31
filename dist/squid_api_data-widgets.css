@@ -57,7 +57,6 @@ rect text {
 }
 
 #squid-api-data-widgets-data-table table.many-columns {
-    display: inherit;
     table-layout: inherit;
 }
 
