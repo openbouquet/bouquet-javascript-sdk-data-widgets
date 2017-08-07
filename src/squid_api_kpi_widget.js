@@ -78,7 +78,17 @@
                             if (compareIndex) {
                                 kpi.compareToValue = (typeof values[i] === "number") ? this.d3Formatter(Math.round(parseFloat(values[compareIndex]) * 100) / 100) : this.format(values[compareIndex]);
                             }
-                            kpi.unit = "";
+							if (results.cols[i].extendedType) {
+								var words = results.cols[i].name.split(" ");
+								for (var j=0; j<words.length; j++) {
+									// see if column header contains the text duration / time
+									if (words[j].toLowerCase() === "duration" || words[j].toLowerCase() === "time") {
+										kpi.value =  squid_api.utils.formatTime(values[i], this.d3Formatter);
+										kpi.compareToValue =  squid_api.utils.formatTime(values[compareIndex], this.d3Formatter);
+									}
+								}
+							}
+                           kpi.unit = "";
                             kpi.name = col.name;
                             if (typeof kpi.compareToValue !== "undefined" && kpi.compareToValue !== null) {
                                 var lvalue = parseFloat(values[i]);

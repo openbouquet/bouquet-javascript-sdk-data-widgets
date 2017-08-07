@@ -2516,35 +2516,7 @@ function program2(depth0,data) {
 										// see if column header contains the text duration / time
 										if (words[i].toLowerCase() === "duration" || words[i].toLowerCase() === "time") {
 											toRound = false;
-											// parse value with moment
-											var d = moment.duration(parseFloat(v), 'milliseconds');
-											// obtain hours / minutes & seconds
-											var hours = d.asHours();
-											var minutes = d.asMinutes();
-											var days = d.asDays();
-											var years = d.asYears();
-											var seconds = d.asSeconds();
-											var milliseconds = d.asMilliseconds();
-											var timeData = d._data;
-											// contruct readable time values
-											if (milliseconds > 1) {
-												v = this.d3Formatter(Math.round(timeData.milliseconds * 100) / 100);
-												if (seconds > 1) {
-													v = timeData.seconds + "s";
-													if (minutes > 1) {
-														v = timeData.minutes + "m " + v;
-														if (hours > 1) {
-															v = timeData.hours + "h " + v;
-															if (days > 1) {
-																v = timeData.days + "d " + v;
-																if (years > 1) {
-																	v = timeData.years + "y " + v;
-																}
-															}
-														}
-													}
-												}
-											}
+											v = squid_api.utils.formatTime(v, this.d3Formatter);
 										}
 									}
 								}
@@ -4707,7 +4679,17 @@ function program2(depth0,data) {
                             if (compareIndex) {
                                 kpi.compareToValue = (typeof values[i] === "number") ? this.d3Formatter(Math.round(parseFloat(values[compareIndex]) * 100) / 100) : this.format(values[compareIndex]);
                             }
-                            kpi.unit = "";
+							if (results.cols[i].extendedType) {
+								var words = results.cols[i].name.split(" ");
+								for (var j=0; j<words.length; j++) {
+									// see if column header contains the text duration / time
+									if (words[j].toLowerCase() === "duration" || words[j].toLowerCase() === "time") {
+										kpi.value =  squid_api.utils.formatTime(values[i], this.d3Formatter);
+										kpi.compareToValue =  squid_api.utils.formatTime(values[compareIndex], this.d3Formatter);
+									}
+								}
+							}
+                           kpi.unit = "";
                             kpi.name = col.name;
                             if (typeof kpi.compareToValue !== "undefined" && kpi.compareToValue !== null) {
                                 var lvalue = parseFloat(values[i]);
