@@ -223,6 +223,32 @@
 			this.initialize();
 		},
 
+		getColumnIdentifier : function(col) {
+			if (col.definition && col.definition.startsWith("@")) {
+				return col.definition;
+			} else if (col.pk){
+				var lastPos = col.name.indexOf(" [");
+				var name = col.name;
+				if (lastPos>1) {
+					name = col.name.substring(0,lastPos);
+				}
+				var id = "@'"+col.pk.domainId+"'.";
+				if (col.role === "DATA") {
+					id += "[measure:'"+name+"']";
+					if (col.originType === "GROWTH") {
+						id = "growth("+id+")";
+					} else if (col.originType === "COMPARETO") {
+						id = "compareTo("+id+")";
+					}
+				} else {
+					id += "@'"+col.id+"'";
+				}
+				return id;
+			} else {
+				return col.id;
+			}
+		},
+
 		/**
 		 * see : http://stackoverflow.com/questions/10966440/recreating-a-removed-view-in-backbone-js
 		 */
@@ -344,8 +370,14 @@
 						for (col=0; col<columns.length; col++) {
 							if (columns[col]) {
 								columns[col].orderDirection = undefined;
+								var colIdentifier = me.getColumnIdentifier(columns[col]);
 								for (ix=0; ix<orderBy.length; ix++) {
 									if (this.ordering) {
+										if (colIdentifier === orderBy[ix].expression.value) {
+											columns[col].orderDirection = orderBy[ix].direction;
+											break;
+										}
+/*
 										if (columns[col].definition) {
 											if (orderBy[ix].expression) {
 												if (columns[col].definition === orderBy[ix].expression.value) {
@@ -359,6 +391,7 @@
 												break;
 											}
 										}
+ */
 									}
 								}
 							}
@@ -484,11 +517,33 @@
 						return d.originType;
 					})
 					.attr("data-content", function(d) {
-						if (d.definition) {
-							return d.definition;
+						return me.getColumnIdentifier(d);
+						/*if (!d.role || d.role !== "DATA") {
+							if (d.definition) {
+								return d.definition;
+							} else {
+								return d.id;
+							}
 						} else {
-							return d.id;
-						}
+							if (d.definition && d.definition.startsWith("@")) {
+								return d.definition;
+							} else if (d.pk){
+								var lastPos = d.name.indexOf(" [");
+								var name = d.name;
+								if (lastPos>1) {
+									name = d.name.substring(0,lastPos);
+								}
+								var id = "@'"+d.pk.domainId+"'.[measure:'"+name+"']";
+								if (d.originType === "GROWTH") {
+									id = "growth("+id+")";
+								} else if (d.originType === "COMPARETO") {
+									id = "compareTo("+id+")";
+								}
+								return id;
+							} else {
+								return d.id;
+							}
+						}*/
 					});
 
 					// add class if more than 10 columns

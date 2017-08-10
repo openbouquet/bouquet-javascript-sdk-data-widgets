@@ -59,11 +59,13 @@
 
                     // resolve compareTo columns
                     var compareMap = {};
+                    var compareIdSuffix = "";
                     for (var i1 = 0; i1 < cols.length; i1++) {
                         var colA = cols[i1];
                         if (colA.originType === "COMPARETO") {
                             // key = col oid, value = compare col index
                             compareMap[colA.id] = i1;
+                            compareIdSuffix = colA.id.endsWith("_compare")?"_compare":"";
                         }
                     }
 
@@ -74,7 +76,7 @@
                         if (col.originType === "USER") {
                             var kpi = {};
                             kpi.value = (typeof values[i] === "number") ? this.d3Formatter(Math.round(parseFloat(values[i]) * 100) / 100) : this.format(values[i]);
-                            var compareIndex = compareMap[col.id];
+                            var compareIndex = compareMap[col.id+compareIdSuffix];
                             if (compareIndex) {
                                 kpi.compareToValue = (typeof values[i] === "number") ? this.d3Formatter(Math.round(parseFloat(values[compareIndex]) * 100) / 100) : this.format(values[compareIndex]);
                             }
