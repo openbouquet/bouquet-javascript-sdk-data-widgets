@@ -4751,6 +4751,10 @@ function program2(depth0,data) {
                             if (typeof kpi.compareToValue !== "undefined" && kpi.compareToValue !== null) {
                                 var lvalue = parseFloat(values[i]);
                                 var rvalue = parseFloat(values[compareIndex]);
+                          		if (typeof values[i] === 'string' || values[i] instanceof String) {
+                           			lvalue = parseFloat(values[i].replace(new RegExp(',', 'g'),''));
+                                    rvalue = parseFloat(values[compareIndex].replace(new RegExp(',', 'g'),''));
+                        		}
                                 kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
                                 if (kpi.growth > 0) {
                                     kpi.compareTextColor = 'text-success';
