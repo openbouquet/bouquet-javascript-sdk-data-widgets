@@ -85,8 +85,8 @@
 								for (var j=0; j<words.length; j++) {
 									// see if column header contains the text duration / time
 									if (words[j].toLowerCase() === "duration" || words[j].toLowerCase() === "time") {
-										kpi.value =  squid_api.utils.formatTime(values[i], this.d3Formatter);
-										kpi.compareToValue =  squid_api.utils.formatTime(values[compareIndex], this.d3Formatter);
+										kpi.value =  squid_api.utils.formatTime(values[i], this.d3Formatter, results.cols[i].format );
+										kpi.compareToValue =  squid_api.utils.formatTime(values[compareIndex], this.d3Formatter, results.cols[i].format);
 									}
 								}
 							}

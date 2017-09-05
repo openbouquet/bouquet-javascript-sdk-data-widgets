@@ -676,14 +676,14 @@
 							}
 							if (display) {
 								v = row.v[colIdx];
-								if (results.cols[colIdx].extendedType) {
+								if ("GROWTH" !== results.cols[colIdx].originType && results.cols[colIdx].extendedType) {
 									var words = results.cols[colIdx].name.split(" ");
 									var toRound = true;
 									for (i=0; i<words.length; i++) {
 										// see if column header contains the text duration / time
 										if (words[i].toLowerCase() === "duration" || words[i].toLowerCase() === "time") {
 											toRound = false;
-											v = squid_api.utils.formatTime(v, this.d3Formatter);
+											v = squid_api.utils.formatTime(v, this.d3Formatter, results.cols[colIdx].format);
 										}
 									}
 								}

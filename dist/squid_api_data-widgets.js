@@ -2564,14 +2564,14 @@ function program2(depth0,data) {
 							}
 							if (display) {
 								v = row.v[colIdx];
-								if (results.cols[colIdx].extendedType) {
+								if ("GROWTH" !== results.cols[colIdx].originType && results.cols[colIdx].extendedType) {
 									var words = results.cols[colIdx].name.split(" ");
 									var toRound = true;
 									for (i=0; i<words.length; i++) {
 										// see if column header contains the text duration / time
 										if (words[i].toLowerCase() === "duration" || words[i].toLowerCase() === "time") {
 											toRound = false;
-											v = squid_api.utils.formatTime(v, this.d3Formatter);
+											v = squid_api.utils.formatTime(v, this.d3Formatter, results.cols[colIdx].format);
 										}
 									}
 								}
@@ -4741,8 +4741,8 @@ function program2(depth0,data) {
 								for (var j=0; j<words.length; j++) {
 									// see if column header contains the text duration / time
 									if (words[j].toLowerCase() === "duration" || words[j].toLowerCase() === "time") {
-										kpi.value =  squid_api.utils.formatTime(values[i], this.d3Formatter);
-										kpi.compareToValue =  squid_api.utils.formatTime(values[compareIndex], this.d3Formatter);
+										kpi.value =  squid_api.utils.formatTime(values[i], this.d3Formatter, results.cols[i].format );
+										kpi.compareToValue =  squid_api.utils.formatTime(values[compareIndex], this.d3Formatter, results.cols[i].format);
 									}
 								}
 							}
