@@ -463,6 +463,17 @@ div.modal-body>div>form>div>fieldset>div>div>span>div>select {
   height: 34px;
 }
 
+th.sorting_asc:after {
+ content: "\f062";
+ font-family: FontAwesome;
+ padding-left:2px;
+}
+
+th.sorting_desc:after {
+ content: "\f063";
+ font-family: FontAwesome;
+ padding-left:2px;
+}
 .squid-api-data-widgets-export-widget .download-formats {
 	padding-top: 20px;
 }

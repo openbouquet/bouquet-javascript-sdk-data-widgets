@@ -181,7 +181,11 @@
 						},
 						"autoWidth":true
 					});
-
+					if (me.canCreate) {
+						this.$el.find("button.create-job").prop('disabled', false);
+					} else {
+						this.$el.find("button.create-job").prop('disabled', true);
+					}
 					return this;
 				}
 			});
@@ -195,12 +199,6 @@
 			$(this.indexModal.el).addClass(this.modalElementClassName);
 
 			$(this.indexModal.el).find(".modal-dialog").addClass("modal-lg");
-
-			if (this.canCreate) {
-				$(this.indexModal.el).find("button.create-job").prop('disabled', false);
-			} else {
-				$(this.indexModal.el).find("button.create-job").prop('disabled', true);
-			}
 
 			/* bootstrap doesn't remove modal from dom when clicking outside of it.
             Check to make sure it has been removed whenever it isn't displayed.
@@ -457,6 +455,7 @@
 		render: function () {
 			var html = this.template();
 			this.$el.html(html);
+			/*
 			//this.status.unset("message");
 			// activate / disactivate button
 			if (this.widgetAccessible) {
@@ -464,6 +463,7 @@
 			} else {
 				this.$el.find("button").prop("visibility", 'visible');
 			}
+			*/
 		}
 	});
 
