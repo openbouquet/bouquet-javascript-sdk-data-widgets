@@ -15,13 +15,13 @@
         <tbody>
             {{#each jobs}}
                 <tr class="job-item" data-attr={{_id}}>
-                    <td>{{reportName}}<div class="hidden">{{_id}}</div></td>
+                    <td><a href="javascript:void(0);" class="bslink" data-toggle="tooltip" data-placement="right" title="{{_id}}">{{reportName}}</a><div class="hidden">{{_id}}</div></td>
                     <td>
                    		{{#reportSelection}}
                     	{{.}}<br>
                     	{{/reportSelection}}
                     </td>
-                    <td>Format: {{report.format}}<br>Usage period: {{report.period.length}}<br>Frequency: Every {{scheduling.frequency}}<br>Next Delivery: {{nextExecutionDate}}</td>
+                    <td>Status: {{status.type}}<br>Format: {{report.format}}<br>Usage period: {{report.period.length}}<br>Frequency: Every {{scheduling.frequency}}<br>Next Delivery: {{nextExecutionDate}}</td>
                     <td>
                     	{{#emails}}
                     	{{.}}<br>

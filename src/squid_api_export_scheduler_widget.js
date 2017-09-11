@@ -177,7 +177,7 @@
 						paging: false,
 						language: {
 							searchPlaceholder: "Search all fields incl. Schedule Id",
-							"emptyTable": "No report currently scheduled"
+							"emptyTable": "No report is currently scheduled"
 						},
 						"autoWidth":true
 					});
@@ -238,7 +238,7 @@
 					if (squid_api.model.login && squid_api.model.login.get("email")) {
 						email = squid_api.model.login.get("email");
 					}
-					model.set({"report":{"period":{"type":"monthly","length":"Previous month"},"format":"XLS"},"scheduling":{"frequency":"months"},"emails":[email], "nextExecutionDate":moment().add(1,"day")});
+					model.set({"report":{"period":{"type":"monthly","length":"Previous month"},"format":"XLS"},"scheduling":{"frequency":"months"},"emails":[email], "status":"Active", "nextExecutionDate":moment().add(1,"day")});
 					var reportId = config.get("report");
 					for (i = 0; i < widget.reports.length; i++) {
 						if (widget.reports[i].oid === reportId) {

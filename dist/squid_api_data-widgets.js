@@ -217,11 +217,15 @@ function program1(depth0,data) {
   if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + ">\n                    <td>";
+    + ">\n                    <td><a href=\"javascript:void(0);\" class=\"bslink\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"";
+  if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">";
   if (helper = helpers.reportName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.reportName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "<div class=\"hidden\">";
+    + "</a><div class=\"hidden\">";
   if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -231,7 +235,9 @@ function program1(depth0,data) {
   else { helper = (depth0 && depth0.reportSelection); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
   if (!helpers.reportSelection) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                    </td>\n                    <td>Format: "
+  buffer += "\n                    </td>\n                    <td>Status: "
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.status)),stack1 == null || stack1 === false ? stack1 : stack1.type)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "<br>Format: "
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.report)),stack1 == null || stack1 === false ? stack1 : stack1.format)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>Usage period: "
     + escapeExpression(((stack1 = ((stack1 = ((stack1 = (depth0 && depth0.report)),stack1 == null || stack1 === false ? stack1 : stack1.period)),stack1 == null || stack1 === false ? stack1 : stack1.length)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -3576,7 +3582,7 @@ function program2(depth0,data) {
 						paging: false,
 						language: {
 							searchPlaceholder: "Search all fields incl. Schedule Id",
-							"emptyTable": "No report currently scheduled"
+							"emptyTable": "No report is currently scheduled"
 						},
 						"autoWidth":true
 					});
@@ -3637,7 +3643,7 @@ function program2(depth0,data) {
 					if (squid_api.model.login && squid_api.model.login.get("email")) {
 						email = squid_api.model.login.get("email");
 					}
-					model.set({"report":{"period":{"type":"monthly","length":"Previous month"},"format":"XLS"},"scheduling":{"frequency":"months"},"emails":[email], "nextExecutionDate":moment().add(1,"day")});
+					model.set({"report":{"period":{"type":"monthly","length":"Previous month"},"format":"XLS"},"scheduling":{"frequency":"months"},"emails":[email], "status":"Active", "nextExecutionDate":moment().add(1,"day")});
 					var reportId = config.get("report");
 					for (i = 0; i < widget.reports.length; i++) {
 						if (widget.reports[i].oid === reportId) {
