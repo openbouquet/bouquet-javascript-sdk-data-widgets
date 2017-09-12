@@ -3422,6 +3422,21 @@ function program2(depth0,data) {
 		canCreate: false,
 		processData: null,
 
+		fetchAndRender: function () {
+			exportJobs.fetch({
+				success: function (collection, response) {
+					if (response.statusCode === 200) {
+						widget.widgetAccessible = true;
+					} else {
+						widget.widgetAccessible = false;
+					}
+				},
+				error: function () {
+					widget.widgetAccessible = false;
+				}
+			});
+		},
+
 		initialize: function (options) {
 			widget = this;
 
@@ -3490,28 +3505,20 @@ function program2(depth0,data) {
 
 			exportJobs = new ExportJobCollection();
 
+			if (squid_api && squid_api.model && squid_api.model.login && squid_api.model.login.get("accessToken")){
+				this.fetchAndRender();
+			}
 			// listeners
 			this.listenTo(squid_api.model.login, "change:accessToken", this.fetchAndRender);
 			this.listenTo(exportJobs, 'change reset sync', this.render);
 		},
 
 		events: {
-			"click button": "renderIndex"
-		},
-
-		fetchAndRender: function () {
-			exportJobs.fetch({
-				success: function (collection, response) {
-					if (response.statusCode === 200) {
-						widget.widgetAccessible = true;
-					} else {
-						widget.widgetAccessible = false;
-					}
-				},
-				error: function () {
-					widget.widgetAccessible = false;
-				}
-			});
+			"click button": function() {
+				var me=this;
+				//$.when(this.fetchAndRender()).done().then(me.renderIndex());
+				me.renderIndex();
+			}
 		},
 
 		closeModal : function(modal) {
@@ -3677,7 +3684,7 @@ function program2(depth0,data) {
 							type: 'emailsList',
 							message: "Please define one email"
 						};
-						
+
 					} else if (formValues.emails.indexOf(value) !== - 1) {
 						var isEmail = re.test(value);
 						if (!isEmail) {
@@ -3705,8 +3712,8 @@ function program2(depth0,data) {
 						} else if (data[x].instance === "Array") {
 							schema[x].type = "List";
 							schema[x].itemType = "Text";
-                            schema[x].addLabel = "Add Email";
-                            schema[x].errorMessage = "Please check Emails";
+							schema[x].addLabel = "Add Email";
+							schema[x].errorMessage = "Please check Emails";
 							//schema[x].template = _.template('<div><div data-items></div><button type="button" data-action="add">Add Email</button></div>', null, Backbone.Form.templateSettings);
 							schema[x].itemTemplate = _.template('<div><span data-editor></span><button type="button" data-action="remove"><i class="fa fa-trash-o"></i></button></div>', null, Backbone.Form.templateSettings);
 							schema[x].validators = [validateEmails];
@@ -3751,108 +3758,108 @@ function program2(depth0,data) {
 				/* bootstrap doesn't remove modal from dom when clicking outside of it.
                 Check to make sure it has been removed whenever it isn't displayed.
 				 */
-				 $(formModal.el).one('hidden.bs.modal', function () {
-					 me.closeModal(formModal);
-				 });
-				 $(formModal.el).find(".close").one("click", function() {
-					 $(formModal.el).trigger("hidden.bs.modal");
-				 });
-				 $(formModal.el).find(".cancel").one("click", function() {
-					 $(formModal.el).trigger("hidden.bs.modal");
-				 });
+				$(formModal.el).one('hidden.bs.modal', function () {
+					me.closeModal(formModal);
+				});
+				$(formModal.el).find(".close").one("click", function() {
+					$(formModal.el).trigger("hidden.bs.modal");
+				});
+				$(formModal.el).find(".cancel").one("click", function() {
+					$(formModal.el).trigger("hidden.bs.modal");
+				});
 
-				 formModal.on('ok', function () {
-					 // the form is used in create and edit mode.
-					 var errors = widget.formContent.commit({ validate: true });
-					 var emails = widget.formContent.getValue().emails; //Return an array with [old,values,new,values]
-					 if (typeof emails !== 'undefined' && emails.length>0) {
-						 // Take the new values assuming no deletion
-						 emails = widget.formContent.getValue().emails.slice((((widget.formContent.getValue().emails.length - 1) / 2) + 1), widget.formContent.getValue().emails.length);
-						 // computing the separator old new values using the first old value.
-						 if (widget.formContent.getValue().emails.lastIndexOf(widget.formContent.getValue().emails[0]) > 0) {
-							 emails = widget.formContent.getValue().emails.slice(widget.formContent.getValue().emails.lastIndexOf(widget.formContent.getValue().emails[0]), widget.formContent.getValue().emails.length);
-						 }
-					 }
+				formModal.on('ok', function () {
+					// the form is used in create and edit mode.
+					var errors = widget.formContent.commit({ validate: true });
+					var emails = widget.formContent.getValue().emails; //Return an array with [old,values,new,values]
+					if (typeof emails !== 'undefined' && emails.length>0) {
+						// Take the new values assuming no deletion
+						emails = widget.formContent.getValue().emails.slice((((widget.formContent.getValue().emails.length - 1) / 2) + 1), widget.formContent.getValue().emails.length);
+						// computing the separator old new values using the first old value.
+						if (widget.formContent.getValue().emails.lastIndexOf(widget.formContent.getValue().emails[0]) > 0) {
+							emails = widget.formContent.getValue().emails.slice(widget.formContent.getValue().emails.lastIndexOf(widget.formContent.getValue().emails[0]), widget.formContent.getValue().emails.length);
+						}
+					}
 
-					 if (typeof errors === 'undefined' && emails.length>0) {
-						 var values = widget.formContent.getValue();
-						 // manipulate data
-						 values.customerId = squid_api.model.customer.get("id");
-						 values.userId = squid_api.model.login.get("oid");
-	
-						 values.emails = emails;
-	
-						 if (id) {
-							 // EDIT aka PUT /jobs/:id
-							 var job = exportJobs.get(id);
-							 job.attributes.emails = values.emails;
-							 job.unset("errors",{silent: true});
-							 job.set(values, {silent: false});
-							 job.save({}, {
-								 success: function(model) {
-									 me.status.unset("message");
-									 var msg = "";
-									 if (model.get("errors")) {
-										 var errors = model.get("errors");
-										 var sep = "";
-										 for (var x=0; x<errors.length; x++) {
-											 if (errors[x].message) {
-												 msg = msg + errors[x].message + sep;
-											 }
-											 sep = "<br>";
-										 }
-									 } else {
-										 exportJobs.add(model);
-										 $(formModal.el).trigger("hidden.bs.modal");
-										 msg = msg + "Schedule successfully modified";
-									 }
-									 me.status.set("message", msg);
-								 }
-							 });
-						 } else {
-							 // CREATE aka POST /jobs/
-	
-							 var config = squid_api.model.config.toJSON();
-							 values.state = config;
-	
-							 // Getting the accountID (shared code with PQ Counter)
-							 values.projectId = config.project;
-							 values.bookmarkId = config.bookmark;
-							 values.reportId = config.report; //Legacy
-							 values.reportName = config.report;
-							 for (ix = 0; ix < me.reports.length; ix++) {
-								 if (me.reports[ix].oid === config.report) {
-									 values.scheduleName = me.reports[ix].name;
-								 }
-							 }
-							 values.reportSelection = me.reportSelection(config);
-							 values.scheduleName = me.scheduleName(config);
-	
-							 var newJob = new ExportJobModel(values);
-							 newJob.save({}, {
-								 success: function (model) {
-									 var msg = "";
-									 me.status.unset("message");
-									 if (model.get("errors")) {
-										 var errors = model.get("errors");
-										 for (var x in errors) {
-											 if (errors[x].message) {
-												 msg = msg + errors[x].message + "<br>";
-											 }
-										 }
-									 } else {
-										 exportJobs.add(model);
-										 $(formModal.el).trigger("hidden.bs.modal");
-										 msg = msg + "Schedule successfully created";
-									 }
-									 me.status.set("message", msg);
-								 }
-							 });
-						 }
-					 } else if (emails.length === 0) {
-						 $(formModal.el).trigger("hidden.bs.modal");
-					 }
-				 });
+					if (typeof errors === 'undefined' && emails.length>0) {
+						var values = widget.formContent.getValue();
+						// manipulate data
+						values.customerId = squid_api.model.customer.get("id");
+						values.userId = squid_api.model.login.get("oid");
+
+						values.emails = emails;
+
+						if (id) {
+							// EDIT aka PUT /jobs/:id
+							var job = exportJobs.get(id);
+							job.attributes.emails = values.emails;
+							job.unset("errors",{silent: true});
+							job.set(values, {silent: false});
+							job.save({}, {
+								success: function(model) {
+									me.status.unset("message");
+									var msg = "";
+									if (model.get("errors")) {
+										var errors = model.get("errors");
+										var sep = "";
+										for (var x=0; x<errors.length; x++) {
+											if (errors[x].message) {
+												msg = msg + errors[x].message + sep;
+											}
+											sep = "<br>";
+										}
+									} else {
+										exportJobs.add(model);
+										$(formModal.el).trigger("hidden.bs.modal");
+										msg = msg + "Schedule successfully modified";
+									}
+									me.status.set("message", msg);
+								}
+							});
+						} else {
+							// CREATE aka POST /jobs/
+
+							var config = squid_api.model.config.toJSON();
+							values.state = config;
+
+							// Getting the accountID (shared code with PQ Counter)
+							values.projectId = config.project;
+							values.bookmarkId = config.bookmark;
+							values.reportId = config.report; //Legacy
+							values.reportName = config.report;
+							for (ix = 0; ix < me.reports.length; ix++) {
+								if (me.reports[ix].oid === config.report) {
+									values.scheduleName = me.reports[ix].name;
+								}
+							}
+							values.reportSelection = me.reportSelection(config);
+							values.scheduleName = me.scheduleName(config);
+
+							var newJob = new ExportJobModel(values);
+							newJob.save({}, {
+								success: function (model) {
+									var msg = "";
+									me.status.unset("message");
+									if (model.get("errors")) {
+										var errors = model.get("errors");
+										for (var x in errors) {
+											if (errors[x].message) {
+												msg = msg + errors[x].message + "<br>";
+											}
+										}
+									} else {
+										exportJobs.add(model);
+										$(formModal.el).trigger("hidden.bs.modal");
+										msg = msg + "Schedule successfully created";
+									}
+									me.status.set("message", msg);
+								}
+							});
+						}
+					} else if (emails.length === 0) {
+						$(formModal.el).trigger("hidden.bs.modal");
+					}
+				});
 
 			});
 		},
@@ -3868,7 +3875,7 @@ function program2(depth0,data) {
 			} else {
 				this.$el.find("button").prop("visibility", 'visible');
 			}
-			*/
+			 */
 		}
 	});
 
