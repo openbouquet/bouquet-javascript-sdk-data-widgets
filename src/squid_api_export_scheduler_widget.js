@@ -181,9 +181,10 @@
 					this.$el.html(this.template(jsonData));
 
 					this.$el.find(".table").DataTable({
-						paging: false,
-						language: {
-							searchPlaceholder: "Search all fields incl. Schedule Id",
+				        "paging": (jsonData.jobs && jsonData.jobs.length>5)? true: false,
+				        "pageLength": 5,
+						"language": {
+							"searchPlaceholder": "Search all fields incl. Schedule Id",
 							"emptyTable": "No report is currently scheduled"
 						},
 						"autoWidth":true
@@ -245,7 +246,7 @@
 					if (squid_api.model.login && squid_api.model.login.get("email")) {
 						email = squid_api.model.login.get("email");
 					}
-					model.set({"report":{"period":{"type":"monthly","length":"Previous month"},"format":"XLS"},"scheduling":{"frequency":"months"},"emails":[email], "status":"Active", "nextExecutionDate":moment().add(1,"day")});
+					model.set({"status":{"type":"Active"}, "report":{"period":{"type":"monthly","length":"Previous month"},"format":"XLS"},"scheduling":{"frequency":"months"},"emails":[email], "nextExecutionDate":moment().add(1,"day")});
 					var reportId = config.get("report");
 					for (i = 0; i < widget.reports.length; i++) {
 						if (widget.reports[i].oid === reportId) {
@@ -268,6 +269,16 @@
 					var compare = moment(d).startOf('day').utc();
 					if (compare < now) {
 						return err;
+					}
+				};
+				var validatePeriodAndDate = function(value, formValues) {
+					var d = moment(formValues.nextExecutionDate);
+					console.log(typeof(value));
+					if (value instanceof Date && "Previous month" === formValues["report.period.length"] && d.date() < 3) {
+						return {
+							type: 'nextExecutionDate',
+							message: 'Day of month must be after the 2nd'
+						};
 					}
 				};
 
@@ -318,12 +329,16 @@
 								schema[x].options = data[x].options.enumValues;
 								schema[x].validators = ['required'];
 							} else if (data[x].options.enum) {
+								
 								schema[x].type = "Select";
 								schema[x].options = data[x].options.enum;
 								schema[x].validators = ['required'];
 							} else {
 								schema[x].type = "Text";
 							}
+						}
+						if (schema[x].title === "Usage Period:" || schema[x].title === "Next Execution Date:") {
+							schema[x].validators.push(validatePeriodAndDate);
 						}
 					}
 				}
