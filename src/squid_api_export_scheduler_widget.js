@@ -151,7 +151,7 @@
 								var level = "error";
 								var message = "";
 								if (typeof response.statusCode !== 'undefined' && response.statusCode === 401) {
-									message = "Authorization expired, please logon again"
+									message = "Authorization expired, please logon again";
 								} else if (typeof response.statusCode !== 'undefined' && response.statusCode !== 200) {
 									message = "Schedule not running, return code is "+statusCode;
 								} else {
@@ -178,13 +178,13 @@
 									var level = "error";
 									var message = "";
 									if (typeof response.statusCode !== 'undefined' && response.statusCode === 401) {
-										message = "Authorization expired, please logon again"
+										message = "Authorization expired, please logon again";
 									} else if (typeof response.statusCode !== 'undefined' && response.statusCode !== 200) {
 										message = "Schedule not deleted, return code is "+statusCode;
 									} else {
 										message = "Schedule successfully deleted";
 										level = "message";
-										exportJobs.remove(job)
+										exportJobs.remove(job);
 									}
 									me.status.set(level, message);
 						        }
