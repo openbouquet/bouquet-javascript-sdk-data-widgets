@@ -3523,6 +3523,7 @@ function program2(depth0,data) {
 
 		closeModal : function(modal) {
 			this.status.unset("message");
+			this.status.unset("error");
 			modal.close();
 			modal.remove();
 		},
@@ -3548,21 +3549,51 @@ function program2(depth0,data) {
 						var url = me.schedulerApiUri + "/jobs/" + id + "?run=1&access_token=" + squid_api.model.login.get("accessToken");
 						$.ajax({
 							method: "GET",
-							url: url
+							url: url,
+							success: function(response) {
+								me.status.unset("message");
+								me.status.unset("error");
+								var level = "error";
+								var message = "";
+								if (typeof response.statusCode !== 'undefined' && response.statusCode === 401) {
+									message = "Authorization expired, please logon again"
+								} else if (typeof response.statusCode !== 'undefined' && response.statusCode !== 200) {
+									message = "Schedule not running, return code is "+statusCode;
+								} else {
+									message = "Your report is running";
+									level = "message";
+								}
+								me.status.set(level, message);
+					        }
+
 						});
-						me.status.set("message", "Your report is running");
 					},
 					"click .delete-job": function (event) {
 						var id = $(event.target).parents(".job-item").attr("data-attr");
 						var r = confirm("Are you sure you want to delete this schedule?");
 						if (r) {
 							var job = exportJobs.get(id);
-							job.destroy({
-								success: function () {
-									me.status.set("message", "Schedule successfully deleted");
-								}
+							var url = me.schedulerApiUri + "/jobs/" + id + "?access_token=" + squid_api.model.login.get("accessToken");
+							$.ajax({
+								method: "DELETE",
+								url: url,
+								success: function(response) {
+									me.status.unset("message");
+									me.status.unset("error");
+									var level = "error";
+									var message = "";
+									if (typeof response.statusCode !== 'undefined' && response.statusCode === 401) {
+										message = "Authorization expired, please logon again"
+									} else if (typeof response.statusCode !== 'undefined' && response.statusCode !== 200) {
+										message = "Schedule not deleted, return code is "+statusCode;
+									} else {
+										message = "Schedule successfully deleted";
+										level = "message";
+										exportJobs.remove(job)
+									}
+									me.status.set(level, message);
+						        }
 							});
-							exportJobs.remove(job);
 						}
 					}
 				},
@@ -3813,7 +3844,11 @@ function program2(depth0,data) {
 							job.save({}, {
 								success: function(model) {
 									me.status.unset("message");
+									me.status.unset("error");
 									var msg = "";
+									var level ="error";
+									var statusCode = model.get("statusCode");
+									var statusJob = model.get("status");
 									if (model.get("errors")) {
 										var errors = model.get("errors");
 										var sep = "";
@@ -3823,12 +3858,23 @@ function program2(depth0,data) {
 											}
 											sep = "<br>";
 										}
-									} else {
+										me.status.set("error", msg);
+									} else if (typeof statusCode !== 'undefined' && statusCode === 401) {
+										$(formModal.el).trigger("hidden.bs.modal");
+										msg = msg + "Authorization expired, please logon again";
+									} else if (typeof statusCode !== 'undefined' && statusCode !== 200) {
+										$(formModal.el).trigger("hidden.bs.modal");
+										msg = msg + "Schedule not updated, return code is "+statusCode;
+									} else if (statusJob !== null && statusJob.type === "Active") {
 										exportJobs.add(model);
 										$(formModal.el).trigger("hidden.bs.modal");
 										msg = msg + "Schedule successfully modified";
+										level = "message";
+									} else {
+										$(formModal.el).trigger("hidden.bs.modal");
+										msg = msg + "Schedule not updated, status code is "+statusJob;
 									}
-									me.status.set("message", msg);
+									me.status.set(level, msg);
 								}
 							});
 						} else {
@@ -3853,21 +3899,38 @@ function program2(depth0,data) {
 							var newJob = new ExportJobModel(values);
 							newJob.save({}, {
 								success: function (model) {
-									var msg = "";
 									me.status.unset("message");
+									me.status.unset("error");
+									var msg = "";
+									var level ="error";
+									var statusCode = model.get("statusCode");
+									var statusJob = model.get("status");
 									if (model.get("errors")) {
 										var errors = model.get("errors");
-										for (var x in errors) {
+										var sep = "";
+										for (var x=0; x<errors.length; x++) {
 											if (errors[x].message) {
-												msg = msg + errors[x].message + "<br>";
+												msg = msg + errors[x].message + sep;
 											}
+											sep = "<br>";
 										}
-									} else {
+										me.status.set("error", msg);
+									} else if (typeof statusCode !== 'undefined' && statusCode === 401) {
+										$(formModal.el).trigger("hidden.bs.modal");
+										msg = msg + "Authorization expired, please logon again";
+									} else if (typeof statusCode !== 'undefined' && statusCode !== 200) {
+										$(formModal.el).trigger("hidden.bs.modal");
+										msg = msg + "Schedule not created, return code is "+statusCode;
+									} else if (statusJob !== null && statusJob.type === "Active") {
 										exportJobs.add(model);
 										$(formModal.el).trigger("hidden.bs.modal");
 										msg = msg + "Schedule successfully created";
+										level = "message";
+									} else {
+										$(formModal.el).trigger("hidden.bs.modal");
+										msg = msg + "Schedule not created, status code is "+statusJob;
 									}
-									me.status.set("message", msg);
+									me.status.set(level, msg);
 								}
 							});
 						}
