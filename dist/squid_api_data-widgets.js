@@ -3547,10 +3547,10 @@ function program2(depth0,data) {
 					"click .run-job": function (event) {
 						var id = $(event.target).parents(".job-item").attr("data-attr");
 						var url = me.schedulerApiUri + "/jobs/" + id + "?run=1&access_token=" + squid_api.model.login.get("accessToken");
-						$.ajax({
+						var rq =  $.ajax({
 							method: "GET",
 							url: url,
-							success: function(response) {
+							success: function(response, status, xhr) {
 								me.status.unset("message");
 								me.status.unset("error");
 								var level = "error";
@@ -3564,9 +3564,12 @@ function program2(depth0,data) {
 									level = "message";
 								}
 								me.status.set(level, message);
+					        },
+					        error: function(result, status, error) {
+					        	me.status.set("error","Schedule not running, status is "+status);
 					        }
-
 						});
+						me.status.set("message", "Your report is running");
 					},
 					"click .delete-job": function (event) {
 						var id = $(event.target).parents(".job-item").attr("data-attr");
@@ -3577,7 +3580,7 @@ function program2(depth0,data) {
 							$.ajax({
 								method: "DELETE",
 								url: url,
-								success: function(response) {
+								success: function(response, status, xhr) {
 									me.status.unset("message");
 									me.status.unset("error");
 									var level = "error";
@@ -3592,6 +3595,9 @@ function program2(depth0,data) {
 										exportJobs.remove(job);
 									}
 									me.status.set(level, message);
+						        },
+						        error: function(result, status, error) {
+						        	me.status.set("error","Schedule not deleted, status is "+status);
 						        }
 							});
 						}
