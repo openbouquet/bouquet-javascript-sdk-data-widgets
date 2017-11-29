@@ -466,7 +466,7 @@
 									} else if (typeof statusCode !== 'undefined' && statusCode !== 200) {
 										$(formModal.el).trigger("hidden.bs.modal");
 										msg = msg + "Schedule not updated, return code is "+statusCode;
-									} else if (statusJob !== null && statusJob.type === "Active") {
+									} else if (statusJob !== null) {
 										exportJobs.add(model);
 										$(formModal.el).trigger("hidden.bs.modal");
 										msg = msg + "Schedule successfully modified";
