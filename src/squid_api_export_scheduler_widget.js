@@ -142,10 +142,10 @@
 					"click .run-job": function (event) {
 						var id = $(event.target).parents(".job-item").attr("data-attr");
 						var url = me.schedulerApiUri + "/jobs/" + id + "?run=1&access_token=" + squid_api.model.login.get("accessToken");
-						var rq =  $.ajax({
+						$.ajax({
 							method: "GET",
 							url: url,
-							success: function(response, status, xhr) {
+							success: function(response) {
 								me.status.unset("message");
 								me.status.unset("error");
 								var level = "error";
@@ -160,7 +160,7 @@
 								}
 								me.status.set(level, message);
 					        },
-					        error: function(result, status, error) {
+					        error: function(result, status) {
 					        	me.status.set("error","Schedule not running, status is "+status);
 					        }
 						});
@@ -175,7 +175,7 @@
 							$.ajax({
 								method: "DELETE",
 								url: url,
-								success: function(response, status, xhr) {
+								success: function(response) {
 									me.status.unset("message");
 									me.status.unset("error");
 									var level = "error";
@@ -191,7 +191,7 @@
 									}
 									me.status.set(level, message);
 						        },
-						        error: function(result, status, error) {
+						        error: function(result, status) {
 						        	me.status.set("error","Schedule not deleted, status is "+status);
 						        }
 							});
@@ -466,7 +466,7 @@
 									} else if (typeof statusCode !== 'undefined' && statusCode !== 200) {
 										$(formModal.el).trigger("hidden.bs.modal");
 										msg = msg + "Schedule not updated, return code is "+statusCode;
-									} else if (statusJob !== null) {
+									} else if (statusJob !== null && (statusJob.type === "Active" || statusJob.type === "Suspended")) {
 										exportJobs.add(model);
 										$(formModal.el).trigger("hidden.bs.modal");
 										msg = msg + "Schedule successfully modified";
