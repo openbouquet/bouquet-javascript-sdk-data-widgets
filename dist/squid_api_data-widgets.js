@@ -3927,7 +3927,7 @@ function program2(depth0,data) {
 									} else if (typeof statusCode !== 'undefined' && statusCode !== 200) {
 										$(formModal.el).trigger("hidden.bs.modal");
 										msg = msg + "Schedule not created, return code is "+statusCode;
-									} else if (statusJob !== null && statusJob.type === "Active") {
+									} else if (statusJob !== null && (statusJob.type === "Active" || statusJob.type === "Suspended")) {
 										exportJobs.add(model);
 										$(formModal.el).trigger("hidden.bs.modal");
 										msg = msg + "Schedule successfully created";
