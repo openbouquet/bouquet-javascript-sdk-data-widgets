@@ -4850,9 +4850,13 @@ function program2(depth0,data) {
                                 var rvalue = parseFloat(values[compareIndex]);
                           		if (typeof values[i] === 'string' || values[i] instanceof String) {
                            			lvalue = parseFloat(values[i].replace(new RegExp(',', 'g'),''));
-                                    rvalue = parseFloat(values[compareIndex].replace(new RegExp(',', 'g'),''));
+                           			if (values[compareIndex] !== null) {
+                           				rvalue = parseFloat(values[compareIndex].replace(new RegExp(',', 'g'),''));
+                           			}
                         		}
-                                kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
+                          		if (values[compareIndex] !== null) {
+                          			kpi.growth = (((lvalue - rvalue) / rvalue) * 100).toFixed(2);
+                          		}
                                 if (kpi.growth > 0) {
                                     kpi.compareTextColor = 'text-success';
                                     kpi.compareClass = 'glyphicon-arrow-up';
