@@ -1449,7 +1449,10 @@ function program2(depth0,data) {
 				for (ix=0; ix<row.length; ix++) {
 					var item1 = row[ix];
 					var idx = Math.floor((ix-offset)/barData.metrics.length);
-					if (cols[ix].role === "DOMAIN" && item1) {
+					if (cols[ix].role === "DOMAIN") {
+						if ( item1 === null) {
+							item1 = "";
+						}
 						if (yAxis1.length === 0) {
 							yAxis1 += item1;
 						} else {
@@ -2156,6 +2159,7 @@ function program2(depth0,data) {
 		displayTableHeader : function(selector, arr) {
 			//First clean old tooltips if any
 			var tooltips = $("div[role='tooltip']");
+			var it = 0;
 			for (it=0;it<tooltips.length;it++) {
 				tooltips[it].remove();
 			}

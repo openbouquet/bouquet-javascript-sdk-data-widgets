@@ -262,6 +262,7 @@
 		displayTableHeader : function(selector, arr) {
 			//First clean old tooltips if any
 			var tooltips = $("div[role='tooltip']");
+			var it = 0;
 			for (it=0;it<tooltips.length;it++) {
 				tooltips[it].remove();
 			}

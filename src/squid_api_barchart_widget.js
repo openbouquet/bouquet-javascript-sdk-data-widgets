@@ -121,7 +121,10 @@
 				for (ix=0; ix<row.length; ix++) {
 					var item1 = row[ix];
 					var idx = Math.floor((ix-offset)/barData.metrics.length);
-					if (cols[ix].role === "DOMAIN" && item1) {
+					if (cols[ix].role === "DOMAIN") {
+						if ( item1 === null) {
+							item1 = "";
+						}
 						if (yAxis1.length === 0) {
 							yAxis1 += item1;
 						} else {
