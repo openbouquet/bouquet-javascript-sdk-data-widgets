@@ -132,6 +132,17 @@
 					this.listenTo(exportJobs, "reset change remove sync", this.render);
 				},
 				events: {
+					"click .bslink": function () {
+						var id = $(event.target).attr("title");
+						var clipboard = new Clipboard("a[title='"+id+"']"); 
+						clipboard.on('success', function(e) {
+							console.info('Action:', e.action);
+							console.info('Text:', e.text);
+							console.info('Trigger:', e.trigger);
+							me.status.set("displayTime", 1000);
+							me.status.set("message", "Job's id "+ id +" copied to clipboard");
+						});
+					},
 					"click .create-job": function () {
 						widget.renderForm();
 					},

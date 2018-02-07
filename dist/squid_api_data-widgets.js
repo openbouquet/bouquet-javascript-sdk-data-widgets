@@ -221,6 +221,10 @@ function program1(depth0,data) {
   if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
+    + "\" data-clipboard-text=\"";
+  if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
     + "\">";
   if (helper = helpers.reportName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.reportName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
@@ -3546,6 +3550,17 @@ function program2(depth0,data) {
 					this.listenTo(exportJobs, "reset change remove sync", this.render);
 				},
 				events: {
+					"click .bslink": function () {
+						var id = $(event.target).attr("title");
+						var clipboard = new Clipboard("a[title='"+id+"']"); 
+						clipboard.on('success', function(e) {
+							console.info('Action:', e.action);
+							console.info('Text:', e.text);
+							console.info('Trigger:', e.trigger);
+							me.status.set("displayTime", 1000);
+							me.status.set("message", "Job's id "+ id +" copied to clipboard");
+						});
+					},
 					"click .create-job": function () {
 						widget.renderForm();
 					},
