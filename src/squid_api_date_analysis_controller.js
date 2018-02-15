@@ -7,7 +7,35 @@
     var View = squid_api.controller.AnalysisController.extend({
         analysis : null,
         config : null,
+        dimension: null,
+        domain: null,
 
+        loadChosenDimensions: function(chosenDimensions) {
+			var dfd = new $.Deferred();
+			var me = this;
+			if (chosenDimensions) {
+				var dimensions = [];
+                for (var j=0; j<chosenDimensions.length; j++) {
+                    var dimensionflatten =  chosenDimensions[j];
+                    me.dimension = dimensionflatten.replace(/.*'([^']+)'/, "$1");
+                    me.domain = dimensionflatten.replace(/.*'([^']+)'\.@'[^']+'$/, "$1");
+                    squid_api.getCustomer().then(function(customer) {
+                        customer.get("projects").load(me.config.get("project")).then(function(project) {
+                            project.get("domains").load(me.domain).then(function(domain) {
+                                domain.get("dimensions").load(me.dimension).then(function(dimension) {
+                                	dimensions.push(dimension);
+                                	if (dimensions.length === chosenDimensions.length) {
+                        				dfd.resolve(dimensions);
+                                	}
+                                });
+                            });
+                        });
+                    });
+                 }
+			}
+			return dfd;
+        },
+        
         refreshAnalysis : function(silent) {
             var changed = false;
             var a = this.analysis;
@@ -35,68 +63,64 @@
             });
             changed = changed || a.hasChanged();
             var selection = this.config.get("selection");
-            if (selection) {
-                var dateFound = false;
-                var chosenDimensions = config.get("chosenDimensions");
-                for (var i=0; i<selection.facets.length; i++) {
-                    // search for date facet within chosenDimensions
-                    var facet = selection.facets[i];
-                    var id = facet.id;
-                    if (chosenDimensions) {
-                        var existsInChosen = chosenDimensions.includes(id);
-                        if (config.get("chosenDimensions").length > 0) {
-                            if (! existsInChosen && facet.dimension.valueType === "DATE" && facet.dimension.valueType === "CONTINUOUS") {
-                                this.setFacets(a, facet.id);
-                                dateFound = true;
-                                break;
-                            }
+            var me = this;
+            var chosenDimensions = config.get("chosenDimensions");
+            var dimensions = this.loadChosenDimensions(chosenDimensions);
+            var indexToRemoveFromChosen = null;
+            $.when(dimensions).done(function(dimensions)  {
+                if (selection) {
+                    var dateFound = false;
+                    var id = config.get("period")[config.get("domain")];
+                    if (dimensions) {
+                        for (var j=0; j<dimensions.length; j++) {
+                          	var expression = dimensions[j].get("expression");
+                        	if (dimensions[j].get("oid") === id.replace(/.*'([^']+)'/, "$1")) {
+                        		dateFound = true;
+                        		indexToRemoveFromChosen = j;
+                        	} else if (Array.isArray(expression.references)) {
+                        		if (expression.references.length === 1) {
+                        			if (expression.references[0].reference.dimensionId === id.replace(/.*'([^']+)'/, "$1")) {
+                        				dateFound = true;
+                                		indexToRemoveFromChosen = j;
+                        			}
+                        		}
+                        	}
                         }
                     }
+                    //
+                    me.setFacets(a, id, indexToRemoveFromChosen);
+                 }
+                changed = changed || a.hasChanged();
+                a.setMetrics(config.get("chosenMetrics"), silent);
+                changed = changed || a.hasChanged();
+                a.setSelection(config.get("selection"), silent);
+                changed = changed || a.hasChanged();
+                a.set({
+                    "limit" : config.get("limit")
+                }, {
+                    "silent" : silent
+                });
+                changed = changed || a.hasChanged();
+                a.set({
+                    "rollups" : config.get("rollups")
+                }, {
+                    "silent" : silent
+                });
+                changed = changed || a.hasChanged();
+                a.set({
+                    "orderBy" : config.get("orderBy")
+                }, {
+                    "silent" : silent
+                });
+                if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
+                	a.get("orderBy").splice(indexToRemoveFromChosen, 1);
                 }
-                if (! dateFound) {
-                    // if no date is found, use the first one found
-                    for (var ix=0; ix<selection.facets.length; ix++) {
-                        if (selection.facets[ix].dimension.type === "CONTINUOUS" && selection.facets[ix].dimension.valueType === "DATE") {
-                            var indexToRemoveFromChosen = null;
-                            if (chosenDimensions) {
-                                var chosenIndex = chosenDimensions.indexOf(selection.facets[ix].id);
-                                if (chosenDimensions && (chosenIndex > -1)) {
-                                    indexToRemoveFromChosen = chosenIndex;
-                                }
-                            }
-                            this.setFacets(a, selection.facets[ix].id, indexToRemoveFromChosen);
-                            break;
-                        }
-                    }
-                }
-            }
-            changed = changed || a.hasChanged();
-            a.setMetrics(config.get("chosenMetrics"), silent);
-            changed = changed || a.hasChanged();
-            a.setSelection(config.get("selection"), silent);
-            changed = changed || a.hasChanged();
-            a.set({
-                "limit" : config.get("limit")
-            }, {
-                "silent" : silent
-            });
-            changed = changed || a.hasChanged();
-            a.set({
-                "rollups" : config.get("rollups")
-            }, {
-                "silent" : silent
-            });
-            changed = changed || a.hasChanged();
-            a.set({
-                "orderBy" : config.get("orderBy")
-            }, {
-                "silent" : silent
-            });
-            changed = changed || a.hasChanged();
+                changed = changed || a.hasChanged();
 
-            if (changed === true) {
-                this.onChangeHandler(this.analysis);
-            }
+                if (changed === true) {
+                    me.onChangeHandler(me.analysis);
+                }
+            });
         },
 
         setFacets: function(a, id, indexToRemoveFromChosen) {
@@ -114,7 +138,7 @@
 
                 // if current date is in dimension list, remove it
                 if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
-                    dimensions.splice(indexToRemoveFromChosen, 1);
+                    var dimension = dimensions.splice(indexToRemoveFromChosen, 1);
                 }
                 a.setFacets(dimensions, {silent : true});
                 var facets = a.get("facets");
