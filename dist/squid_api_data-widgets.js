@@ -2971,9 +2971,10 @@ function program2(depth0,data) {
                 }, {
                     "silent" : silent
                 });
-                if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
+                //with this code, sort doesn't work anymore in data table for date columns
+                /*if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
                 	a.get("orderBy").splice(indexToRemoveFromChosen, 1);
-                }
+                }*/
                 changed = changed || a.hasChanged();
 
                 if (changed === true) {
