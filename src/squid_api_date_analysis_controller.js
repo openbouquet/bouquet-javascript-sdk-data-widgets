@@ -19,18 +19,35 @@
                     var dimensionflatten =  chosenDimensions[j];
                     me.dimension = dimensionflatten.replace(/.*'([^']+)'/, "$1");
                     me.domain = dimensionflatten.replace(/.*'([^']+)'\.@'[^']+'$/, "$1");
-                    squid_api.getCustomer().then(function(customer) {
-                        customer.get("projects").load(me.config.get("project")).then(function(project) {
-                            project.get("domains").load(me.domain).then(function(domain) {
-                                domain.get("dimensions").load(me.dimension).then(function(dimension) {
-                                	dimensions.push(dimension);
-                                	if (dimensions.length === chosenDimensions.length) {
-                        				dfd.resolve(dimensions);
-                                	}
-                                });
-                            });
-                        });
-                    });
+                    if (dimensionflatten.startsWith("@'"+me.domain+"'") == false) {
+	                    squid_api.getCustomer().then(function(customer) {
+	                        customer.get("projects").load(me.config.get("project")).then(function(project) {
+	                            project.get("relations").load(me.domain).then(function(relation) {
+		                            project.get("domains").load(relation.get("rightId").domainId).then(function(domain) {
+		                                domain.get("dimensions").load(me.dimension).then(function(dimension) {
+		                                	dimensions.push(dimension);
+		                                	if (dimensions.length === chosenDimensions.length) {
+		                        				dfd.resolve(dimensions);
+		                                	}
+		                                });
+		                            });
+	                            });
+	                        });
+	                    });                  
+	                } else {
+	                    squid_api.getCustomer().then(function(customer) {
+	                        customer.get("projects").load(me.config.get("project")).then(function(project) {
+	                            project.get("domains").load(me.domain).then(function(domain) {
+	                                domain.get("dimensions").load(me.dimension).then(function(dimension) {
+	                                	dimensions.push(dimension);
+	                                	if (dimensions.length === chosenDimensions.length) {
+	                        				dfd.resolve(dimensions);
+	                                	}
+	                                });
+	                            });
+	                        });
+	                    });
+                    }
                  }
 			}
 			return dfd;
