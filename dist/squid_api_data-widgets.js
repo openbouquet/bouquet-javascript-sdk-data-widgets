@@ -2878,7 +2878,7 @@ function program2(depth0,data) {
                     var dimensionflatten =  chosenDimensions[j];
                     me.dimension = dimensionflatten.replace(/.*'([^']+)'/, "$1");
                     me.domain = dimensionflatten.replace(/.*'([^']+)'\.@'[^']+'$/, "$1");
-                    if (dimensionflatten.startsWith("@'"+me.domain+"'") == false) {
+                    if (dimensionflatten.startsWith("@'"+me.domain+"'") === false) {
 	                    squid_api.getCustomer().then(function(customer) {
 	                        customer.get("projects").load(me.config.get("project")).then(function(project) {
 	                            project.get("relations").load(me.domain).then(function(relation) {
@@ -3015,7 +3015,7 @@ function program2(depth0,data) {
 
                 // if current date is in dimension list, remove it
                 if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
-                    var dimension = dimensions.splice(indexToRemoveFromChosen, 1);
+                    dimensions.splice(indexToRemoveFromChosen, 1);
                 }
                 a.setFacets(dimensions, {silent : true});
                 var facets = a.get("facets");
@@ -4238,6 +4238,8 @@ function program2(depth0,data) {
             for (var i=0; i<this.formats.length;i++) {
                 if (this.formats[i].format === t.value) {
                     this.selectedFormatIndex = i;
+                } else if (this.formats[i].selected === true){ 
+                	this.formats[i].selected = false;
                 }
             }
             var input = $(this.viewPort).find('input[name="compression"]');

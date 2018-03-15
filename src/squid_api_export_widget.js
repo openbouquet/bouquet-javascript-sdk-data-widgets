@@ -200,6 +200,8 @@
             for (var i=0; i<this.formats.length;i++) {
                 if (this.formats[i].format === t.value) {
                     this.selectedFormatIndex = i;
+                } else if (this.formats[i].selected === true){ 
+                	this.formats[i].selected = false;
                 }
             }
             var input = $(this.viewPort).find('input[name="compression"]');
