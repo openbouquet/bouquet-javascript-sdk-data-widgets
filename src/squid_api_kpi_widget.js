@@ -56,6 +56,7 @@
                 results = this.model.get("results");
                 if (results) {
                     var cols = results.cols;
+                    var hasGrowth=false;
 
                     // resolve compareTo columns
                     var compareMap = {};
@@ -66,6 +67,8 @@
                             // key = col oid, value = compare col index
                             compareMap[colA.id] = i1;
                             compareIdSuffix = colA.id.endsWith("_compare")?"_compare":"";
+                        } else if (colA.originType === "GROWTH") {
+                        	hasGrowth = true;
                         }
                     }
 
@@ -90,9 +93,23 @@
 									}
 								}
 							}
-                           kpi.unit = "";
+							kpi.unit = "";
                             kpi.name = col.name;
-                            if (typeof kpi.compareToValue !== "undefined" && kpi.compareToValue !== null) {
+                            if (hasGrowth) { 
+                            	kpi.growth = values[compareIndex+1];
+                            	kpi.growth = kpi.growth === null? 0:kpi.growth.replace("%","");
+                                if (kpi.growth > 0) {
+                                    kpi.compareTextColor = 'text-success';
+                                    kpi.compareClass = 'glyphicon-arrow-up';
+                                }  else if (kpi.growth < 0) {
+                                    kpi.compareTextColor = 'text-danger';
+                                    kpi.compareClass = 'glyphicon-arrow-down';
+                                } else {
+                                    kpi.growth = 0;
+                                    kpi.compareTextColor = 'text-info';
+                                    kpi.compareClass = 'glyphicon-transfer';
+                                }                            	
+                            } else if (typeof kpi.compareToValue !== "undefined" && kpi.compareToValue !== null) {
                                 var lvalue = parseFloat(values[i]);
                                 var rvalue = parseFloat(values[compareIndex]);
                           		if (typeof values[i] === 'string' || values[i] instanceof String) {
