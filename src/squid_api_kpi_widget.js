@@ -97,8 +97,8 @@
 							kpi.name = col.name;
 							if (hasGrowth) { 
 								kpi.growth = values[compareIndex+1];
-								kpi.growth = kpi.growth === null? 0:kpi.growth.replace("%","");
-								var localGrowth = kpi.growth.replace(" ","");
+								kpi.growth = kpi.growth === null? "0":kpi.growth.replace("%","").replace(" ","");
+								var localGrowth = kpi.growth;
 								var idxComma = localGrowth.indexOf(",");
 								var idxdot = localGrowth.indexOf(".");
 								if (idxdot < idxComma && idxdot > -1) {
