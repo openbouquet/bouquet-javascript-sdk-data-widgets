@@ -5855,6 +5855,7 @@ function program2(depth0,data) {
                             }
                         }
                     }
+                    me.render();
                 });
             }
         },

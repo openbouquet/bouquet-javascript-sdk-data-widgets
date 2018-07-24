@@ -9,6 +9,11 @@
 .squid-api-modelinfo-internal-view table tr td:nth-child(1) {
     font-weight: bold;
 }
+
+.squid-api-modelinfo-internal-view table tr td:nth-child(2) {
+  white-space: pre-line;
+  text-align: justify;
+}
 .squid-api-modelinfo-internal-view h4 {
     padding: 4px;
     margin-top: 0px;
