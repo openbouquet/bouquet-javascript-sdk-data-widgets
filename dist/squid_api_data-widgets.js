@@ -7702,7 +7702,7 @@ function program2(depth0,data) {
 	                        if (this.results.rows[0]) {
 	                            var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
 	                            var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
-	                            for (var currentDay = startDate; currentDay.isBefore(endDate); startDate.add('days', 1)) {
+	                            for (var currentDay = startDate; currentDay.isAfter(endDate) === false; startDate.add('days', 1)) {
 	                                if (! toRemove.includes(i)) {
 	                                    var currentDate = currentDay.format('YYYY-MM-DD');
 	                                    var dataExists = false;
