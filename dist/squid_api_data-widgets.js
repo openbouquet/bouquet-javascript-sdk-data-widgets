@@ -1,1146 +1,643 @@
 this["squid_api"] = this["squid_api"] || {};
 this["squid_api"]["template"] = this["squid_api"]["template"] || {};
 
-this["squid_api"]["template"]["squid_api_barchart_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, self=this;
+this["squid_api"]["template"]["squid_api_barchart_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    return " display: none; ";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program1(depth0,data) {
-  
-  
-  return " display: none; ";
-  }
+  return "<div id=\"bar_chart\" class=\"squid-api-data-widgets-bar-chart\">\n    <div id=\"re-run\" style=\""
+    + ((stack1 = helpers.unless.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.isInCache : depth0),{"name":"unless","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\">\n        <div class=\"reactiveMessage\">\n            <span>\n                <i class=\"fa fa-refresh\"></i><br>\n                Please manually refresh your analysis\n            </span>\n        </div>\n    </div>\n</div>\n";
+},"useData":true});
 
-  buffer += "<div id=\"bar_chart\" class=\"squid-api-data-widgets-bar-chart\">\n    <div id=\"re-run\" style=\"";
-  stack1 = helpers.unless.call(depth0, (depth0 && depth0.isInCache), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\">\n        <div class=\"reactiveMessage\">\n            <span>\n                <i class=\"fa fa-refresh\"></i><br>\n                Please manually refresh your analysis\n            </span>\n        </div>\n    </div>\n</div>\n";
-  return buffer;
-  });
+this["squid_api"]["template"]["squid_api_basic_displaytype_selector"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-this["squid_api"]["template"]["squid_api_basic_displaytype_selector"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  return "    	<li data-content=\""
+    + alias4(((helper = (helper = helpers.view || (depth0 != null ? depth0.view : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"view","hash":{},"data":data}) : helper)))
+    + "\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isActive : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "><i class=\"fa "
+    + alias4(((helper = (helper = helpers.icon || (depth0 != null ? depth0.icon : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"icon","hash":{},"data":data}) : helper)))
+    + " fa-2x\"></i></li>\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    return "class=\"active\"";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n    	<li data-content=\"";
-  if (helper = helpers.view) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.view); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.isActive), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "><i class=\"fa ";
-  if (helper = helpers.icon) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.icon); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " fa-2x\"></i></li>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return "class=\"active\"";
-  }
+  return "<ul class=\"squid-api-data-widgets-displaytype-selector\">\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</div>";
+},"useData":true});
 
-  buffer += "<ul class=\"squid-api-data-widgets-displaytype-selector\">\n    ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>";
-  return buffer;
-  });
+this["squid_api"]["template"]["squid_api_datatable_widget"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-this["squid_api"]["template"]["squid_api_datatable_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
-
-
-  buffer += "<div class='sq-loading' style='display: none; position:absolute; width:100%; top:40%; z-index: 1;'>\r\n	<div class=\"spinner\">\r\n	<div class=\"rect5\"></div>\r\n	<div class=\"rect4\"></div>\r\n	<div class=\"rect3\"></div>\r\n	<div class=\"rect2\"></div>\r\n	<div class=\"rect1\"></div>\r\n	<div class=\"rect2\"></div>\r\n	<div class=\"rect3\"></div>\r\n	<div class=\"rect4\"></div>\r\n	<div class=\"rect5\"></div>\r\n	</div>\r\n</div>\r\n<div id=\"squid-api-data-widgets-data-table\">\r\n	<table class=\"sq-table\">\r\n		<thead>\r\n			<tr></tr>\r\n		</thead>\r\n		<tbody></tbody>\r\n	</table>\r\n	<div id=\"error\"></div>\r\n	<div id=\"stale\">\r\n		<div class=\"reactiveMessage\"><span><i class=\"fa fa-table\"></i><br>\r\n			";
-  if (helper = helpers.staleMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.staleMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\r\n		</span></div>\r\n	</div>\r\n	<div id=\"re-run\" style=\"display: none;\">\r\n		<div class=\"reactiveMessage\"><span><i class=\"fa fa-refresh\"></i><br>\r\n        	";
-  if (helper = helpers.reRunMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.reRunMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+  return "<div class='sq-loading' style='display: none; position:absolute; width:100%; top:40%; z-index: 1;'>\r\n	<div class=\"spinner\">\r\n	<div class=\"rect5\"></div>\r\n	<div class=\"rect4\"></div>\r\n	<div class=\"rect3\"></div>\r\n	<div class=\"rect2\"></div>\r\n	<div class=\"rect1\"></div>\r\n	<div class=\"rect2\"></div>\r\n	<div class=\"rect3\"></div>\r\n	<div class=\"rect4\"></div>\r\n	<div class=\"rect5\"></div>\r\n	</div>\r\n</div>\r\n<div id=\"squid-api-data-widgets-data-table\">\r\n	<table class=\"sq-table\">\r\n		<thead>\r\n			<tr></tr>\r\n		</thead>\r\n		<tbody></tbody>\r\n	</table>\r\n	<div id=\"error\"></div>\r\n	<div id=\"stale\">\r\n		<div class=\"reactiveMessage\"><span><i class=\"fa fa-table\"></i><br>\r\n			"
+    + alias4(((helper = (helper = helpers.staleMessage || (depth0 != null ? depth0.staleMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"staleMessage","hash":{},"data":data}) : helper)))
+    + "\r\n		</span></div>\r\n	</div>\r\n	<div id=\"re-run\" style=\"display: none;\">\r\n		<div class=\"reactiveMessage\"><span><i class=\"fa fa-refresh\"></i><br>\r\n        	"
+    + alias4(((helper = (helper = helpers.reRunMessage || (depth0 != null ? depth0.reRunMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"reRunMessage","hash":{},"data":data}) : helper)))
     + "\r\n		</span></div>\r\n		<span>\r\n	</div>\r\n	<div class=\"footer\">\r\n		<blockquote id=\"total\">\r\n			Showing <span id=\"count-entries\"></span> of <span id=\"total-entries\"></span> entries\r\n		</blockquote>\r\n		<blockquote id=\"no-data\">\r\n			No data found\r\n		</blockquote>\r\n		<div id=\"pagination\"></div>\r\n	</div>\r\n</div>\r\n";
-  return buffer;
-  });
+},"useData":true});
 
-this["squid_api"]["template"]["squid_api_dimension_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+this["squid_api"]["template"]["squid_api_dimension_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n	<div class=\"information\">";
-  if (helper = helpers.noDataMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.noDataMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+  return "	<div class=\"information\">"
+    + container.escapeExpression(((helper = (helper = helpers.noDataMessage || (depth0 != null ? depth0.noDataMessage : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"noDataMessage","hash":{},"data":data}) : helper)))
     + "</div>\n";
-  return buffer;
-  }
+},"3":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program3(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n<ul class=\"sortable\">\n    ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.chosenDimensions), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</ul>\n";
-  return buffer;
-  }
-function program4(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n        <li class=\"item\" data-content=\""
-    + escapeExpression(((stack1 = (depth0 && depth0.id)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+  return "<ul class=\"sortable\">\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.chosenDimensions : depth0),{"name":"each","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</ul>\n";
+},"4":function(container,depth0,helpers,partials,data) {
+    var alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "        <li class=\"item\" data-content=\""
+    + alias2(alias1((depth0 != null ? depth0.id : depth0), depth0))
     + "\"><i class=\"fa fa-ellipsis-v\"></i>"
-    + escapeExpression(((stack1 = (depth0 && depth0.value)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</li>\n    ";
-  return buffer;
-  }
+    + alias2(alias1((depth0 != null ? depth0.value : depth0), depth0))
+    + "</li>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-  buffer += "<div class=\"squid-api-data-widgets-dimension-widget\">\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.noChosenDimensions), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n\n\n";
-  return buffer;
-  });
+  return "<div class=\"squid-api-data-widgets-dimension-widget\">\n"
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.noChosenDimensions : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
+    + "</div>\n\n\n";
+},"useData":true});
 
-this["squid_api"]["template"]["squid_api_displaytype_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+this["squid_api"]["template"]["squid_api_displaytype_selector_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n    	<li data-content=\"";
-  if (helper = helpers.view) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.view); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.isActive), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "><i class=\"fa ";
-  if (helper = helpers.icon) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.icon); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " fa-2x\"></i></li>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return "class=\"active\"";
-  }
+  return "    	<li data-content=\""
+    + alias4(((helper = (helper = helpers.view || (depth0 != null ? depth0.view : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"view","hash":{},"data":data}) : helper)))
+    + "\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isActive : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "><i class=\"fa "
+    + alias4(((helper = (helper = helpers.icon || (depth0 != null ? depth0.icon : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"icon","hash":{},"data":data}) : helper)))
+    + " fa-2x\"></i></li>\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    return "class=\"active\"";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-  buffer += "<ul class=\"squid-api-data-widgets-displaytype-selector\">\n    ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_domain_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\r\n    <select class=\"sq-select form-control\">\r\n        ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n    </select>\r\n";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n            <option value=\"";
-  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\r\n                ";
-  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\r\n            </option>\r\n        ";
-  return buffer;
-  }
-function program3(depth0,data) {
-  
-  
-  return "selected";
-  }
-
-function program5(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n    <!-- just display filter name -->\r\n    <label>";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</label>\r\n    <span>-</span>\r\n";
-  return buffer;
-  }
-
-  buffer += "<div class=\"squid-api-data-widgets-domain-selector\">\r\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(5, program5, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</div>\r\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_export_scheduler_index_view"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper, options;
-  buffer += "\n                <tr class=\"job-item\" data-attr=";
-  if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + ">\n                    <td><a href=\"javascript:void(0);\" class=\"bslink\" data-toggle=\"tooltip\" data-placement=\"right\" title=\"";
-  if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clipboard-text=\"";
-  if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">";
-  if (helper = helpers.reportName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.reportName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</a><div class=\"hidden\">";
-  if (helper = helpers._id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0._id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</div></td>\n                    <td>\n                   		";
-  options={hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data}
-  if (helper = helpers.reportSelection) { stack1 = helper.call(depth0, options); }
-  else { helper = (depth0 && depth0.reportSelection); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
-  if (!helpers.reportSelection) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data}); }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                    </td>\n                    <td>Status: "
-    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.status)),stack1 == null || stack1 === false ? stack1 : stack1.type)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Format: "
-    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.report)),stack1 == null || stack1 === false ? stack1 : stack1.format)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Usage period: "
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = (depth0 && depth0.report)),stack1 == null || stack1 === false ? stack1 : stack1.period)),stack1 == null || stack1 === false ? stack1 : stack1.length)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Frequency: Every "
-    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.scheduling)),stack1 == null || stack1 === false ? stack1 : stack1.frequency)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Next Delivery: ";
-  if (helper = helpers.nextExecutionDate) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.nextExecutionDate); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n                    <td>\n                    	";
-  options={hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data}
-  if (helper = helpers.emails) { stack1 = helper.call(depth0, options); }
-  else { helper = (depth0 && depth0.emails); stack1 = typeof helper === functionType ? helper.call(depth0, options) : helper; }
-  if (!helpers.emails) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data}); }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n                    </td>\n                    <td><button class=\"btn btn-secondary run-job\"><i class=\"fa fa-play\"></i></button></td>\n                    <td><button class=\"btn btn-secondary edit-job\"><i class=\"fa fa-pencil-square-o\"></i></button></td>\n                    <td><button class=\"btn btn-secondary delete-job\"><i class=\"fa fa-trash-o\"></i></button></td>\n                </tr>\n            ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "";
-  buffer += "\n                    	"
-    + escapeExpression((typeof depth0 === functionType ? depth0.apply(depth0) : depth0))
-    + "<br>\n                    	";
-  return buffer;
-  }
-
-  buffer += "<div class=\"squid-api-export-scheduler-index-view table-responsive\">\n    <button class=\"btn btn-default create-job\">New Schedule</button>\n    <table class=\"table table-bordered table-striped table-hover\">\n        <thead>\n            <tr>\n                <th class=\"col-xs-1\">Report</th>\n                <th class=\"col-xs-3\">Report Settings</th>\n                <th class=\"col-xs-3\">Schedule Settings</th>\n                <th class=\"col-xs-2\">Delivered to</th>\n                <th class=\"col-xs-1\">Run Now</th>\n                <th class=\"col-xs-1\">Edit</th>\n                <th class=\"col-xs-1\">Delete</th>\n            </tr>\n        </thead>\n        <tbody>\n            ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.jobs), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </tbody>\n    </table>\n</div>\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_export_scheduler_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  
-
-
-  return "<div class=\"squid-api-export-scheduler-widget\">\r\n	<button class=\"btn btn-default\">My Schedule <i class=\"fa fa-clock-o\"></i></button>\r\n</div>\r\n";
-  });
-
-this["squid_api"]["template"]["squid_api_export_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n		<div class=\"panel panel-default filter-panel\">\r\n			<div class=\"panel-heading\">\r\n				<button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n				data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\" aria-hidden=\"true\" aria-expanded=\"false\">\r\n					<i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n				</button>\r\n				<h4 class=\"panel-title\" id=\"myModalLabel\">Export</h4>\r\n			</div>\r\n			<div class=\"panel-body\">\r\n				<button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\" aria-expanded=\"false\"></button>\r\n		";
-  return buffer;
-  }
-
-function program3(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n			<span class=\"type\">\r\n				<input type=\"radio\" name=\"format\" value=\"";
-  if (helper = helpers.format) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.format); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "> <span class=\"type-name\">";
-  if (helper = helpers.format) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.format); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</span>\r\n			</span>\r\n			";
-  return buffer;
-  }
-function program4(depth0,data) {
-  
-  
-  return "checked";
-  }
-
-function program6(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\r\n			<div style=\"display: inline-block;\">\r\n				<span class=\"type\">\r\n					<label>Compression: </label> <input type=\"checkbox\" name=\"compression\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.compression), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "/> <span class=\"type-name\">gzip</span>\r\n				</span>\r\n			</div>\r\n			";
-  return buffer;
-  }
-
-function program8(depth0,data) {
-  
-  
-  return "\r\n		<div id=\"metricSelector\">\r\n		</div>\r\n		";
-  }
-
-function program10(depth0,data) {
-  
-  
-  return "\r\n		<div id=\"dimensionSelector\">\r\n		</div>\r\n		<div id=\"metricSelector\">\r\n		</div>\r\n		";
-  }
-
-function program12(depth0,data) {
-  
-  
-  return "\r\n		<div>\r\n			<a id=\"view-sql\" class=\"btn btn-default\" target=\"_blank\">View SQL</a>\r\n		</div>\r\n		";
-  }
-
-function program14(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n		<div id=\"curl-view\">\r\n            <br><hr>\r\n			Need to automate exports? Use the <a id=\"curlbtn\">shell commands</a>.\r\n			<div id=\"curl\">\r\n				<p>Sample code to download the analysis results using curl shell command.</p>\r\n				<b>1 - get an authentication token</b>\r\n				<p>replace the 'login' and 'password' fields in the following snippet</p>\r\n				<pre class=\"curl\">curl '";
-  if (helper = helpers.apiURL) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.apiURL); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "/auth-token' -H 'Origin: ";
-  if (helper = helpers.origin) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.origin); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "' -H 'Accept-Encoding: gzip,deflate' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: */*' -H 'Cache-Control: no-cache' --data 'customerId=";
-  if (helper = helpers.customerId) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.customerId); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "&client_id=";
-  if (helper = helpers.clientId) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.clientId); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "&redirect_uri=";
-  if (helper = helpers.redirectURI) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.redirectURI); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "&login=<b>[login]</b>&password=<b>[password]</b>'</pre>\r\n				<b>2 - download the export</b>\r\n				<p>replace the 'access_token' field in the following snippet by the value of the 'tokenId' field returned by the previous script</p>\r\n				<pre class=\"curl\">curl '";
-  if (helper = helpers.curl) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.curl); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "' -H 'Origin: ";
-  if (helper = helpers.origin) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.origin); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "' -H 'Accept-Encoding: gzip,deflate' -H 'Content-Type: application/json' -H 'Accept: application/json, text/javascript, */*; q=0.01' --data-binary $'";
-  if (helper = helpers.data) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.data); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "' --compressed -o ";
-  if (helper = helpers.curlFileName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.curlFileName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</pre>\r\n				<b>3 - view the export</b>\r\n				<p>your analysis results should now be downloaded as</p>\r\n				<pre class=\"curl\">ls ";
-  if (helper = helpers.curlFileName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.curlFileName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</pre>\r\n			</div>\r\n		</div>\r\n		";
-  return buffer;
-  }
-
-function program16(depth0,data) {
-  
-  
-  return "\r\n			</div>\r\n		</div>\r\n		";
-  }
-
-function program18(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n	<button type=\"button\" class=\"btn popup-trigger form-control\">";
-  if (helper = helpers.buttonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.buttonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + " <i class=\"fa fa-download\"></i></button>\r\n	";
-  return buffer;
-  }
-
-  buffer += "<div class=\"squid-api-data-widgets-export-widget\">\r\n	<div class=\"download-wrapper\">\r\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n		<div class=\"download-formats\">\r\n			<label>Format: </label>\r\n			";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.formats), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n			";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayCompression), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n		</div>\r\n		<div>&nbsp;</div>\r\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.metricSelectorEnabled), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.analysisConfigurationEnabled), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n		<div>\r\n			<button id=\"download\" class=\"btn btn-small btn-sm btn-success\" target=\"_blank\">";
-  if (helper = helpers.downloadButtonLabel) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.downloadButtonLabel); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</button>\r\n		</div>\r\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.sqlView), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.data), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n		<form id=\"download-form\" style=\"visibility: hidden;\"></form>\r\n	</div>\r\n	";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInPopup), {hash:{},inverse:self.noop,fn:self.program(18, program18, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</div>\r\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_kpi_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\r\n	";
-  stack1 = helpers.each.call(depth0, depth0, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n	<div class='sq-kpi squid-api-data-widgets-kpi-widget'>\r\n		<div class=\"name\">\r\n	        ";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\r\n	    </div>\r\n		<div>\r\n			<span class=\"value\">";
-  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</span>\r\n			<span class=\"unit\">";
-  if (helper = helpers.unit) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.unit); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</span>\r\n		</div>\r\n		";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.compareToValue), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n	</div>\r\n	";
-  return buffer;
-  }
-function program3(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n		<div>\r\n			<span class=\"compareToValue\">";
-  if (helper = helpers.compareToValue) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.compareToValue); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</span>\r\n			<span class=\"unit\">";
-  if (helper = helpers.unit) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.unit); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</span>\r\n		</div>\r\n		";
-  return buffer;
-  }
-
-function program5(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\r\n	";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.done), {hash:{},inverse:self.program(8, program8, data),fn:self.program(6, program6, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n";
-  return buffer;
-  }
-function program6(depth0,data) {
-  
-  
-  return "\r\n  		No Data\r\n  	";
-  }
-
-function program8(depth0,data) {
-  
-  
-  return "\r\n  		Computing\r\n  	";
-  }
-
-  stack1 = helpers['if'].call(depth0, depth0, {hash:{},inverse:self.program(5, program5, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { return stack1; }
-  else { return ''; }
-  });
-
-this["squid_api"]["template"]["squid_api_materialize_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n        <div class=\"panel panel-default filter-panel\">\r\n            <div class=\"panel-heading\">\r\n                <button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n                        data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\" aria-hidden=\"true\">\r\n                    <i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n                </button>\r\n                <h4 class=\"panel-title\" id=\"myModalLabel\">Save</h4>\r\n            </div>\r\n        <div class=\"panel-body\">\r\n            <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\"\r\n                    aria-hidden=\"true\"></button>\r\n        ";
-  return buffer;
-  }
-
-function program3(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n            <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\"\r\n                    aria-hidden=\"true\"></button>\r\n\r\n            <div id=\"materializedatasets-view\">\r\n                <div>\r\n                    <button id=\"materialize-save-as-domain\" class=\"btn btn-default\"  data-toggle=\"materialize-virtualize-tooltip\" data-placement=\"bottom\"\r\n                       title=\"Create a virtual dataset. The datasets is not actually reinjected but stays as domain without physical existence.\" target=\"_blank\">Save as domain</button>\r\n                </div>\r\n                <div>\r\n                    <button id=\"materialize-save-as-table\" class=\"btn btn-default\" data-toggle=\"materialize-materialize-tooltip\" data-placement=\"bottom\"\r\n                       title=\"Create a physical dataset. The datasets/table is created on the specified database.\" target=\"_blank\">Save as table</button>\r\n                </div>\r\n                <div>\r\n                    <button id=\"materialize-save-on-spark\" class=\"btn btn-default\" data-toggle=\"materialize-spark-tooltip\" data-placement=\"bottom\"\r\n                            title=\"Send the dataset to spark\" target=\"_blank\">Save on Spark</button>\r\n                </div>\r\n            </div>\r\n        ";
-  return buffer;
-  }
-
-function program5(depth0,data) {
-  
-  
-  return "\r\n        </div>\r\n        </div>\r\n        ";
-  }
-
-function program7(depth0,data) {
-  
-  
-  return "\r\n        <a href=\"#\" data-toggle=\"materialize-tooltip\" data-placement=\"top\"\r\n           title=\"You can use this button to reinject the current dataset. For example, you may want to reinject the new dataset in the same database as an other table to save your current work.\">\r\n            <button type=\"button\" class=\"btn popup-trigger form-control\">Save <i class=\"fa fa-cloud\"></i></button>\r\n        </a>\r\n    ";
-  }
-
-  buffer += "<div class=\"squid-api-data-widgets-materialize-widget\">\r\n    <div class=\"download-wrapper\">\r\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n\r\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.materializeDatasetsView), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n    </div>\r\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInPopup), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</div>\r\n\r\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_metric_total_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, self=this, functionType="function", escapeExpression=this.escapeExpression;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\r\n	";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n	<div class=\"item";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += " squid-api-data-widgets-metrictotal-widget\" style=\"padding: 3px; display: inline-block;\" id=\"";
-  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" >\r\n		<table style=\"border:1px solid #DDD; border-collapse: separate; border-spacing: 3px;\">\r\n			<tr>\r\n				<td><span class=\"name\">";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</span></td>\r\n			</tr>\r\n			<tr>\r\n				<td><span class=\"value\" style=\"color:#999;\">"
-    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.total)),stack1 == null || stack1 === false ? stack1 : stack1.value)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</span></td>\r\n			</tr>\r\n		</table>\r\n	</div>\r\n	";
-  return buffer;
-  }
-function program3(depth0,data) {
-  
-  
-  return " selected";
-  }
-
-function program5(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n    <label>";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</label>\r\n    <span>-</span>\r\n";
-  return buffer;
-  }
-
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(5, program5, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n\r\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_metric_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n	<div class=\"information\">";
-  if (helper = helpers.noDataMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.noDataMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+  return "<ul class=\"squid-api-data-widgets-displaytype-selector\">\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "</div>\n";
-  return buffer;
-  }
+},"useData":true});
 
-function program3(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n    ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.chosenMetrics), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n";
-  return buffer;
-  }
-function program4(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n    	";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selectMetric), {hash:{},inverse:self.program(7, program7, data),fn:self.program(5, program5, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        	<div class=\"name\">"
-    + escapeExpression(((stack1 = (depth0 && depth0.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n        	";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayMetricValue), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </li>\n    ";
-  return buffer;
-  }
-function program5(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n    		<li class=\"item "
-    + escapeExpression(((stack1 = (depth0 && depth0.selected)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" data-selected=\""
-    + escapeExpression(((stack1 = (depth0 && depth0.attrSelected)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" data-content=\""
-    + escapeExpression(((stack1 = (depth0 && depth0.value)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">\n    		";
-  return buffer;
-  }
+this["squid_api"]["template"]["squid_api_domain_selector_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program7(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n    		<li class=\"item\" data-selected=\""
-    + escapeExpression(((stack1 = (depth0 && depth0.attrSelected)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" data-content=\""
-    + escapeExpression(((stack1 = (depth0 && depth0.value)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">\n    	";
-  return buffer;
-  }
+  return "    <select class=\"sq-select form-control\">\r\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    </select>\r\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program9(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n        		<div class=\"value\">"
-    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.total)),stack1 == null || stack1 === false ? stack1 : stack1.value)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n        	";
-  return buffer;
-  }
+  return "            <option value=\""
+    + alias4(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data}) : helper)))
+    + "\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selected : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ">\r\n                "
+    + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+    + "\r\n            </option>\r\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    return "selected";
+},"5":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-  buffer += "<ul class=\"squid-api-data-widgets-metric-widget\">\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.noChosenMetrics), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</ul>\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_modelinfo_internal_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                <tr>\n                    <td>";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n                    <td>";
-  if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n                </tr>\n              ";
-  return buffer;
-  }
-
-function program3(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n                    <tr>\n                        <td>";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n                        <td>";
-  if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</td>\n                    </tr>\n                ";
-  return buffer;
-  }
-
-  buffer += "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6 nopadding\">\n        <h4>Dimensions</h4>\n        <table class=\"table table-condensed dimensions\">\n        <thead>\n        <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n        </thead>\n              ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.dimensions), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </table>\n    </div>\n    <div class=\"col-md-6 nopadding\">\n        <h4>Metrics</h4>\n        <table class=\"table table-condensed metrics\">\n            <thead> \n             <tr>\n                <th>Name</th>\n                <th>Description</th>\n            </tr>\n            </thead>\n                ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.metrics), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </table>\n    </div>\n</div>\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_modelinfo_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  
-
-
-  return "<div class=\"squid-api-modelinfo-widget\">\n    <button class=\"btn btn-default form-control\" role=\"button\" data-toggle=\"popover\">\n        <i class=\"fa fa-info\" aria-hidden=\"true\"></i>\n    </button>\n</div>\n";
-  });
-
-this["squid_api"]["template"]["squid_api_orderby_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  
-  return " disabled ";
-  }
-
-function program3(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n		<div class=\"pull-left\">\n			<table>\n				<tr>\n					<td>\n						<span class=\"preview\" style=\"font-size : 14px; padding-right: 5px; position: relative; top: 3px;\">Preview</span>\n					</td>\n					<td>\n						";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.removeOrderDirection), {hash:{},inverse:self.program(6, program6, data),fn:self.program(4, program4, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n					</td>\n					<td>\n						&nbsp;\n						<span style=\"font-size : 14px; font-weight: bold; padding-right: 5px; position: relative; top: 4px;\">";
-  if (helper = helpers.limit) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.limit); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</span> <label style=\"position: relative; top: 4px; font-weight: normal;\">by</label> <select class=\"sq-select form-control\" style=\"display: inline-block; position: relative; bottom: 5px; max-width: 100px;\">\n							<option>none</option>\n							";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.Columns), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n						</select>\n					</td>\n				</tr>\n			</table>\n		</div>\n	";
-  return buffer;
-  }
-function program4(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n							<span class=\"orderby-direction\" style=\"top: 3px; position: relative; font-weight: bold; font-size: 14px;\">";
-  if (helper = helpers.orderByDirectionDisplay) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.orderByDirectionDisplay); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "<span>\n						";
-  return buffer;
-  }
-
-function program6(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n							<div class=\"onoffswitch\">\n			    				<input type=\"checkbox\" name=\"onoffswitch\" class=\"onoffswitch-checkbox\" id=\"myonoffswitch\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.checked), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\n			    				<label class=\"onoffswitch-label\" for=\"myonoffswitch\">\n			        				<span class=\"onoffswitch-inner\"></span>\n			       				 	<span class=\"onoffswitch-switch\"></span>\n			    				</label>\n							</div>\n						";
-  return buffer;
-  }
-function program7(depth0,data) {
-  
-  
-  return "checked";
-  }
-
-function program9(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n								<option ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += " value=\"";
-  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\">";
-  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</option>\n							";
-  return buffer;
-  }
-function program10(depth0,data) {
-  
-  
-  return " selected=\"selected\" ";
-  }
-
-  buffer += "<div class=\"orderby-container squid-api-data-widgets-orderby-widget ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.disabled), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\">\n	";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.limit), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n";
-  return buffer;
-  });
-
-this["squid_api"]["template"]["squid_api_project_selector_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\r\n    <select class=\"sq-select form-control squid-api-data-widgets-project-selector\">\r\n        ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.options), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n    </select>\r\n";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n            <option value=\"";
-  if (helper = helpers.value) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.value); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selected), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">\r\n                ";
-  if (helper = helpers.label) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.label); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\r\n            </option>\r\n        ";
-  return buffer;
-  }
-function program3(depth0,data) {
-  
-  
-  return "selected";
-  }
-
-function program5(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n    <!-- just display filter name -->\r\n    <label>";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+  return "    <!-- just display filter name -->\r\n    <label>"
+    + container.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"name","hash":{},"data":data}) : helper)))
     + "</label>\r\n    <span>-</span>\r\n";
-  return buffer;
-  }
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.selAvailable), {hash:{},inverse:self.program(5, program5, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n";
-  return buffer;
-  });
+  return "<div class=\"squid-api-data-widgets-domain-selector\">\r\n"
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.selAvailable : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(5, data, 0),"data":data})) != null ? stack1 : "")
+    + "</div>\r\n";
+},"useData":true});
 
-this["squid_api"]["template"]["squid_api_saveasdomain_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+this["squid_api"]["template"]["squid_api_export_scheduler_index_view"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, options, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression, alias5=helpers.blockHelperMissing, alias6=container.lambda, buffer = 
+  "                <tr class=\"job-item\" data-attr="
+    + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
+    + ">\n                    <td><a href=\"javascript:void(0);\" class=\"bslink\" data-toggle=\"tooltip\" data-placement=\"right\" title=\""
+    + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
+    + "\" data-clipboard-text=\""
+    + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias4(((helper = (helper = helpers.reportName || (depth0 != null ? depth0.reportName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"reportName","hash":{},"data":data}) : helper)))
+    + "</a><div class=\"hidden\">"
+    + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
+    + "</div></td>\n                    <td>\n";
+  stack1 = ((helper = (helper = helpers.reportSelection || (depth0 != null ? depth0.reportSelection : depth0)) != null ? helper : alias2),(options={"name":"reportSelection","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data}),(typeof helper === alias3 ? helper.call(alias1,options) : helper));
+  if (!helpers.reportSelection) { stack1 = alias5.call(depth0,stack1,options)}
+  if (stack1 != null) { buffer += stack1; }
+  buffer += "                    </td>\n                    <td>Status: "
+    + alias4(alias6(((stack1 = (depth0 != null ? depth0.status : depth0)) != null ? stack1.type : stack1), depth0))
+    + "<br>Format: "
+    + alias4(alias6(((stack1 = (depth0 != null ? depth0.report : depth0)) != null ? stack1.format : stack1), depth0))
+    + "<br>Usage period: "
+    + alias4(alias6(((stack1 = ((stack1 = (depth0 != null ? depth0.report : depth0)) != null ? stack1.period : stack1)) != null ? stack1.length : stack1), depth0))
+    + "<br>Frequency: Every "
+    + alias4(alias6(((stack1 = (depth0 != null ? depth0.scheduling : depth0)) != null ? stack1.frequency : stack1), depth0))
+    + "<br>Next Delivery: "
+    + alias4(((helper = (helper = helpers.nextExecutionDate || (depth0 != null ? depth0.nextExecutionDate : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"nextExecutionDate","hash":{},"data":data}) : helper)))
+    + "</td>\n                    <td>\n";
+  stack1 = ((helper = (helper = helpers.emails || (depth0 != null ? depth0.emails : depth0)) != null ? helper : alias2),(options={"name":"emails","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data}),(typeof helper === alias3 ? helper.call(alias1,options) : helper));
+  if (!helpers.emails) { stack1 = alias5.call(depth0,stack1,options)}
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "                    </td>\n                    <td><button class=\"btn btn-secondary run-job\"><i class=\"fa fa-play\"></i></button></td>\n                    <td><button class=\"btn btn-secondary edit-job\"><i class=\"fa fa-pencil-square-o\"></i></button></td>\n                    <td><button class=\"btn btn-secondary delete-job\"><i class=\"fa fa-trash-o\"></i></button></td>\n                </tr>\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    return "                    	"
+    + container.escapeExpression(container.lambda(depth0, depth0))
+    + "<br>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n            <button type=\"button\"  class=\"create btn btn-default\">\r\n                <i class=\"fa fa-plus\"></i> New ";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\r\n            </button>\r\n        ";
-  return buffer;
-  }
+  return "<div class=\"squid-api-export-scheduler-index-view table-responsive\">\n    <button class=\"btn btn-default create-job\">New Schedule</button>\n    <table class=\"table table-bordered table-striped table-hover\">\n        <thead>\n            <tr>\n                <th class=\"col-xs-1\">Report</th>\n                <th class=\"col-xs-3\">Report Settings</th>\n                <th class=\"col-xs-3\">Schedule Settings</th>\n                <th class=\"col-xs-2\">Delivered to</th>\n                <th class=\"col-xs-1\">Run Now</th>\n                <th class=\"col-xs-1\">Edit</th>\n                <th class=\"col-xs-1\">Delete</th>\n            </tr>\n        </thead>\n        <tbody>\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.jobs : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "        </tbody>\n    </table>\n</div>\n";
+},"useData":true});
 
-function program3(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n                <div class=\"panel panel-default filter-panel\">\r\n                    <div class=\"panel-heading\">\r\n                        <button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n                                data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\" aria-hidden=\"true\">\r\n                            <i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n                        </button>\r\n                        <h4 class=\"panel-title\" id=\"myModalLabel\">Save</h4>\r\n                    </div>\r\n                <div class=\"panel-body\">\r\n                    <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\"\r\n                            aria-hidden=\"true\"></button>\r\n                ";
-  return buffer;
-  }
+this["squid_api"]["template"]["squid_api_export_scheduler_widget"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div class=\"squid-api-export-scheduler-widget\">\r\n	<button class=\"btn btn-default\">My Schedule <i class=\"fa fa-clock-o\"></i></button>\r\n</div>\r\n";
+},"useData":true});
 
-  buffer += "<div class=\"modal-header\">\r\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\r\n    <h4 class=\"modal-title\" id=\"myModalLabel\">";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h4>\r\n</div>\r\n<div class=\"modal-body\">\r\n    <div class=\"squid-api-collection-management-widget\">\r\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n        <div class=\"squid-api-data-widgets-saveastable-widget \">\r\n            <div class=\"download-wrapper\">\r\n                ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n\r\n                <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\"\r\n                        aria-hidden=\"true\"></button>\r\n                <div style=\"display: inline-block;\">\r\n                    <div><label for=\"name\">Name: </label> <input value=\"";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"name\" name=\"name\"></div>\r\n                </div>\r\n                <div id=\"saveasdomain-view\">\r\n                    <div><label for=\"projectName\">Project: </label> <input value=\"";
-  if (helper = helpers.projectName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.projectName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"projectName\" name=\"projectName\"></div>\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\"";
-  if (helper = helpers.schemaName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.schemaName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+this["squid_api"]["template"]["squid_api_export_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "		<div class=\"panel panel-default filter-panel\">\r\n			<div class=\"panel-heading\">\r\n				<button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n				data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\" aria-hidden=\"true\" aria-expanded=\"false\">\r\n					<i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n				</button>\r\n				<h4 class=\"panel-title\" id=\"myModalLabel\">Export</h4>\r\n			</div>\r\n			<div class=\"panel-body\">\r\n				<button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\" aria-expanded=\"false\"></button>\r\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "			<span class=\"type\">\r\n				<input type=\"radio\" name=\"format\" value=\""
+    + alias4(((helper = (helper = helpers.format || (depth0 != null ? depth0.format : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"format","hash":{},"data":data}) : helper)))
+    + "\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selected : depth0),{"name":"if","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "> <span class=\"type-name\">"
+    + alias4(((helper = (helper = helpers.format || (depth0 != null ? depth0.format : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"format","hash":{},"data":data}) : helper)))
+    + "</span>\r\n			</span>\r\n";
+},"4":function(container,depth0,helpers,partials,data) {
+    return "checked";
+},"6":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return "			<div style=\"display: inline-block;\">\r\n				<span class=\"type\">\r\n					<label>Compression: </label> <input type=\"checkbox\" name=\"compression\" "
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.compression : depth0),{"name":"if","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "/> <span class=\"type-name\">gzip</span>\r\n				</span>\r\n			</div>\r\n";
+},"8":function(container,depth0,helpers,partials,data) {
+    return "		<div id=\"metricSelector\">\r\n		</div>\r\n";
+},"10":function(container,depth0,helpers,partials,data) {
+    return "		<div id=\"dimensionSelector\">\r\n		</div>\r\n		<div id=\"metricSelector\">\r\n		</div>\r\n";
+},"12":function(container,depth0,helpers,partials,data) {
+    return "		<div>\r\n			<a id=\"view-sql\" class=\"btn btn-default\" target=\"_blank\">View SQL</a>\r\n		</div>\r\n";
+},"14":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "		<div id=\"curl-view\">\r\n            <br><hr>\r\n			Need to automate exports? Use the <a id=\"curlbtn\">shell commands</a>.\r\n			<div id=\"curl\">\r\n				<p>Sample code to download the analysis results using curl shell command.</p>\r\n				<b>1 - get an authentication token</b>\r\n				<p>replace the 'login' and 'password' fields in the following snippet</p>\r\n				<pre class=\"curl\">curl '"
+    + alias4(((helper = (helper = helpers.apiURL || (depth0 != null ? depth0.apiURL : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"apiURL","hash":{},"data":data}) : helper)))
+    + "/auth-token' -H 'Origin: "
+    + alias4(((helper = (helper = helpers.origin || (depth0 != null ? depth0.origin : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"origin","hash":{},"data":data}) : helper)))
+    + "' -H 'Accept-Encoding: gzip,deflate' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: */*' -H 'Cache-Control: no-cache' --data 'customerId="
+    + alias4(((helper = (helper = helpers.customerId || (depth0 != null ? depth0.customerId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"customerId","hash":{},"data":data}) : helper)))
+    + "&client_id="
+    + alias4(((helper = (helper = helpers.clientId || (depth0 != null ? depth0.clientId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"clientId","hash":{},"data":data}) : helper)))
+    + "&redirect_uri="
+    + alias4(((helper = (helper = helpers.redirectURI || (depth0 != null ? depth0.redirectURI : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"redirectURI","hash":{},"data":data}) : helper)))
+    + "&login=<b>[login]</b>&password=<b>[password]</b>'</pre>\r\n				<b>2 - download the export</b>\r\n				<p>replace the 'access_token' field in the following snippet by the value of the 'tokenId' field returned by the previous script</p>\r\n				<pre class=\"curl\">curl '"
+    + ((stack1 = ((helper = (helper = helpers.curl || (depth0 != null ? depth0.curl : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"curl","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "' -H 'Origin: "
+    + alias4(((helper = (helper = helpers.origin || (depth0 != null ? depth0.origin : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"origin","hash":{},"data":data}) : helper)))
+    + "' -H 'Accept-Encoding: gzip,deflate' -H 'Content-Type: application/json' -H 'Accept: application/json, text/javascript, */*; q=0.01' --data-binary $'"
+    + alias4(((helper = (helper = helpers.data || (depth0 != null ? depth0.data : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data","hash":{},"data":data}) : helper)))
+    + "' --compressed -o "
+    + alias4(((helper = (helper = helpers.curlFileName || (depth0 != null ? depth0.curlFileName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"curlFileName","hash":{},"data":data}) : helper)))
+    + "</pre>\r\n				<b>3 - view the export</b>\r\n				<p>your analysis results should now be downloaded as</p>\r\n				<pre class=\"curl\">ls "
+    + alias4(((helper = (helper = helpers.curlFileName || (depth0 != null ? depth0.curlFileName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"curlFileName","hash":{},"data":data}) : helper)))
+    + "</pre>\r\n			</div>\r\n		</div>\r\n";
+},"16":function(container,depth0,helpers,partials,data) {
+    return "			</div>\r\n		</div>\r\n";
+},"18":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "	<button type=\"button\" class=\"btn popup-trigger form-control\">"
+    + container.escapeExpression(((helper = (helper = helpers.buttonLabel || (depth0 != null ? depth0.buttonLabel : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"buttonLabel","hash":{},"data":data}) : helper)))
+    + " <i class=\"fa fa-download\"></i></button>\r\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return "<div class=\"squid-api-data-widgets-export-widget\">\r\n	<div class=\"download-wrapper\">\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.displayInAccordion : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "		<div class=\"download-formats\">\r\n			<label>Format: </label>\r\n"
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.formats : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.displayCompression : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "		</div>\r\n		<div>&nbsp;</div>\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.metricSelectorEnabled : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.analysisConfigurationEnabled : depth0),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "		<div>\r\n			<button id=\"download\" class=\"btn btn-small btn-sm btn-success\" target=\"_blank\">"
+    + container.escapeExpression(((helper = (helper = helpers.downloadButtonLabel || (depth0 != null ? depth0.downloadButtonLabel : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"downloadButtonLabel","hash":{},"data":data}) : helper)))
+    + "</button>\r\n		</div>\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.sqlView : depth0),{"name":"if","hash":{},"fn":container.program(12, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.data : depth0),{"name":"if","hash":{},"fn":container.program(14, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.displayInAccordion : depth0),{"name":"if","hash":{},"fn":container.program(16, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "		<form id=\"download-form\" style=\"visibility: hidden;\"></form>\r\n	</div>\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.displayInPopup : depth0),{"name":"if","hash":{},"fn":container.program(18, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</div>\r\n";
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_kpi_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),depth0,{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"2":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "	<div class='sq-kpi squid-api-data-widgets-kpi-widget'>\r\n		<div class=\"name\">\r\n	        "
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "\r\n	    </div>\r\n		<div>\r\n			<span class=\"value\">"
+    + alias4(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data}) : helper)))
+    + "</span>\r\n			<span class=\"unit\">"
+    + alias4(((helper = (helper = helpers.unit || (depth0 != null ? depth0.unit : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"unit","hash":{},"data":data}) : helper)))
+    + "</span>\r\n		</div>\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.compareToValue : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "	</div>\r\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "		<div>\r\n			<span class=\"compareToValue\">"
+    + alias4(((helper = (helper = helpers.compareToValue || (depth0 != null ? depth0.compareToValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"compareToValue","hash":{},"data":data}) : helper)))
+    + "</span>\r\n			<span class=\"unit\">"
+    + alias4(((helper = (helper = helpers.unit || (depth0 != null ? depth0.unit : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"unit","hash":{},"data":data}) : helper)))
+    + "</span>\r\n		</div>\r\n";
+},"5":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.done : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.program(8, data, 0),"data":data})) != null ? stack1 : "");
+},"6":function(container,depth0,helpers,partials,data) {
+    return "  		No Data\r\n";
+},"8":function(container,depth0,helpers,partials,data) {
+    return "  		Computing\r\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),depth0,{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(5, data, 0),"data":data})) != null ? stack1 : "");
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_materialize_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "        <div class=\"panel panel-default filter-panel\">\r\n            <div class=\"panel-heading\">\r\n                <button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n                        data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\" aria-hidden=\"true\">\r\n                    <i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n                </button>\r\n                <h4 class=\"panel-title\" id=\"myModalLabel\">Save</h4>\r\n            </div>\r\n        <div class=\"panel-body\">\r\n            <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\"\r\n                    aria-hidden=\"true\"></button>\r\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "            <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\""
+    + container.escapeExpression(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\"\r\n                    aria-hidden=\"true\"></button>\r\n\r\n            <div id=\"materializedatasets-view\">\r\n                <div>\r\n                    <button id=\"materialize-save-as-domain\" class=\"btn btn-default\"  data-toggle=\"materialize-virtualize-tooltip\" data-placement=\"bottom\"\r\n                       title=\"Create a virtual dataset. The datasets is not actually reinjected but stays as domain without physical existence.\" target=\"_blank\">Save as domain</button>\r\n                </div>\r\n                <div>\r\n                    <button id=\"materialize-save-as-table\" class=\"btn btn-default\" data-toggle=\"materialize-materialize-tooltip\" data-placement=\"bottom\"\r\n                       title=\"Create a physical dataset. The datasets/table is created on the specified database.\" target=\"_blank\">Save as table</button>\r\n                </div>\r\n                <div>\r\n                    <button id=\"materialize-save-on-spark\" class=\"btn btn-default\" data-toggle=\"materialize-spark-tooltip\" data-placement=\"bottom\"\r\n                            title=\"Send the dataset to spark\" target=\"_blank\">Save on Spark</button>\r\n                </div>\r\n            </div>\r\n";
+},"5":function(container,depth0,helpers,partials,data) {
+    return "        </div>\r\n        </div>\r\n";
+},"7":function(container,depth0,helpers,partials,data) {
+    return "        <a href=\"#\" data-toggle=\"materialize-tooltip\" data-placement=\"top\"\r\n           title=\"You can use this button to reinject the current dataset. For example, you may want to reinject the new dataset in the same database as an other table to save your current work.\">\r\n            <button type=\"button\" class=\"btn popup-trigger form-control\">Save <i class=\"fa fa-cloud\"></i></button>\r\n        </a>\r\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return "<div class=\"squid-api-data-widgets-materialize-widget\">\r\n    <div class=\"download-wrapper\">\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.displayInAccordion : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.materializeDatasetsView : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.displayInAccordion : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    </div>\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.displayInPopup : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</div>\r\n\r\n";
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_metric_total_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"2":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "	<div class=\"item"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selected : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + " squid-api-data-widgets-metrictotal-widget\" style=\"padding: 3px; display: inline-block;\" id=\""
+    + alias4(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data}) : helper)))
+    + "\" >\r\n		<table style=\"border:1px solid #DDD; border-collapse: separate; border-spacing: 3px;\">\r\n			<tr>\r\n				<td><span class=\"name\">"
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</span></td>\r\n			</tr>\r\n			<tr>\r\n				<td><span class=\"value\" style=\"color:#999;\">"
+    + alias4(container.lambda(((stack1 = (depth0 != null ? depth0.total : depth0)) != null ? stack1.value : stack1), depth0))
+    + "</span></td>\r\n			</tr>\r\n		</table>\r\n	</div>\r\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    return " selected";
+},"5":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "    <label>"
+    + container.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"name","hash":{},"data":data}) : helper)))
+    + "</label>\r\n    <span>-</span>\r\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.selAvailable : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(5, data, 0),"data":data})) != null ? stack1 : "")
+    + "\r\n";
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_metric_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "	<div class=\"information\">"
+    + container.escapeExpression(((helper = (helper = helpers.noDataMessage || (depth0 != null ? depth0.noDataMessage : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"noDataMessage","hash":{},"data":data}) : helper)))
+    + "</div>\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.chosenMetrics : depth0),{"name":"each","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"4":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selectMetric : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.program(7, data, 0),"data":data})) != null ? stack1 : "")
+    + "        	<div class=\"name\">"
+    + container.escapeExpression(container.lambda((depth0 != null ? depth0.name : depth0), depth0))
+    + "</div>\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.displayMetricValue : depth0),{"name":"if","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "        </li>\n";
+},"5":function(container,depth0,helpers,partials,data) {
+    var alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "    		<li class=\"item "
+    + alias2(alias1((depth0 != null ? depth0.selected : depth0), depth0))
+    + "\" data-selected=\""
+    + alias2(alias1((depth0 != null ? depth0.attrSelected : depth0), depth0))
+    + "\" data-content=\""
+    + alias2(alias1((depth0 != null ? depth0.value : depth0), depth0))
+    + "\">\n";
+},"7":function(container,depth0,helpers,partials,data) {
+    var alias1=container.lambda, alias2=container.escapeExpression;
+
+  return "    		<li class=\"item\" data-selected=\""
+    + alias2(alias1((depth0 != null ? depth0.attrSelected : depth0), depth0))
+    + "\" data-content=\""
+    + alias2(alias1((depth0 != null ? depth0.value : depth0), depth0))
+    + "\">\n";
+},"9":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return "        		<div class=\"value\">"
+    + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? depth0.total : depth0)) != null ? stack1.value : stack1), depth0))
+    + "</div>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return "<ul class=\"squid-api-data-widgets-metric-widget\">\n"
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.noChosenMetrics : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
+    + "</ul>\n";
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_modelinfo_internal_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "                <tr>\n                    <td>"
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</td>\n                    <td>"
+    + alias4(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper)))
+    + "</td>\n                </tr>\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "                    <tr>\n                        <td>"
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</td>\n                        <td>"
+    + alias4(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper)))
+    + "</td>\n                    </tr>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6 nopadding\">\n        <h4>Dimensions</h4>\n        <table class=\"table table-condensed dimensions\">\n        <thead>\n        <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n        </thead>\n"
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.dimensions : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "        </table>\n    </div>\n    <div class=\"col-md-6 nopadding\">\n        <h4>Metrics</h4>\n        <table class=\"table table-condensed metrics\">\n            <thead> \n             <tr>\n                <th>Name</th>\n                <th>Description</th>\n            </tr>\n            </thead>\n"
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.metrics : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "        </table>\n    </div>\n</div>\n";
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_modelinfo_widget"] = Handlebars.template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div class=\"squid-api-modelinfo-widget\">\n    <button class=\"btn btn-default form-control\" role=\"button\" data-toggle=\"popover\">\n        <i class=\"fa fa-info\" aria-hidden=\"true\"></i>\n    </button>\n</div>\n";
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_orderby_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    return " disabled ";
+},"3":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return "		<div class=\"pull-left\">\n			<table>\n				<tr>\n					<td>\n						<span class=\"preview\" style=\"font-size : 14px; padding-right: 5px; position: relative; top: 3px;\">Preview</span>\n					</td>\n					<td>\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.removeOrderDirection : depth0),{"name":"if","hash":{},"fn":container.program(4, data, 0),"inverse":container.program(6, data, 0),"data":data})) != null ? stack1 : "")
+    + "					</td>\n					<td>\n						&nbsp;\n						<span style=\"font-size : 14px; font-weight: bold; padding-right: 5px; position: relative; top: 4px;\">"
+    + container.escapeExpression(((helper = (helper = helpers.limit || (depth0 != null ? depth0.limit : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"limit","hash":{},"data":data}) : helper)))
+    + "</span> <label style=\"position: relative; top: 4px; font-weight: normal;\">by</label> <select class=\"sq-select form-control\" style=\"display: inline-block; position: relative; bottom: 5px; max-width: 100px;\">\n							<option>none</option>\n"
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.Columns : depth0),{"name":"each","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "						</select>\n					</td>\n				</tr>\n			</table>\n		</div>\n";
+},"4":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "							<span class=\"orderby-direction\" style=\"top: 3px; position: relative; font-weight: bold; font-size: 14px;\">"
+    + container.escapeExpression(((helper = (helper = helpers.orderByDirectionDisplay || (depth0 != null ? depth0.orderByDirectionDisplay : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"orderByDirectionDisplay","hash":{},"data":data}) : helper)))
+    + "<span>\n";
+},"6":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return "							<div class=\"onoffswitch\">\n			    				<input type=\"checkbox\" name=\"onoffswitch\" class=\"onoffswitch-checkbox\" id=\"myonoffswitch\" "
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.checked : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ">\n			    				<label class=\"onoffswitch-label\" for=\"myonoffswitch\">\n			        				<span class=\"onoffswitch-inner\"></span>\n			       				 	<span class=\"onoffswitch-switch\"></span>\n			    				</label>\n							</div>\n";
+},"7":function(container,depth0,helpers,partials,data) {
+    return "checked";
+},"9":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "								<option "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selected : depth0),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + " value=\""
+    + alias4(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+    + "</option>\n";
+},"10":function(container,depth0,helpers,partials,data) {
+    return " selected=\"selected\" ";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return "<div class=\"orderby-container squid-api-data-widgets-orderby-widget "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.disabled : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.limit : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</div>\n";
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_project_selector_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return "    <select class=\"sq-select form-control squid-api-data-widgets-project-selector\">\r\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.options : depth0),{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    </select>\r\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "            <option value=\""
+    + alias4(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data}) : helper)))
+    + "\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.selected : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ">\r\n                "
+    + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+    + "\r\n            </option>\r\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    return "selected";
+},"5":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "    <!-- just display filter name -->\r\n    <label>"
+    + container.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"name","hash":{},"data":data}) : helper)))
+    + "</label>\r\n    <span>-</span>\r\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.selAvailable : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(5, data, 0),"data":data})) != null ? stack1 : "");
+},"useData":true});
+
+this["squid_api"]["template"]["squid_api_saveasdomain_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "            <button type=\"button\"  class=\"create btn btn-default\">\r\n                <i class=\"fa fa-plus\"></i> New "
+    + container.escapeExpression(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"type","hash":{},"data":data}) : helper)))
+    + "\r\n            </button>\r\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "                <div class=\"panel panel-default filter-panel\">\r\n                    <div class=\"panel-heading\">\r\n                        <button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n                                data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\" aria-hidden=\"true\">\r\n                            <i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n                        </button>\r\n                        <h4 class=\"panel-title\" id=\"myModalLabel\">Save</h4>\r\n                    </div>\r\n                <div class=\"panel-body\">\r\n                    <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\"\r\n                            aria-hidden=\"true\"></button>\r\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<div class=\"modal-header\">\r\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\r\n    <h4 class=\"modal-title\" id=\"myModalLabel\">"
+    + alias4(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + "</h4>\r\n</div>\r\n<div class=\"modal-body\">\r\n    <div class=\"squid-api-collection-management-widget\">\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.createRole : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "        <div class=\"squid-api-data-widgets-saveastable-widget \">\r\n            <div class=\"download-wrapper\">\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.displayInAccordion : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\r\n                <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\"\r\n                        aria-hidden=\"true\"></button>\r\n                <div style=\"display: inline-block;\">\r\n                    <div><label for=\"name\">Name: </label> <input value=\""
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "\" type=\"text\" id=\"name\" name=\"name\"></div>\r\n                </div>\r\n                <div id=\"saveasdomain-view\">\r\n                    <div><label for=\"projectName\">Project: </label> <input value=\""
+    + alias4(((helper = (helper = helpers.projectName || (depth0 != null ? depth0.projectName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"projectName","hash":{},"data":data}) : helper)))
+    + "\" type=\"text\" id=\"projectName\" name=\"projectName\"></div>\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\""
+    + alias4(((helper = (helper = helpers.schemaName || (depth0 != null ? depth0.schemaName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"schemaName","hash":{},"data":data}) : helper)))
     + "\" type=\"text\" id=\"schemaName\" name=\"schemaName\"></div>\r\n\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n    </div>\r\n</div>\r\n<div class=\"squid-api-model-management-footer\">\r\n    <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close without saving</button>\r\n    <button type=\"button\" class=\"btn btn-default save-close\" data-dismiss=\"modal\">Save and Close</button>\r\n</div>\r\n<!--  end of modal - -->\r\n</div>\r\n";
-  return buffer;
-  });
+},"useData":true});
 
-this["squid_api"]["template"]["squid_api_saveastable_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+this["squid_api"]["template"]["squid_api_saveastable_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n            <button type=\"button\"  class=\"create btn btn-default\">\r\n                <i class=\"fa fa-plus\"></i> New ";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\r\n            </button>\r\n        ";
-  return buffer;
-  }
+  return "            <button type=\"button\"  class=\"create btn btn-default\">\r\n                <i class=\"fa fa-plus\"></i> New "
+    + container.escapeExpression(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"type","hash":{},"data":data}) : helper)))
+    + "\r\n            </button>\r\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program3(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n                <div class=\"panel panel-default filter-panel\">\r\n                    <div class=\"panel-heading\">\r\n                        <button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n                                data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\" aria-hidden=\"true\">\r\n                            <i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n                        </button>\r\n                        <h4 class=\"panel-title\" id=\"myModalLabel\">Save</h4>\r\n                    </div>\r\n                <div class=\"panel-body\">\r\n                    <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\"\r\n                            aria-hidden=\"true\"></button>\r\n                ";
-  return buffer;
-  }
+  return "                <div class=\"panel panel-default filter-panel\">\r\n                    <div class=\"panel-heading\">\r\n                        <button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n                                data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\" aria-hidden=\"true\">\r\n                            <i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n                        </button>\r\n                        <h4 class=\"panel-title\" id=\"myModalLabel\">Save</h4>\r\n                    </div>\r\n                <div class=\"panel-body\">\r\n                    <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\"\r\n                            aria-hidden=\"true\"></button>\r\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  buffer += "<div class=\"modal-header\">\r\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\r\n    <h4 class=\"modal-title\" id=\"myModalLabel\">";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h4>\r\n</div>\r\n<div class=\"modal-body\">\r\n    <div class=\"squid-api-collection-management-widget\">\r\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n        <div class=\"squid-api-data-widgets-saveastable-widget \">\r\n            <div class=\"download-wrapper\">\r\n                ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n\r\n                <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\"\r\n                        aria-hidden=\"true\"></button>\r\n                <div style=\"display: inline-block;\">\r\n                    <div><label for=\"name\">Name: </label> <input value=\"";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"name\" name=\"name\"></div>\r\n                </div>\r\n                <div id=\"saveastable-view\">\r\n                    <div><label for=\"projectName\">Project: </label> <input value=\"";
-  if (helper = helpers.projectName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.projectName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" type=\"text\" id=\"projectName\" name=\"projectName\"></div>\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\"";
-  if (helper = helpers.schemaName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.schemaName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+  return "<div class=\"modal-header\">\r\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\r\n    <h4 class=\"modal-title\" id=\"myModalLabel\">"
+    + alias4(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + "</h4>\r\n</div>\r\n<div class=\"modal-body\">\r\n    <div class=\"squid-api-collection-management-widget\">\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.createRole : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "        <div class=\"squid-api-data-widgets-saveastable-widget \">\r\n            <div class=\"download-wrapper\">\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.displayInAccordion : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\r\n                <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\"\r\n                        aria-hidden=\"true\"></button>\r\n                <div style=\"display: inline-block;\">\r\n                    <div><label for=\"name\">Name: </label> <input value=\""
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "\" type=\"text\" id=\"name\" name=\"name\"></div>\r\n                </div>\r\n                <div id=\"saveastable-view\">\r\n                    <div><label for=\"projectName\">Project: </label> <input value=\""
+    + alias4(((helper = (helper = helpers.projectName || (depth0 != null ? depth0.projectName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"projectName","hash":{},"data":data}) : helper)))
+    + "\" type=\"text\" id=\"projectName\" name=\"projectName\"></div>\r\n                    <div><label for=\"schemaName\">Schema: </label> <input value=\""
+    + alias4(((helper = (helper = helpers.schemaName || (depth0 != null ? depth0.schemaName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"schemaName","hash":{},"data":data}) : helper)))
     + "\" type=\"text\" id=\"schemaName\" name=\"schemaName\"></div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n    </div>\r\n</div>\r\n<div class=\"squid-api-model-management-footer\">\r\n    <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close without saving</button>\r\n    <button type=\"button\" class=\"btn btn-default save-close\" data-dismiss=\"modal\">Save and Close</button>\r\n</div>\r\n<!--  end of modal - -->\r\n</div>\r\n";
-  return buffer;
-  });
+},"useData":true});
 
-this["squid_api"]["template"]["squid_api_saveonspark_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+this["squid_api"]["template"]["squid_api_saveonspark_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n            <button type=\"button\"  class=\"create btn btn-default\">\r\n                <i class=\"fa fa-plus\"></i> New ";
-  if (helper = helpers.type) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.type); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\r\n            </button>\r\n        ";
-  return buffer;
-  }
+  return "            <button type=\"button\"  class=\"create btn btn-default\">\r\n                <i class=\"fa fa-plus\"></i> New "
+    + container.escapeExpression(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"type","hash":{},"data":data}) : helper)))
+    + "\r\n            </button>\r\n";
+},"3":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-function program3(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\r\n                <div class=\"panel panel-default filter-panel\">\r\n                    <div class=\"panel-heading\">\r\n                        <button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n                                data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\" aria-hidden=\"true\">\r\n                            <i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n                        </button>\r\n                        <h4 class=\"panel-title\" id=\"myModalLabel\">Save</h4>\r\n                    </div>\r\n                <div class=\"panel-body\">\r\n                    <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\"\r\n                            aria-hidden=\"true\"></button>\r\n                ";
-  return buffer;
-  }
+  return "                <div class=\"panel panel-default filter-panel\">\r\n                    <div class=\"panel-heading\">\r\n                        <button type=\"button\" class=\"close\" data-toggle=\"collapse\"\r\n                                data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\" aria-hidden=\"true\">\r\n                            <i class=\"glyphicon glyphicon-chevron-up\"></i>\r\n                        </button>\r\n                        <h4 class=\"panel-title\" id=\"myModalLabel\">Save</h4>\r\n                    </div>\r\n                <div class=\"panel-body\">\r\n                    <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\"\r\n                            aria-hidden=\"true\"></button>\r\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  buffer += "<div class=\"modal-header\">\r\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\r\n    <h4 class=\"modal-title\" id=\"myModalLabel\">";
-  if (helper = helpers.typeLabelPlural) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.typeLabelPlural); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h4>\r\n</div>\r\n<div class=\"modal-body\">\r\n    <div class=\"squid-api-collection-management-widget\">\r\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.createRole), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n        <div class=\"squid-api-data-widgets-saveastable-widget \">\r\n            <div class=\"download-wrapper\">\r\n                ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.displayInAccordion), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n\r\n                <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\"";
-  if (helper = helpers['data-target']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0['data-target']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\" data-clavier=\"true\"\r\n                        aria-hidden=\"true\"></button>\r\n                <div style=\"display: inline-block;\">\r\n                    <div><label for=\"name\">Name: </label> <input value=\"";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+  return "<div class=\"modal-header\">\r\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\r\n    <h4 class=\"modal-title\" id=\"myModalLabel\">"
+    + alias4(((helper = (helper = helpers.typeLabelPlural || (depth0 != null ? depth0.typeLabelPlural : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"typeLabelPlural","hash":{},"data":data}) : helper)))
+    + "</h4>\r\n</div>\r\n<div class=\"modal-body\">\r\n    <div class=\"squid-api-collection-management-widget\">\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.createRole : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "        <div class=\"squid-api-data-widgets-saveastable-widget \">\r\n            <div class=\"download-wrapper\">\r\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.displayInAccordion : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\r\n                <button type=\"button\" class=\"close\" data-toggle=\"collapse\" data-target=\""
+    + alias4(((helper = (helper = helpers["data-target"] || (depth0 != null ? depth0["data-target"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"data-target","hash":{},"data":data}) : helper)))
+    + "\" data-clavier=\"true\"\r\n                        aria-hidden=\"true\"></button>\r\n                <div style=\"display: inline-block;\">\r\n                    <div><label for=\"name\">Name: </label> <input value=\""
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
     + "\" type=\"text\" id=\"name\" name=\"name\"></div>\r\n                </div>\r\n                <div id=\"saveastable-view\">\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n    </div>\r\n</div>\r\n<div class=\"squid-api-model-management-footer\">\r\n    <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close without saving</button>\r\n    <button type=\"button\" class=\"btn btn-default save-close\" data-dismiss=\"modal\">Save and Close</button>\r\n</div>\r\n<!--  end of modal - -->\r\n</div>\r\n";
-  return buffer;
-  });
+},"useData":true});
 
-this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n      <div id=\"time-unit-selector\">\n        <select class=\"form-control\">\n            ";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.timeUnits), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </select>\n      </div>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n              <option value=";
-  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + ">";
-  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</option>\n            ";
-  return buffer;
-  }
+  return "      <div id=\"time-unit-selector\">\n        <select class=\"form-control\">\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.timeUnits : depth0),{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "        </select>\n      </div>\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  buffer += "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 2;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"chart_container\" class=\"squid-api-data-widgets-timeseries-widget\">\n    <div id=\"yearswitcher\"></div>\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.timeUnitSelector), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    <div id=\"metrics\">\n        ";
-  if (helper = helpers.metricColumns) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.metricColumns); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n    </div>\n    <div id=\"stale\">\n        <div class=\"reactiveMessage\">\n            <span><i class=\"fa fa-line-chart\"></i>\n            <br>";
-  if (helper = helpers.staleMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.staleMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</span>\n        </div>\n    </div>\n    <div id=\"re-run\" style=\"display: none;\">\n            <div class=\"reactiveMessage\">\n                <span><i class=\"fa fa-refresh\"></i>\n                <br>";
-  if (helper = helpers.reRunMessage) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.reRunMessage); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
+  return "              <option value="
+    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
+    + ">"
+    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</option>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<div class='sq-loading' style='position:absolute; width:100%; top:40%; z-index: 2;'>\n    <div class=\"spinner\">\n    <div class=\"rect5\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect1\"></div>\n    <div class=\"rect2\"></div>\n    <div class=\"rect3\"></div>\n    <div class=\"rect4\"></div>\n    <div class=\"rect5\"></div>\n    </div>\n</div>\n<div id=\"chart_container\" class=\"squid-api-data-widgets-timeseries-widget\">\n    <div id=\"yearswitcher\"></div>\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.timeUnitSelector : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "    <div id=\"metrics\">\n        "
+    + alias4(((helper = (helper = helpers.metricColumns || (depth0 != null ? depth0.metricColumns : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"metricColumns","hash":{},"data":data}) : helper)))
+    + "\n    </div>\n    <div id=\"stale\">\n        <div class=\"reactiveMessage\">\n            <span><i class=\"fa fa-line-chart\"></i>\n            <br>"
+    + alias4(((helper = (helper = helpers.staleMessage || (depth0 != null ? depth0.staleMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"staleMessage","hash":{},"data":data}) : helper)))
+    + "</span>\n        </div>\n    </div>\n    <div id=\"re-run\" style=\"display: none;\">\n            <div class=\"reactiveMessage\">\n                <span><i class=\"fa fa-refresh\"></i>\n                <br>"
+    + alias4(((helper = (helper = helpers.reRunMessage || (depth0 != null ? depth0.reRunMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"reRunMessage","hash":{},"data":data}) : helper)))
     + "</span>\n            </div>\n        </div>\n    <div id=\"legend\" />\n    <div id=\"brushing\" style=\"display: none;\">\n        <a>Double click the visulisation to zoom out</a>\n    </div>\n    <div id=\"widget\">\n\n    </div>\n    <div id=\"error\" />\n</div>\n";
-  return buffer;
-  });
+},"useData":true});
 (function(root, factory) {
     root.squid_api.controller.AnalysisController = factory(root.Backbone,
             root.squid_api);
