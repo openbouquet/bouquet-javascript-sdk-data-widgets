@@ -1705,11 +1705,19 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 						var facets = this.model.get("facets");
 						if (facets) {
 							for (i=0; i<facets.length; i++) {
-								obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facets[i].value) || {};
+								var facetWithAlias = facets[i].value;
+								var alias = null;
+								var facetId = facetWithAlias;
+								if (facetWithAlias.toLowerCase().indexOf("' as '") !== -1) {
+									facetId = facetWithAlias.substring(0, facetWithAlias.toLowerCase().indexOf("' as '")+1);
+									alias =  facetWithAlias.substring(facetWithAlias.toLowerCase().indexOf("' as '")+6, facetWithAlias.length-1);
+								}
+		
+								obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facetId) || {};
 								if (obj) {
 									obj = {
 											dataType : "STRING",
-											name : obj.name,
+											name : alias === null? obj.name:alias,
 											id : obj.id
 									};
 									columns.push(obj);
