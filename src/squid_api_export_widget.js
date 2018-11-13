@@ -193,14 +193,14 @@
         updateFormats : function(formats) {
         	this.formats = formats;
         },
-        
+
         clickedFormat : function (event) {
             var t = event.target;
             this.selectedFormatIndex = null;
             for (var i=0; i<this.formats.length;i++) {
                 if (this.formats[i].format === t.value) {
                     this.selectedFormatIndex = i;
-                } else if (this.formats[i].selected === true){ 
+                } else if (this.formats[i].selected === true){
                 	this.formats[i].selected = false;
                 }
             }
@@ -257,7 +257,8 @@
                 // build the template
 
                 if (selectedFormat.format === "xml") {
-                    if (me.model.get("templateData").options.xmlType) {
+                    if (me.model.get("templateData").options.xmlType &&
+                        selectedFormat.template[me.model.get("templateData").options.xmlType]) {
                         velocityTemplate = selectedFormat.template[me.model.get("templateData").options.xmlType](me.model.get("templateData"));
                     } else {
                         velocityTemplate = selectedFormat.template(me.model.get("templateData"));
