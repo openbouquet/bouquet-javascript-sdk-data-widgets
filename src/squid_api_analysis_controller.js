@@ -157,7 +157,7 @@
             });
             changed = changed || a.hasChanged();
             a.set({
-                "orderBy" : config.get("orderBy")
+                "orderBy" : $.extend(true, [], config.get("orderBy"))
             }, {
                 "silent" : silent
             });

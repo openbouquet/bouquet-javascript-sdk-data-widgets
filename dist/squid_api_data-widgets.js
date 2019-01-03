@@ -797,7 +797,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             });
             changed = changed || a.hasChanged();
             a.set({
-                "orderBy" : config.get("orderBy")
+                "orderBy" : $.extend(true, [], config.get("orderBy"))
             }, {
                 "silent" : silent
             });
@@ -2378,43 +2378,58 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 			var dfd = new $.Deferred();
 			var me = this;
 			if (chosenDimensions) {
-				var dimensions = [];
-                for (var j=0; j<chosenDimensions.length; j++) {
-                    var dimensionflatten =  chosenDimensions[j];
-                    me.dimension = dimensionflatten.replace(/.*'([^']+)'/, "$1");
-                    me.domain = dimensionflatten.replace(/.*'([^']+)'\.@'[^']+'$/, "$1");
-                    if (dimensionflatten.startsWith("@'"+me.domain+"'") === false) {
-	                    squid_api.getCustomer().then(function(customer) {
-	                        customer.get("projects").load(me.config.get("project")).then(function(project) {
-	                            project.get("relations").load(me.domain).then(function(relation) {
-		                            project.get("domains").load(relation.get("rightId").domainId).then(function(domain) {
-		                                domain.get("dimensions").load(me.dimension).then(function(dimension) {
-		                                	dimensions.push(dimension);
-		                                	if (dimensions.length === chosenDimensions.length) {
-		                        				dfd.resolve(dimensions);
-		                                	}
-		                                });
-		                            });
-	                            });
-	                        });
-	                    });                  
-	                } else {
-	                    squid_api.getCustomer().then(function(customer) {
-	                        customer.get("projects").load(me.config.get("project")).then(function(project) {
-	                            project.get("domains").load(me.domain).then(function(domain) {
-	                                domain.get("dimensions").load(me.dimension).then(function(dimension) {
-	                                	dimensions.push(dimension);
-	                                	if (dimensions.length === chosenDimensions.length) {
-	                        				dfd.resolve(dimensions);
-	                                	}
-	                                });
-	                            });
-	                        });
-	                    });
-                    }
-                 }
+                squid_api.getCustomer().then(function(customer) {
+                    customer.get("projects").load(me.config.get("project")).then(function(project) {
+	    				var dimensions = [];
+	                    for (var j=0; j<chosenDimensions.length; j++) {
+	                        var dimensionflatten =  chosenDimensions[j];
+	                        me.dimension = dimensionflatten.replace(/.*'([^']+)'/, "$1");
+	                        me.domain = dimensionflatten.replace(/.*'([^']+)'\.@'[^']+'$/, "$1");
+	                        me.dimensionflatten = dimensionflatten;
+	                        if (dimensionflatten.startsWith("@'"+me.domain+"'") === false) {
+	    	                	dimension = me.loadDimensionFromRelation(project, me.domain, me.dimension);
+	    	                	$.when(dimension).done(function(dimension) {
+		    	               		dimensions.push(dimension);
+		    	                	if (dimensions.length === chosenDimensions.length) {
+		    	        				dfd.resolve(dimensions);
+		    	                	}    	 
+	    	                	});
+	    	                } else {
+	    	                	dimension = me.loadDimensionFromDomain(project, me.domain, me.dimension);
+	    	                	$.when(dimension).done(function(dimension) {
+		    	               		dimensions.push(dimension);
+		    	                	if (dimensions.length === chosenDimensions.length) {
+		    	        				dfd.resolve(dimensions);
+		    	                	}    	 
+	    	                	});
+	    	                }
+	                     }
+                   });
+                });
 			}
 			return dfd;
+        },
+        
+        loadDimensionFromRelation: function(project, relationId, dimensionId) {
+			var dfd = new $.Deferred();
+        	project.get("relations").load(relationId).then(function(relation) {
+        		project.get("domains").load(relation.get("rightId").domainId).then(function(domain) {
+        			domain.get("dimensions").load(dimensionId).then(function(dimension) {
+        				dfd.resolve(dimension);
+                    });
+                });
+            });
+        	return dfd;
+        },
+       
+        loadDimensionFromDomain: function(project, domainId, dimensionId) {
+			var dfd = new $.Deferred();
+            project.get("domains").load(domainId).then(function(domain) {
+            	domain.get("dimensions").load(dimensionId).then(function(dimension) {
+    				dfd.resolve(dimension);
+                });
+            });
+        	return dfd;
         },
         
         refreshAnalysis : function(silent) {
@@ -2489,7 +2504,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                 });
                 changed = changed || a.hasChanged();
                 a.set({
-                    "orderBy" : config.get("orderBy")
+                    "orderBy" :  $.extend(true, [], config.get("orderBy"))
                 }, {
                     "silent" : silent
                 });
