@@ -2,6 +2,7 @@
   "name":"Nom",
   "description":"Description",
   "noDataMessage":"Il n'y a pas de données",
+  "computing":"Calcul en cours",
   "reRunMessage":"Veuillez réexecuter votre analyse",
   "staleMessage" : "Veuillez cliquer sur 'Rafraîchir' pour mettre à jour les résultats",
   "comparison-label":"Comparaison",

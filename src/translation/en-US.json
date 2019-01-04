@@ -2,6 +2,7 @@
   "name":"Name",
   "description":"Description",
   "noDataMessage":"No data found",
+  "computing":"Computing",
   "reRunMessage":"Please manually refresh your analysis",
   "staleMessage" : "Please click on the 'Refresh' button to update your analysis",
   "comparison-label":"Comparison",

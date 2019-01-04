@@ -283,9 +283,9 @@ this["squid_api"]["template"]["squid_api_kpi_widget"] = Handlebars.template({"1"
 
   return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.done : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.program(8, data, 0),"data":data})) != null ? stack1 : "");
 },"6":function(container,depth0,helpers,partials,data) {
-    return "  		No Data\r\n";
+    return "  		<span data-i18n=\"noDataMessage\">No Data</span>\r\n";
 },"8":function(container,depth0,helpers,partials,data) {
-    return "  		Computing\r\n";
+    return "  		<span data-i18n=\"computing\">Computing</span>\r\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -4551,6 +4551,9 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 				}
 			}
 			this.$el.html(this.template(jsonData));
+			if (typeof $.i18n !== "undefined") {
+				this.$el.localize();
+			}
 			return this;
 		}
 

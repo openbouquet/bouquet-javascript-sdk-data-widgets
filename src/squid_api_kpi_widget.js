@@ -150,6 +150,9 @@
 				}
 			}
 			this.$el.html(this.template(jsonData));
+			if (typeof $.i18n !== "undefined") {
+				this.$el.localize();
+			}
 			return this;
 		}
 
