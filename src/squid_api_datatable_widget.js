@@ -537,7 +537,7 @@
 								return d.definition;
 							} else {
 								return d.id;
-							}
+							}	
 						} else {
 							if (d.definition && d.definition.startsWith("@")) {
 								return d.definition;
@@ -586,7 +586,7 @@
 											}
 									};
 
-									if (role === "DATA" && originType !== "COMPARETO") {
+									if (role === "DATA" && originType === "USER") {
 										// metric
 										metrics = domain.get("metrics");
 										var metricItem = metrics.findWhere({"definition" : id});
@@ -595,8 +595,8 @@
 											metricItemDescription = metricItem.get("description");
 										}
 										column.attr("title", metricItemDescription);
-										column.tooltip(options);
-									} else if (originType === "COMPARETO") {
+										//column.tooltip(options);
+									} else if (originType === "COMPARETO" || originType === "GROWTH") {
 										// compare column
 										results = squid_api.model.filters.get("results");
 										if (results) {
@@ -606,14 +606,33 @@
 													if (compareTo[0].selectedItems[0]) {
 														var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
 														var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
-														column.attr("title", "metric comparaison on period " + lowerBound + " to " + upperBound);
+														metrics = domain.get("metrics");
+														var metricItem = metrics.findWhere({"definition" : id.replace(/.*\(([^\)]+)\)/, "$1")});
+														var metricItemDescription = "metric";
+														if (metricItem) {
+															metricItemDescription = metricItem.get("name");
+														}
+
+														var columnTitle = "Metric " + (originType === "COMPARETO"? "comparison":"growth") + " on period " + lowerBound + " to " + upperBound;
+														if (typeof $.i18n !== "undefined") {
+															columnTitle = $.i18n.t("compare-growth-title", {"type":(originType === "COMPARETO"? $.i18n.t("comparison-label"):$.i18n.t("growth-label")), "metric":metricItemDescription, "lower":lowerBound, "upper":upperBound});
+											            }
+
+														column.attr("title", columnTitle);
 													}
 												}
 											}
 										}
-										column.tooltip(options);
+										//column.tooltip(options);
 									} else {
-										column.tooltip(options);
+										var dimensions = domain.get("dimensions");
+										var dimension = dimensions.findWhere({"oid" : id.replace(/.*'([^']+)'/, "$1")});
+										var dimensionDescription = "";
+										if (dimension) {
+											dimensionDescription = dimension.get("description");
+										}
+										column.attr("title", dimensionDescription);
+										//column.tooltip(options);
 									}
 								}
 							});
@@ -839,14 +858,20 @@
 
 				if (results.totalSize>0) {
 					// display total
-					this.$el.find("#total").show();
 					this.$el.find("#no-data").hide();
-					this.$el.find("#count-entries").html(""+ (results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length));
-					this.$el.find("#total-entries").html(""+results.totalSize);
+					var resultsInfo = "Showing "+(results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length)+" of "+results.totalSize+" entries";
+                    if (typeof $.i18n !== "undefined") {
+                    	resultsInfo=$.i18n.t("table-results-size", {"results":(results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length),"total":results.totalSize});
+                    }
+					this.$el.find("#total-msg").html(resultsInfo);
+					this.$el.find("#total").show();
 				} else {
 					this.$el.find("#total").hide();
 					this.$el.find("#no-data").show();
 				} 
+				if (typeof $.i18n !== "undefined") {
+					$("#table-view").localize();
+				}
 			}
 		},
 
@@ -890,6 +915,11 @@
 				var me = this;
 				this.currentDomain = this.config.get("domain");
 				var parentId = this.config.get("domain");
+	            if (typeof $.i18n !== "undefined") {
+					this.noDataMessage = $.i18n.t("noDataMessage");
+					this.staleMessage = $.i18n.t("staleMessage");
+					this.reRunMessage = $.i18n.t("reRunMessage");
+	            }
 
 				squid_api.getCustomer().then(function(customer) {
 					customer.get("projects").load(me.config.get("project")).then(function(project) {

@@ -598,7 +598,9 @@
                     }
                 });
             }
-
+            if (typeof $.i18n !== "undefined") {
+            	$("#export-content").localize();
+            }
             return this;
         }
     });

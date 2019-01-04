@@ -170,10 +170,25 @@
                                 return 0;
                             });
                         }
-                        
+                        var dimensionsLabel="Dimensions";
+                        var metricsLabel="Metrics";
+                        var nameLabel="Name";
+                        var descriptionLabel="Description";
+
+                        if (typeof $.i18n !== "undefined") {
+                            dimensionsLabel=$.i18n.t("dimensions");
+                            metricsLabel=$.i18n.t("metrics");
+                            nameLabel=$.i18n.t("name");
+                            descriptionLabel=$.i18n.t("description");
+                        }
+
                         var jsonData = {
                             dimensions: this.dimensions,
-                            metrics: this.metrics
+                            metrics: this.metrics,
+                            dimensionsLabel: dimensionsLabel,
+                            metricsLabel: metricsLabel,
+                            nameLabel: nameLabel,
+                            descriptionLabel: descriptionLabel
                         };
 
                         if (me.descriptionAvailable) {
@@ -197,11 +212,13 @@
                                 	inStateClick.inState.click = false;
                                 }
                             });
+
                         } else {
                             this.$el.empty();
                         }
                     }
                 }
+
             }
 
             return this;

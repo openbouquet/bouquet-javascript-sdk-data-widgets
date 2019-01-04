@@ -38,7 +38,7 @@ this["squid_api"]["template"]["squid_api_datatable_widget"] = Handlebars.templat
     + alias4(((helper = (helper = helpers.staleMessage || (depth0 != null ? depth0.staleMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"staleMessage","hash":{},"data":data}) : helper)))
     + "\r\n		</span></div>\r\n	</div>\r\n	<div id=\"re-run\" style=\"display: none;\">\r\n		<div class=\"reactiveMessage\"><span><i class=\"fa fa-refresh\"></i><br>\r\n        	"
     + alias4(((helper = (helper = helpers.reRunMessage || (depth0 != null ? depth0.reRunMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"reRunMessage","hash":{},"data":data}) : helper)))
-    + "\r\n		</span></div>\r\n		<span>\r\n	</div>\r\n	<div class=\"footer\">\r\n		<blockquote id=\"total\">\r\n			Showing <span id=\"count-entries\"></span> of <span id=\"total-entries\"></span> entries\r\n		</blockquote>\r\n		<blockquote id=\"no-data\">\r\n			No data found\r\n		</blockquote>\r\n		<div id=\"pagination\"></div>\r\n	</div>\r\n</div>\r\n";
+    + "\r\n		</span></div>\r\n		<span>\r\n	</div>\r\n	<div class=\"footer\">\r\n		<blockquote id=\"total\" style=\"display: none;\">\r\n			<footer id=\"total-msg\"></footer>\r\n		</blockquote>\r\n		<blockquote id=\"no-data\" style=\"display: none;\">\r\n			<footer data-i18n=\"noDataMessage\">No data found</footer>\r\n		</blockquote>\r\n		<div id=\"pagination\"></div>\r\n	</div>\r\n</div>\r\n";
 },"useData":true});
 
 this["squid_api"]["template"]["squid_api_dimension_widget"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
@@ -422,11 +422,23 @@ this["squid_api"]["template"]["squid_api_modelinfo_internal_widget"] = Handlebar
     + alias4(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper)))
     + "</td>\n                    </tr>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6 nopadding\">\n        <h4>Dimensions</h4>\n        <table class=\"table table-condensed dimensions\">\n        <thead>\n        <tr>\n            <th>Name</th>\n            <th>Description</th>\n          </tr>\n        </thead>\n"
+  return "<div class=\"squid-api-modelinfo-internal-view\">\n    <div class=\"col-md-6 nopadding\">\n        <h4>"
+    + alias4(((helper = (helper = helpers.dimensionsLabel || (depth0 != null ? depth0.dimensionsLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"dimensionsLabel","hash":{},"data":data}) : helper)))
+    + "</h4>\n        <table class=\"table table-condensed dimensions\">\n        <thead>\n        <tr>\n          <th>"
+    + alias4(((helper = (helper = helpers.nameLabel || (depth0 != null ? depth0.nameLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"nameLabel","hash":{},"data":data}) : helper)))
+    + "</th>\n          <th>"
+    + alias4(((helper = (helper = helpers.descriptionLabel || (depth0 != null ? depth0.descriptionLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"descriptionLabel","hash":{},"data":data}) : helper)))
+    + "</th>\n        </tr>\n        </thead>\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.dimensions : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "        </table>\n    </div>\n    <div class=\"col-md-6 nopadding\">\n        <h4>Metrics</h4>\n        <table class=\"table table-condensed metrics\">\n            <thead> \n             <tr>\n                <th>Name</th>\n                <th>Description</th>\n            </tr>\n            </thead>\n"
+    + "        </table>\n    </div>\n    <div class=\"col-md-6 nopadding\">\n        <h4>"
+    + alias4(((helper = (helper = helpers.metricsLabel || (depth0 != null ? depth0.metricsLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"metricsLabel","hash":{},"data":data}) : helper)))
+    + "</h4>\n        <table class=\"table table-condensed metrics\">\n            <thead>\n             <tr>\n               <th>"
+    + alias4(((helper = (helper = helpers.nameLabel || (depth0 != null ? depth0.nameLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"nameLabel","hash":{},"data":data}) : helper)))
+    + "</th>\n               <th>"
+    + alias4(((helper = (helper = helpers.descriptionLabel || (depth0 != null ? depth0.descriptionLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"descriptionLabel","hash":{},"data":data}) : helper)))
+    + "</th>\n            </tr>\n            </thead>\n"
     + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.metrics : depth0),{"name":"each","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "        </table>\n    </div>\n</div>\n";
 },"useData":true});
@@ -1935,7 +1947,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 								return d.definition;
 							} else {
 								return d.id;
-							}
+							}	
 						} else {
 							if (d.definition && d.definition.startsWith("@")) {
 								return d.definition;
@@ -1984,7 +1996,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 											}
 									};
 
-									if (role === "DATA" && originType !== "COMPARETO") {
+									if (role === "DATA" && originType === "USER") {
 										// metric
 										metrics = domain.get("metrics");
 										var metricItem = metrics.findWhere({"definition" : id});
@@ -1993,8 +2005,8 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 											metricItemDescription = metricItem.get("description");
 										}
 										column.attr("title", metricItemDescription);
-										column.tooltip(options);
-									} else if (originType === "COMPARETO") {
+										//column.tooltip(options);
+									} else if (originType === "COMPARETO" || originType === "GROWTH") {
 										// compare column
 										results = squid_api.model.filters.get("results");
 										if (results) {
@@ -2004,14 +2016,33 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 													if (compareTo[0].selectedItems[0]) {
 														var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
 														var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
-														column.attr("title", "metric comparaison on period " + lowerBound + " to " + upperBound);
+														metrics = domain.get("metrics");
+														var metricItem = metrics.findWhere({"definition" : id.replace(/.*\(([^\)]+)\)/, "$1")});
+														var metricItemDescription = "metric";
+														if (metricItem) {
+															metricItemDescription = metricItem.get("name");
+														}
+
+														var columnTitle = "Metric " + (originType === "COMPARETO"? "comparison":"growth") + " on period " + lowerBound + " to " + upperBound;
+														if (typeof $.i18n !== "undefined") {
+															columnTitle = $.i18n.t("compare-growth-title", {"type":(originType === "COMPARETO"? $.i18n.t("comparison-label"):$.i18n.t("growth-label")), "metric":metricItemDescription, "lower":lowerBound, "upper":upperBound});
+											            }
+
+														column.attr("title", columnTitle);
 													}
 												}
 											}
 										}
-										column.tooltip(options);
+										//column.tooltip(options);
 									} else {
-										column.tooltip(options);
+										var dimensions = domain.get("dimensions");
+										var dimension = dimensions.findWhere({"oid" : id.replace(/.*'([^']+)'/, "$1")});
+										var dimensionDescription = "";
+										if (dimension) {
+											dimensionDescription = dimension.get("description");
+										}
+										column.attr("title", dimensionDescription);
+										//column.tooltip(options);
 									}
 								}
 							});
@@ -2237,14 +2268,20 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 
 				if (results.totalSize>0) {
 					// display total
-					this.$el.find("#total").show();
 					this.$el.find("#no-data").hide();
-					this.$el.find("#count-entries").html(""+ (results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length));
-					this.$el.find("#total-entries").html(""+results.totalSize);
+					var resultsInfo = "Showing "+(results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length)+" of "+results.totalSize+" entries";
+                    if (typeof $.i18n !== "undefined") {
+                    	resultsInfo=$.i18n.t("table-results-size", {"results":(results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length),"total":results.totalSize});
+                    }
+					this.$el.find("#total-msg").html(resultsInfo);
+					this.$el.find("#total").show();
 				} else {
 					this.$el.find("#total").hide();
 					this.$el.find("#no-data").show();
 				} 
+				if (typeof $.i18n !== "undefined") {
+					$("#table-view").localize();
+				}
 			}
 		},
 
@@ -2288,6 +2325,11 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 				var me = this;
 				this.currentDomain = this.config.get("domain");
 				var parentId = this.config.get("domain");
+	            if (typeof $.i18n !== "undefined") {
+					this.noDataMessage = $.i18n.t("noDataMessage");
+					this.staleMessage = $.i18n.t("staleMessage");
+					this.reRunMessage = $.i18n.t("reRunMessage");
+	            }
 
 				squid_api.getCustomer().then(function(customer) {
 					customer.get("projects").load(me.config.get("project")).then(function(project) {
@@ -4156,7 +4198,9 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                     }
                 });
             }
-
+            if (typeof $.i18n !== "undefined") {
+            	$("#export-content").localize();
+            }
             return this;
         }
     });
@@ -5443,10 +5487,25 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                                 return 0;
                             });
                         }
-                        
+                        var dimensionsLabel="Dimensions";
+                        var metricsLabel="Metrics";
+                        var nameLabel="Name";
+                        var descriptionLabel="Description";
+
+                        if (typeof $.i18n !== "undefined") {
+                            dimensionsLabel=$.i18n.t("dimensions");
+                            metricsLabel=$.i18n.t("metrics");
+                            nameLabel=$.i18n.t("name");
+                            descriptionLabel=$.i18n.t("description");
+                        }
+
                         var jsonData = {
                             dimensions: this.dimensions,
-                            metrics: this.metrics
+                            metrics: this.metrics,
+                            dimensionsLabel: dimensionsLabel,
+                            metricsLabel: metricsLabel,
+                            nameLabel: nameLabel,
+                            descriptionLabel: descriptionLabel
                         };
 
                         if (me.descriptionAvailable) {
@@ -5470,11 +5529,13 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                                 	inStateClick.inState.click = false;
                                 }
                             });
+
                         } else {
                             this.$el.empty();
                         }
                     }
                 }
+
             }
 
             return this;

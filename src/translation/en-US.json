@@ -1,0 +1,11 @@
+{
+  "name":"Name",
+  "description":"Description",
+  "noDataMessage":"No data found",
+  "reRunMessage":"Please manually refresh your analysis",
+  "staleMessage" : "Please click on the 'Refresh' button to update your analysis",
+  "comparison-label":"Comparison",
+  "growth-label":"Growth",
+  "compare-growth-title":" {{type}} of metric '{{metric}}' on period {{lower}} to {{upper}}",
+  "table-results-size":"Showing {{results}} of {{total}} entries"
+}

@@ -1,0 +1,11 @@
+{
+  "name":"Nom",
+  "description":"Description",
+  "noDataMessage":"Il n'y a pas de données",
+  "reRunMessage":"Veuillez réexecuter votre analyse",
+  "staleMessage" : "Veuillez cliquer sur 'Rafraîchir' pour mettre à jour les résultats",
+  "comparison-label":"Comparaison",
+  "growth-label":"Croissance",
+  "compare-growth-title":" {{type}} de l'indicateur '{{metric}}' sur la période {{lower}} à {{upper}}",
+  "table-results-size":"Lignes {{results}} sur un total de {{total}}"
+}
