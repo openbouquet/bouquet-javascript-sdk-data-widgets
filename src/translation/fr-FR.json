@@ -7,5 +7,8 @@
   "comparison-label":"Comparaison",
   "growth-label":"Croissance",
   "compare-growth-title":" {{type}} de l'indicateur '{{metric}}' sur la période {{lower}} à {{upper}}",
-  "table-results-size":"Lignes {{results}} sur un total de {{total}}"
+  "table-results-size":"Lignes {{results}} sur un total de {{total}}",
+  "bar-current":"Référence",
+  "bar-compare":"Compare",
+  "bar-summary":"Sommaire"
 }

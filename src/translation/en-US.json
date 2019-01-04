@@ -7,5 +7,8 @@
   "comparison-label":"Comparison",
   "growth-label":"Growth",
   "compare-growth-title":" {{type}} of metric '{{metric}}' on period {{lower}} to {{upper}}",
-  "table-results-size":"Showing {{results}} of {{total}} entries"
+  "table-results-size":"Showing {{results}} of {{total}} entries",
+  "bar-current":"Current",
+  "bar-compare":"Compare",
+  "bar-summary":"Summary"
 }

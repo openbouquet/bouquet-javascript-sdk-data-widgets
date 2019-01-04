@@ -86,8 +86,11 @@
 					labels: [],
 					title: ""
 			};
-
-			barData.series.push("Current");
+			var currentLbl = "Current";
+            if (typeof $.i18n !== "undefined") {
+            	currentLbl=$.i18n.t("bar-current");
+            }
+			barData.series.push(currentLbl);
 			// check to see if we only display totals
 			var onlyMetrics = true;
 			var hasCompare = false;
@@ -107,10 +110,18 @@
 				}
 			}
 			if (hasCompare) {
-				barData.series.push("Compare");
+				var compareLbl = "Current";
+	            if (typeof $.i18n !== "undefined") {
+	            	compareLbl=$.i18n.t("bar-compare");
+	            }
+				barData.series.push(compareLbl);
 			}
 			if (onlyMetrics) {
-				barData.title = "Summary";
+				var summaryLbl = "Current";
+	            if (typeof $.i18n !== "undefined") {
+	            	summaryLbl=$.i18n.t("bar-summary");
+	            }
+				barData.title = summaryLbl;
 			}
 			// store bar data
 			for (i=0; i<rows.length; i++) {
