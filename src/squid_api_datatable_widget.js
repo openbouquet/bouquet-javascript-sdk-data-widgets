@@ -870,7 +870,7 @@
 					this.$el.find("#no-data").show();
 				} 
 				if (typeof $.i18n !== "undefined") {
-					$("#table-view").localize();
+					this.$el.localize();
 				}
 			}
 		},

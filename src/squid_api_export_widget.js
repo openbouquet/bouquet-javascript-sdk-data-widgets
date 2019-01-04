@@ -599,7 +599,7 @@
                 });
             }
             if (typeof $.i18n !== "undefined") {
-            	$("#export-content").localize();
+            	this.$el.localize();
             }
             return this;
         }

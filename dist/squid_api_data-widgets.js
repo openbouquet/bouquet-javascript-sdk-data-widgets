@@ -2291,7 +2291,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 					this.$el.find("#no-data").show();
 				} 
 				if (typeof $.i18n !== "undefined") {
-					$("#table-view").localize();
+					this.$el.localize();
 				}
 			}
 		},
@@ -4210,7 +4210,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                 });
             }
             if (typeof $.i18n !== "undefined") {
-            	$("#export-content").localize();
+            	this.$el.localize();
             }
             return this;
         }
