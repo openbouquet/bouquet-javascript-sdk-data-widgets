@@ -578,19 +578,20 @@
 									var role = column.attr("data-role");
 									var originType = column.attr("origin-type");
 									var id = column.attr("data-content");
-
-									var options = {
+									var metricItem, metricItemDescription;
+									
+									/*var options = {
 											position: {
 												my: "center bottom",
 												at: "center top+5",
 											}
-									};
+									};*/
 
 									if (role === "DATA" && originType === "USER") {
 										// metric
 										metrics = domain.get("metrics");
-										var metricItem = metrics.findWhere({"definition" : id});
-										var metricItemDescription = "";
+										metricItem = metrics.findWhere({"definition" : id});
+										metricItemDescription = "";
 										if (metricItem) {
 											metricItemDescription = metricItem.get("description");
 										}
@@ -607,8 +608,8 @@
 														var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
 														var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
 														metrics = domain.get("metrics");
-														var metricItem = metrics.findWhere({"definition" : id.replace(/.*\(([^\)]+)\)/, "$1")});
-														var metricItemDescription = "metric";
+														metricItem = metrics.findWhere({"definition" : id.replace(/.*\(([^\)]+)\)/, "$1")});
+														metricItemDescription = "metric";
 														if (metricItem) {
 															metricItemDescription = metricItem.get("name");
 														}

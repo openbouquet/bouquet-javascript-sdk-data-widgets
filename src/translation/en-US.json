@@ -11,5 +11,10 @@
   "table-results-size":"Showing {{results}} of {{total}} entries",
   "bar-current":"Current",
   "bar-compare":"Compare",
-  "bar-summary":"Summary"
+  "bar-summary":"Summary",
+  "daily":"Daily",
+  "weekly":"Weekly",
+  "monthly":"Monthly",
+  "yearly":"Yearly",
+  "double-click-zoom-out":"Double click the visulisation to zoom out"
 }

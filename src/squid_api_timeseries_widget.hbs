@@ -17,7 +17,7 @@
       <div id="time-unit-selector">
         <select class="form-control">
             {{#each timeUnits}}
-              <option value={{id}}>{{name}}</option>
+              <option value={{id}} data-i18n="i18n">{{name}}</option>
             {{/each}}
         </select>
       </div>
@@ -39,7 +39,7 @@
         </div>
     <div id="legend" />
     <div id="brushing" style="display: none;">
-        <a>Double click the visulisation to zoom out</a>
+        <a data-i18n="double-click-zoom-out">Double click the visulisation to zoom out</a>
     </div>
     <div id="widget">
 

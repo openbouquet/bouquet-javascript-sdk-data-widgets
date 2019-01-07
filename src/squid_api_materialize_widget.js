@@ -339,7 +339,7 @@
         },
 
         render: function () {
-            var me = this;
+            var me = this, dfModal;
             var analysis = this.model.get("analysis");
             if (!analysis) {
                 analysis = this.model;
@@ -396,7 +396,7 @@
                 }
             });
 
-            var dfModal = new squid_api.view.ModalView({
+            dfModal = new squid_api.view.ModalView({
                 view : dfCollection
             });
 

@@ -634,7 +634,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 
   return "              <option value="
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
-    + ">"
+    + " data-i18n=\"i18n\">"
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
     + "</option>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -648,7 +648,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
     + alias4(((helper = (helper = helpers.staleMessage || (depth0 != null ? depth0.staleMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"staleMessage","hash":{},"data":data}) : helper)))
     + "</span>\n        </div>\n    </div>\n    <div id=\"re-run\" style=\"display: none;\">\n            <div class=\"reactiveMessage\">\n                <span><i class=\"fa fa-refresh\"></i>\n                <br>"
     + alias4(((helper = (helper = helpers.reRunMessage || (depth0 != null ? depth0.reRunMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"reRunMessage","hash":{},"data":data}) : helper)))
-    + "</span>\n            </div>\n        </div>\n    <div id=\"legend\" />\n    <div id=\"brushing\" style=\"display: none;\">\n        <a>Double click the visulisation to zoom out</a>\n    </div>\n    <div id=\"widget\">\n\n    </div>\n    <div id=\"error\" />\n</div>\n";
+    + "</span>\n            </div>\n        </div>\n    <div id=\"legend\" />\n    <div id=\"brushing\" style=\"display: none;\">\n        <a data-i18n=\"double-click-zoom-out\">Double click the visulisation to zoom out</a>\n    </div>\n    <div id=\"widget\">\n\n    </div>\n    <div id=\"error\" />\n</div>\n";
 },"useData":true});
 (function(root, factory) {
     root.squid_api.controller.AnalysisController = factory(root.Backbone,
@@ -1999,19 +1999,20 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 									var role = column.attr("data-role");
 									var originType = column.attr("origin-type");
 									var id = column.attr("data-content");
-
-									var options = {
+									var metricItem, metricItemDescription;
+									
+									/*var options = {
 											position: {
 												my: "center bottom",
 												at: "center top+5",
 											}
-									};
+									};*/
 
 									if (role === "DATA" && originType === "USER") {
 										// metric
 										metrics = domain.get("metrics");
-										var metricItem = metrics.findWhere({"definition" : id});
-										var metricItemDescription = "";
+										metricItem = metrics.findWhere({"definition" : id});
+										metricItemDescription = "";
 										if (metricItem) {
 											metricItemDescription = metricItem.get("description");
 										}
@@ -2028,8 +2029,8 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 														var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
 														var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
 														metrics = domain.get("metrics");
-														var metricItem = metrics.findWhere({"definition" : id.replace(/.*\(([^\)]+)\)/, "$1")});
-														var metricItemDescription = "metric";
+														metricItem = metrics.findWhere({"definition" : id.replace(/.*\(([^\)]+)\)/, "$1")});
+														metricItemDescription = "metric";
 														if (metricItem) {
 															metricItemDescription = metricItem.get("name");
 														}
@@ -2429,21 +2430,23 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 
         loadChosenDimensions: function(chosenDimensions) {
 			var dfd = new $.Deferred();
+			var chosenDimensionsCopy = chosenDimensions;
 			var me = this;
-			if (chosenDimensions) {
+			if (chosenDimensionsCopy) {
                 squid_api.getCustomer().then(function(customer) {
                     customer.get("projects").load(me.config.get("project")).then(function(project) {
-	    				var dimensions = [];
-	                    for (var j=0; j<chosenDimensions.length; j++) {
-	                        var dimensionflatten =  chosenDimensions[j];
+                    	var dimensions = [];
+	                    for (var j=0; j<chosenDimensionsCopy.length; j++) {
+	                        var dimensionflatten =  chosenDimensionsCopy[j];
+	                        var dimension;
 	                        me.dimension = dimensionflatten.replace(/.*'([^']+)'/, "$1");
 	                        me.domain = dimensionflatten.replace(/.*'([^']+)'\.@'[^']+'$/, "$1");
 	                        me.dimensionflatten = dimensionflatten;
 	                        if (dimensionflatten.startsWith("@'"+me.domain+"'") === false) {
 	    	                	dimension = me.loadDimensionFromRelation(project, me.domain, me.dimension);
-	    	                	$.when(dimension).done(function(dimension) {
-		    	               		dimensions.push(dimension);
-		    	                	if (dimensions.length === chosenDimensions.length) {
+	    	                	$.when(dimensionLoaded).done(function(dimensionLoaded) {
+		    	               		dimensions.push(dimensionLoaded);
+		    	                	if (dimensions.length === chosenDimensionsCopy.length) {
 		    	        				dfd.resolve(dimensions);
 		    	                	}    	 
 	    	                	});
@@ -2451,7 +2454,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	    	                	dimension = me.loadDimensionFromDomain(project, me.domain, me.dimension);
 	    	                	$.when(dimension).done(function(dimension) {
 		    	               		dimensions.push(dimension);
-		    	                	if (dimensions.length === chosenDimensions.length) {
+		    	                	if (dimensions.length === chosenDimensionsCopy.length) {
 		    	        				dfd.resolve(dimensions);
 		    	                	}    	 
 	    	                	});
@@ -4903,7 +4906,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
         },
 
         render: function () {
-            var me = this;
+            var me = this, dfModal;
             var analysis = this.model.get("analysis");
             if (!analysis) {
                 analysis = this.model;
@@ -4960,7 +4963,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                 }
             });
 
-            var dfModal = new squid_api.view.ModalView({
+            dfModal = new squid_api.view.ModalView({
                 view : dfCollection
             });
 
@@ -6912,16 +6915,20 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                 } else {
                     this.timeUnits = [{
                         id: "TO_DATE",
+                        i18n: "daily",
                         name: "Daily"
                     },
                     {
                         id: "WEEKLY",
+                        i18n: "weekly",
                         name: "Weekly"
                     }, {
                         id: "MONTHLY",
+                        i18n: "monthly",
                         name: "Monthly"
                     }, {
                         id: "YEARLY",
+                        i18n: "yearly",
                         name: "Yearly"
                     }];
                 }
@@ -7354,6 +7361,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 
         show: function() {
             this.$el.show();
+            
         },
 
         updateTimeUnitSelector: function() {
@@ -7366,7 +7374,11 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 
         renderTemplate: function(done) {
             // render metrics used for analysis
-            var metricColumns = [];
+            if (typeof $.i18n !== "undefined") {
+				this.staleMessage = $.i18n.t("staleMessage");
+				this.reRunMessage = $.i18n.t("reRunMessage");
+            }
+            var metricColumns = [], i;
             var results = this.model.get("results");
             if (done && ! this.model.get("error") && results) {
                 var cols = this.model.get("results").cols;
@@ -7377,6 +7389,13 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                 }
             }
             metricColumns = metricColumns.join(", ");
+            if (typeof this.timeUnits !== "undefined" && typeof $.i18n !== "undefined") {
+            	for (i=0; i<this.timeUnits.length; i++) {
+            		if (typeof this.timeUnits[i].i18n !== "undefined") {
+            			this.timeUnits[i].name = $.i18n.t(this.timeUnits[i].i18n);
+            		}
+            	}
+            }
             this.$el.html(this.template({
                 reRunMessage: this.reRunMessage,
                 timeUnitSelector: this.timeUnitSelector,
@@ -7386,6 +7405,9 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             }));
             if (this.timeUnitSelector) {
                 this.updateTimeUnitSelector();
+            }
+            if (typeof $.i18n !== "undefined") {
+            	this.$el.localize();
             }
         },
 

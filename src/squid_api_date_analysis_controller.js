@@ -12,21 +12,23 @@
 
         loadChosenDimensions: function(chosenDimensions) {
 			var dfd = new $.Deferred();
+			var chosenDimensionsCopy = chosenDimensions;
 			var me = this;
-			if (chosenDimensions) {
+			if (chosenDimensionsCopy) {
                 squid_api.getCustomer().then(function(customer) {
                     customer.get("projects").load(me.config.get("project")).then(function(project) {
-	    				var dimensions = [];
-	                    for (var j=0; j<chosenDimensions.length; j++) {
-	                        var dimensionflatten =  chosenDimensions[j];
+                    	var dimensions = [];
+	                    for (var j=0; j<chosenDimensionsCopy.length; j++) {
+	                        var dimensionflatten =  chosenDimensionsCopy[j];
+	                        var dimension;
 	                        me.dimension = dimensionflatten.replace(/.*'([^']+)'/, "$1");
 	                        me.domain = dimensionflatten.replace(/.*'([^']+)'\.@'[^']+'$/, "$1");
 	                        me.dimensionflatten = dimensionflatten;
 	                        if (dimensionflatten.startsWith("@'"+me.domain+"'") === false) {
 	    	                	dimension = me.loadDimensionFromRelation(project, me.domain, me.dimension);
-	    	                	$.when(dimension).done(function(dimension) {
-		    	               		dimensions.push(dimension);
-		    	                	if (dimensions.length === chosenDimensions.length) {
+	    	                	$.when(dimensionLoaded).done(function(dimensionLoaded) {
+		    	               		dimensions.push(dimensionLoaded);
+		    	                	if (dimensions.length === chosenDimensionsCopy.length) {
 		    	        				dfd.resolve(dimensions);
 		    	                	}    	 
 	    	                	});
@@ -34,7 +36,7 @@
 	    	                	dimension = me.loadDimensionFromDomain(project, me.domain, me.dimension);
 	    	                	$.when(dimension).done(function(dimension) {
 		    	               		dimensions.push(dimension);
-		    	                	if (dimensions.length === chosenDimensions.length) {
+		    	                	if (dimensions.length === chosenDimensionsCopy.length) {
 		    	        				dfd.resolve(dimensions);
 		    	                	}    	 
 	    	                	});

@@ -47,16 +47,20 @@
                 } else {
                     this.timeUnits = [{
                         id: "TO_DATE",
+                        i18n: "daily",
                         name: "Daily"
                     },
                     {
                         id: "WEEKLY",
+                        i18n: "weekly",
                         name: "Weekly"
                     }, {
                         id: "MONTHLY",
+                        i18n: "monthly",
                         name: "Monthly"
                     }, {
                         id: "YEARLY",
+                        i18n: "yearly",
                         name: "Yearly"
                     }];
                 }
@@ -489,6 +493,7 @@
 
         show: function() {
             this.$el.show();
+            
         },
 
         updateTimeUnitSelector: function() {
@@ -501,7 +506,11 @@
 
         renderTemplate: function(done) {
             // render metrics used for analysis
-            var metricColumns = [];
+            if (typeof $.i18n !== "undefined") {
+				this.staleMessage = $.i18n.t("staleMessage");
+				this.reRunMessage = $.i18n.t("reRunMessage");
+            }
+            var metricColumns = [], i;
             var results = this.model.get("results");
             if (done && ! this.model.get("error") && results) {
                 var cols = this.model.get("results").cols;
@@ -512,6 +521,13 @@
                 }
             }
             metricColumns = metricColumns.join(", ");
+            if (typeof this.timeUnits !== "undefined" && typeof $.i18n !== "undefined") {
+            	for (i=0; i<this.timeUnits.length; i++) {
+            		if (typeof this.timeUnits[i].i18n !== "undefined") {
+            			this.timeUnits[i].name = $.i18n.t(this.timeUnits[i].i18n);
+            		}
+            	}
+            }
             this.$el.html(this.template({
                 reRunMessage: this.reRunMessage,
                 timeUnitSelector: this.timeUnitSelector,
@@ -521,6 +537,9 @@
             }));
             if (this.timeUnitSelector) {
                 this.updateTimeUnitSelector();
+            }
+            if (typeof $.i18n !== "undefined") {
+            	this.$el.localize();
             }
         },
 

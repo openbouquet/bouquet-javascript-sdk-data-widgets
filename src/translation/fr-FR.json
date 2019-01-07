@@ -11,5 +11,10 @@
   "table-results-size":"Lignes {{results}} sur un total de {{total}}",
   "bar-current":"Référence",
   "bar-compare":"Compare",
-  "bar-summary":"Sommaire"
+  "bar-summary":"Sommaire",
+  "daily":"Journalier",
+  "weekly":"Hbedomadaire",
+  "monthly":"Mensuel",
+  "yearly":"Annuel",
+  "double-click-zoom-out":"Veuillez double-click pour dézoomer"
 }
