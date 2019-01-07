@@ -479,7 +479,10 @@
 	
 	            // empty timeseries div
 	            $(this.renderTo).empty();
-	
+	            if (typeof $.i18n !== "undefined" && typeof this.configuration !== "undefined") {
+					this.configuration.missing_text =  $.i18n.t("noDataMessage");
+	            }
+
 	            // reinitialize timeseries
 	            MG.data_graphic(this.configuration);
             }

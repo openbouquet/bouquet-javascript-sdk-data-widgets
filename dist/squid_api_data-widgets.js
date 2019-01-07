@@ -792,6 +792,9 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             changed = changed || a.hasChanged();
             a.setFacets(config.get("chosenDimensions"), silent);
             changed = changed || a.hasChanged();
+            if (config.has("chosenMetrics") === false || config.get("chosenMetrics").length ===0) {
+            	alert("issue");
+            }
             a.setMetrics(config.get("chosenMetrics"), silent);
             changed = changed || a.hasChanged();
             a.setSelection(config.get("selection"), silent);
@@ -7347,7 +7350,10 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	
 	            // empty timeseries div
 	            $(this.renderTo).empty();
-	
+	            if (typeof $.i18n !== "undefined" && typeof this.configuration !== "undefined") {
+					this.configuration.missing_text =  $.i18n.t("noDataMessage");
+	            }
+
 	            // reinitialize timeseries
 	            MG.data_graphic(this.configuration);
             }
