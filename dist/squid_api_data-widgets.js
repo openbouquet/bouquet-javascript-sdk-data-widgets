@@ -7145,7 +7145,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             }
         },
 
-        standardizeData: function(currentDateIndex) {
+        standardizeData: function(compare, currentDateIndex) {
             // standardize data
             for (i=0; i<this.results.rows.length; i++) {
                 // store date
@@ -7195,19 +7195,29 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             var nVariate = false;
             var compare = false;
             var toRemove = [];
+            var nrDomainCol = 0;
 
             if (this.results && this.results.cols) {
 	            // see if multiple dimensions exist
 	            for (var col=1; col<this.results.cols.length; col++) {
+	            	if (this.results.cols[col].role !== "DOMAIN") {
+	            		//metrics = [];
+		                if (this.results.cols[col].originType === "COMPARETO") {
+		                	compare = true;
+		                }
+	            	}
+	            }
+	            for (var col=1; col<this.results.cols.length; col++) {
 	                if (this.results.cols[col].role === "DOMAIN") {
-	                    nVariate = true;
+	                	nrDomainCol++;
+	                	nVariate = nrDomainCol>=1;
 	                    var selection = this.config.get("selection");
 	                    if (selection) {
 	                        var facets = selection.facets;
 	                        for (var f=0; f<facets.length; f++) {
 	                            if (facets[f].id === this.results.cols[col].definition && this.results.cols[col].extendedType.name === "DATE") {
 	                                nVariate = false;
-	                                this.standardizeData(col);
+	                                this.standardizeData(compare, col);
 	                            }
 	                        }
 	                    }
@@ -7222,7 +7232,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	
 	            if (nVariate) {
 	                // make sure we only have three columns
-	                this.standardizeData();
+	                this.standardizeData(compare);
 	                // show metrics
 	                this.$el.find("#metrics").show();
 	            } else {
@@ -7255,8 +7265,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	                                    hashMap[i2] = {};
 	                                    hashMap[i2][i1] = i3;
 	                                }
-	                                if (i4) {
-	                                    compare = true;
+	                                if (compare) {
 	                                    // if compare exists
 	                                    if (hashMap[i2 + " (compare)"]) {
 	                                        hashMap[i2 + " (compare)"][i1] = i4;
@@ -7270,9 +7279,6 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	                            }
 	                        }
 	                    } else {
-	                        if (this.results.cols[i].originType === "COMPARETO") {
-	                            compare = true;
-	                        }
 	                        legend.push(this.results.cols[i].name);
 	                    }
 	                }
@@ -7283,7 +7289,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	            } else {
 	                this.configuration.colors = this.colorPalette;
 	            }
-	
+	            
 	            var arr = [];
 	            if (nVariate) {
 	                var keys = [];
