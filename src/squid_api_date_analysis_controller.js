@@ -26,8 +26,8 @@
 	                        me.dimensionflatten = dimensionflatten;
 	                        if (dimensionflatten.startsWith("@'"+me.domain+"'") === false) {
 	    	                	dimension = me.loadDimensionFromRelation(project, me.domain, me.dimension);
-	    	                	$.when(dimensionLoaded).done(function(dimensionLoaded) {
-		    	               		dimensions.push(dimensionLoaded);
+	    	                	$.when(dimension).done(function(dimension) {
+		    	               		dimensions.push(dimension);
 		    	                	if (dimensions.length === chosenDimensionsCopy.length) {
 		    	        				dfd.resolve(dimensions);
 		    	                	}    	 
@@ -74,6 +74,11 @@
             var changed = false;
             var a = this.analysis;
             var config = this.config;
+            if (this.config.hasChanged("timeUnit")) {
+            	a.setParameter("force", true); 
+            } else {
+           	 	a.setParameter("force", false); 
+            }
             if (silent !== false) {
                 silent = true;
             }

@@ -792,9 +792,6 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             changed = changed || a.hasChanged();
             a.setFacets(config.get("chosenDimensions"), silent);
             changed = changed || a.hasChanged();
-            if (config.has("chosenMetrics") === false || config.get("chosenMetrics").length ===0) {
-            	alert("issue");
-            }
             a.setMetrics(config.get("chosenMetrics"), silent);
             changed = changed || a.hasChanged();
             a.setSelection(config.get("selection"), silent);
@@ -2032,10 +2029,14 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 														var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
 														var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
 														metrics = domain.get("metrics");
-														metricItem = metrics.findWhere({"definition" : id.replace(/.*\(([^\)]+)\)/, "$1")});
-														metricItemDescription = "metric";
-														if (metricItem) {
-															metricItemDescription = metricItem.get("name");
+														if (typeof id !== "undefined") {
+															metricItem = metrics.findWhere({"definition" : id.replace(/.*\(([^\)]+)\)/, "$1")});
+															metricItemDescription = "metric";
+															if (metricItem) {
+																metricItemDescription = metricItem.get("name");
+															}
+														} else {
+															metricItemDescription = "";
 														}
 
 														var columnTitle = "Metric " + (originType === "COMPARETO"? "comparison":"growth") + " on period " + lowerBound + " to " + upperBound;
@@ -2049,7 +2050,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 											}
 										}
 										//column.tooltip(options);
-									} else {
+									} else if (typeof id !== "undefined"){
 										var dimensions = domain.get("dimensions");
 										var dimension = dimensions.findWhere({"oid" : id.replace(/.*'([^']+)'/, "$1")});
 										var dimensionDescription = "";
@@ -2447,8 +2448,8 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	                        me.dimensionflatten = dimensionflatten;
 	                        if (dimensionflatten.startsWith("@'"+me.domain+"'") === false) {
 	    	                	dimension = me.loadDimensionFromRelation(project, me.domain, me.dimension);
-	    	                	$.when(dimensionLoaded).done(function(dimensionLoaded) {
-		    	               		dimensions.push(dimensionLoaded);
+	    	                	$.when(dimension).done(function(dimension) {
+		    	               		dimensions.push(dimension);
 		    	                	if (dimensions.length === chosenDimensionsCopy.length) {
 		    	        				dfd.resolve(dimensions);
 		    	                	}    	 
@@ -2495,6 +2496,11 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             var changed = false;
             var a = this.analysis;
             var config = this.config;
+            if (this.config.hasChanged("timeUnit")) {
+            	a.setParameter("force", true); 
+            } else {
+           	 	a.setParameter("force", false); 
+            }
             if (silent !== false) {
                 silent = true;
             }
@@ -6986,10 +6992,10 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                     colors: this.colorPalette,
                     after_brushing: function(brush) {
                         var div = $(this).parent().siblings("#brushing");
-                        if (brush.min_y === 0) {
-                            div.hide();
-                        } else {
+                        if (brush.min_x !== brush.max_x) {
                             div.show();
+                        } else {
+                            div.hide();
                         }
                     },
                     mouseover: function(d, i) {

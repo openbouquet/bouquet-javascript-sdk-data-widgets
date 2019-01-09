@@ -608,10 +608,14 @@
 														var lowerBound = moment(compareTo[0].selectedItems[0].lowerBound).utc().format("ll");
 														var upperBound = moment(compareTo[0].selectedItems[0].upperBound).utc().format("ll");
 														metrics = domain.get("metrics");
-														metricItem = metrics.findWhere({"definition" : id.replace(/.*\(([^\)]+)\)/, "$1")});
-														metricItemDescription = "metric";
-														if (metricItem) {
-															metricItemDescription = metricItem.get("name");
+														if (typeof id !== "undefined") {
+															metricItem = metrics.findWhere({"definition" : id.replace(/.*\(([^\)]+)\)/, "$1")});
+															metricItemDescription = "metric";
+															if (metricItem) {
+																metricItemDescription = metricItem.get("name");
+															}
+														} else {
+															metricItemDescription = "";
 														}
 
 														var columnTitle = "Metric " + (originType === "COMPARETO"? "comparison":"growth") + " on period " + lowerBound + " to " + upperBound;
@@ -625,7 +629,7 @@
 											}
 										}
 										//column.tooltip(options);
-									} else {
+									} else if (typeof id !== "undefined"){
 										var dimensions = domain.get("dimensions");
 										var dimension = dimensions.findWhere({"oid" : id.replace(/.*'([^']+)'/, "$1")});
 										var dimensionDescription = "";

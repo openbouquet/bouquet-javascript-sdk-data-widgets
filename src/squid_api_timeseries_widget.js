@@ -115,10 +115,10 @@
                     colors: this.colorPalette,
                     after_brushing: function(brush) {
                         var div = $(this).parent().siblings("#brushing");
-                        if (brush.min_y === 0) {
-                            div.hide();
-                        } else {
+                        if (brush.min_x !== brush.max_x) {
                             div.show();
+                        } else {
+                            div.hide();
                         }
                     },
                     mouseover: function(d, i) {
