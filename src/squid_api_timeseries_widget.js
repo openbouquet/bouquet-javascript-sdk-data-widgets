@@ -132,8 +132,6 @@
                         }
 
                         // append current hovered date
-                        $(this.target).parents().find("#legend").find(".date").remove();
-                        $(this.target).parents().find("#legend").prepend("<span class='date'>" + moment(values[0].date).format("L") + "</span>");
 
                         for (i=0; i<values.length; i++) {
                             var line = this.legend[values[i].line_id - 1];
@@ -146,6 +144,8 @@
                                 }
                             }
                         }
+                        $(this.target).parents().find("#legend").find(".date").remove();
+                        $(this.target).parents().find("#legend").prepend("<span class='date'>" + moment(values[0].date).format("L") + "</span>");
                     },
                     mouseout: function() {
                         $(this.target).parents().find("#legend").find(".date").remove();

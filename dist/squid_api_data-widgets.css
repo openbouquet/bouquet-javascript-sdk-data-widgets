@@ -1014,7 +1014,7 @@ th.sorting_desc:after {
 
 .squid-api-data-widgets-timeseries-widget #legend .date {
     position: absolute;
-    bottom: -50px;
+    top: -380px;
     left: 0px;
     font-size: 14px;
     font-weight: bold;
