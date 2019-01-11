@@ -52,6 +52,10 @@
                     me.refreshAnalysis();
                 }
             });
+            this.listenTo(this.model, "change", function() {
+                console.log("Model change");
+            });
+           
 
             // controller
             if (! this.ignoreConfigChange) {
@@ -89,8 +93,8 @@
                     }
                     if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
                     	if (this.config.hasChanged("startIndex") === false) {
-                    		this.config.set("startIndex",0, {silent: true});
-                    		this.config.set("pageIndex",0, {silent: true});
+                    		this.config.attributes.startIndex=0;
+                    		this.config.attributes.pageIndex=0;
                     	}
                         this.refreshAnalysis(true);
                     }
@@ -156,11 +160,15 @@
                 "silent" : silent
             });
             changed = changed || a.hasChanged();
-            a.set({
-                "orderBy" : $.extend(true, [], config.get("orderBy"))
-            }, {
-                "silent" : silent
-            });
+            if (config.hasChanged("orderBy")) {
+				a.set({
+					"orderBy" :  $.extend(true, [], config.get("orderBy"))
+				}, {
+					"silent" : silent
+				});
+            } else {
+            	a.attributes.orderBy=$.extend(true, [], config.get("orderBy"));
+            }
             changed = changed || a.hasChanged();
             if (this.pagination) {
                 a.setParameter("maxResults", this.config.get("maxResults") || 10, silent);

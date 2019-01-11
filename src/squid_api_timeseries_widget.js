@@ -330,7 +330,7 @@
 		                }
 	            	}
 	            }
-	            for (var col=1; col<this.results.cols.length; col++) {
+	            for (col=1; col<this.results.cols.length; col++) {
 	                if (this.results.cols[col].role === "DOMAIN") {
 	                	nrDomainCol++;
 	                	nVariate = nrDomainCol>=1;

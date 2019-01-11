@@ -74,11 +74,6 @@
             var changed = false;
             var a = this.analysis;
             var config = this.config;
-            if (this.config.hasChanged("timeUnit")) {
-            	a.setParameter("force", true); 
-            } else {
-           	 	a.setParameter("force", false); 
-            }
             if (silent !== false) {
                 silent = true;
             }
@@ -146,11 +141,17 @@
                     "silent" : silent
                 });
                 changed = changed || a.hasChanged();
-                a.set({
-                    "orderBy" :  $.extend(true, [], config.get("orderBy"))
-                }, {
-                    "silent" : silent
-                });
+                if (config.hasChanged("orderBy")) {
+    				a.set({
+    					"orderBy" :  $.extend(true, [], config.get("orderBy"))
+    				}, {
+    					"silent" : silent
+    				});
+                } else {
+                	a.attributes.orderBy=$.extend(true, [], config.get("orderBy"));
+                	a.attributes.offset=0;
+                	a.attributes.startIndex=0;
+                }
                 //with this code, sort doesn't work anymore in data table for date columns
                 /*if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
                 	a.get("orderBy").splice(indexToRemoveFromChosen, 1);

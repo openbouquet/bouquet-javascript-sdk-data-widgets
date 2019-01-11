@@ -704,6 +704,10 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                     me.refreshAnalysis();
                 }
             });
+            this.listenTo(this.model, "change", function() {
+                console.log("Model change");
+            });
+           
 
             // controller
             if (! this.ignoreConfigChange) {
@@ -741,8 +745,8 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                     }
                     if (refreshNeeded && (squid_api.model.status.get("configReady") === true)) {
                     	if (this.config.hasChanged("startIndex") === false) {
-                    		this.config.set("startIndex",0, {silent: true});
-                    		this.config.set("pageIndex",0, {silent: true});
+                    		this.config.attributes.startIndex=0;
+                    		this.config.attributes.pageIndex=0;
                     	}
                         this.refreshAnalysis(true);
                     }
@@ -808,11 +812,15 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                 "silent" : silent
             });
             changed = changed || a.hasChanged();
-            a.set({
-                "orderBy" : $.extend(true, [], config.get("orderBy"))
-            }, {
-                "silent" : silent
-            });
+            if (config.hasChanged("orderBy")) {
+				a.set({
+					"orderBy" :  $.extend(true, [], config.get("orderBy"))
+				}, {
+					"silent" : silent
+				});
+            } else {
+            	a.attributes.orderBy=$.extend(true, [], config.get("orderBy"));
+            }
             changed = changed || a.hasChanged();
             if (this.pagination) {
                 a.setParameter("maxResults", this.config.get("maxResults") || 10, silent);
@@ -2496,11 +2504,6 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             var changed = false;
             var a = this.analysis;
             var config = this.config;
-            if (this.config.hasChanged("timeUnit")) {
-            	a.setParameter("force", true); 
-            } else {
-           	 	a.setParameter("force", false); 
-            }
             if (silent !== false) {
                 silent = true;
             }
@@ -2568,11 +2571,17 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                     "silent" : silent
                 });
                 changed = changed || a.hasChanged();
-                a.set({
-                    "orderBy" :  $.extend(true, [], config.get("orderBy"))
-                }, {
-                    "silent" : silent
-                });
+                if (config.hasChanged("orderBy")) {
+    				a.set({
+    					"orderBy" :  $.extend(true, [], config.get("orderBy"))
+    				}, {
+    					"silent" : silent
+    				});
+                } else {
+                	a.attributes.orderBy=$.extend(true, [], config.get("orderBy"));
+                	a.attributes.offset=0;
+                	a.attributes.startIndex=0;
+                }
                 //with this code, sort doesn't work anymore in data table for date columns
                 /*if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
                 	a.get("orderBy").splice(indexToRemoveFromChosen, 1);
@@ -7207,7 +7216,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 		                }
 	            	}
 	            }
-	            for (var col=1; col<this.results.cols.length; col++) {
+	            for (col=1; col<this.results.cols.length; col++) {
 	                if (this.results.cols[col].role === "DOMAIN") {
 	                	nrDomainCol++;
 	                	nVariate = nrDomainCol>=1;
