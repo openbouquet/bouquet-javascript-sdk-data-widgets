@@ -311,8 +311,10 @@
 
             // reset configuration to default (if previous svg has been brushed)
             this.configuration = _.clone(this.defaultConfiguration);
-            if (this.config.get("timeUnit") && this.config.get("timeUnit") !== "DAILY") {
+            if (this.config.get("timeUnit") && this.config.get("timeUnit") !== "TO_DATE") {
             	this.configuration.interpolate= d3.curveMonotoneX;
+            } else {
+            	this.configuration.interpolate= d3.curveLinear;
             }
             // for manipulation time
             var start = new Date().getTime();
