@@ -35,12 +35,12 @@
                 if (options.colorPalette) {
                     this.colorPalette = options.colorPalette;
                 } else {
-                    this.colorPalette = d3.scale.category10().range();
+                    this.colorPalette = d3.scaleOrdinal(d3.schemeCategory10).range();
                 }
                 if (options.colorPaletteCompare) {
                     this.colorPaletteCompare = options.colorPaletteCompare;
                 } else {
-                    this.colorPaletteCompare = d3.scale.category20().range();
+                    this.colorPaletteCompare = d3.scaleOrdinal(d3.schemeCategory20).range();
                 }
                 if (options.timeUnits) {
                     this.timeUnits = options.timeUnits;
@@ -101,7 +101,7 @@
                 this.defaultConfiguration = options.configuration;
             } else {
                 this.defaultConfiguration = {
-                    interpolate: "basic",
+                    interpolate: d3.curveLinear,
                     right: 80,
                     height: this.height,
                     target: this.renderTo,
@@ -113,6 +113,7 @@
                     missing_is_hidden_accessor: 'dead',
                     legend_target: this.renderLegend,
                     colors: this.colorPalette,
+                    brushing: false,
                     after_brushing: function(brush) {
                         var div = $(this).parent().siblings("#brushing");
                         if (brush.min_x !== brush.max_x) {
@@ -159,7 +160,7 @@
             } else {
                 // default number formatter
                 if (d3) {
-                    this.format = d3.format(",.f");
+                    this.format = d3.format(",.2f");
                 } else {
                     this.format = function(f){
                         return f;
@@ -270,35 +271,37 @@
 
         standardizeData: function(compare, currentDateIndex) {
             // standardize data
-            for (i=0; i<this.results.rows.length; i++) {
-                // store date
-                if (! currentDateIndex) {
-                    var v = [this.results.rows[i].v[0]];
-                    var dim = "";
-                    var metricVals = [];
-                    for (ix=1; ix<this.results.rows[i].v.length; ix++) {
-                    	if (this.results.cols[ix].role === "DOMAIN" && this.results.rows[i].v[ix]) {
-                            if (dim.length === 0) {
-                                dim += this.results.rows[i].v[ix];
-                            } else {
-                                dim += " / " + this.results.rows[i].v[ix];
+        	if (this.results.rows.length>0 && this.results.rows[0].v.length === this.results.cols.length) {
+                for (i=0; i<this.results.rows.length; i++) {
+                    // store date
+                    if (! currentDateIndex) {
+                        var v = [this.results.rows[i].v[0]];
+                        var dim = "";
+                        var metricVals = [];
+                        for (ix=1; ix<this.results.rows[i].v.length; ix++) {
+                        	if (this.results.cols[ix].role === "DOMAIN" && this.results.rows[i].v[ix]) {
+                                if (dim.length === 0) {
+                                    dim += this.results.rows[i].v[ix];
+                                } else {
+                                    dim += " / " + this.results.rows[i].v[ix];
+                                }
+                            } else if (this.results.cols[ix].role === "DATA" || this.results.rows[i].v[ix] === null) {
+                                metricVals.push(this.results.rows[i].v[ix]);
                             }
-                        } else if (this.results.cols[ix].role === "DATA" || this.results.rows[i].v[ix] === null) {
-                            metricVals.push(this.results.rows[i].v[ix]);
                         }
+                        v.push(dim);
+                        for (ix1=0; ix1<metricVals.length; ix1++) {
+                            v.push(metricVals[ix1]);
+                        }
+                        this.results.rows[i].v = v;
+                    } else {
+                        // remove currentDateRow
+                        this.results.rows[i].v.splice(currentDateIndex, 1);
                     }
-                    v.push(dim);
-                    for (ix1=0; ix1<metricVals.length; ix1++) {
-                        v.push(metricVals[ix1]);
-                    }
-                    this.results.rows[i].v = v;
-                } else {
-                    // remove currentDateRow
-                    this.results.rows[i].v.splice(currentDateIndex, 1);
                 }
-            }
-            if (currentDateIndex) {
-                this.results.cols.splice(currentDateIndex, 1);
+                if (currentDateIndex) {
+                    this.results.cols.splice(currentDateIndex, 1);
+                }
             }
         },
 
@@ -308,7 +311,9 @@
 
             // reset configuration to default (if previous svg has been brushed)
             this.configuration = _.clone(this.defaultConfiguration);
-
+            if (this.config.get("timeUnit") && this.config.get("timeUnit") !== "DAILY") {
+            	this.configuration.interpolate= d3.curveMonotoneX;
+            }
             // for manipulation time
             var start = new Date().getTime();
 
@@ -410,7 +415,18 @@
 	            if (compare) {
 	                this.configuration.colors = this.colorPaletteCompare;
 	            } else {
-	                this.configuration.colors = this.colorPalette;
+	            	if (false && legend.length<=10) {
+	            		this.configuration.colors = this.colorPalette;
+	            	} else if (false && legend.length<=20) {
+	            		this.configuration.colors = this.c;
+	            	} else {
+	            		var customColorPalette = $.extend(true, [], this.colorPalette);
+	            		customColorPalette.concat(this.colorPaletteCompare);
+	            		for (var cc=0; cc<legend.length; cc++) {
+	            			customColorPalette.push(customColorPalette[cc % customColorPalette.length]);
+	            		}	            		
+	            		this.configuration.colors = customColorPalette;
+	            	}
 	            }
 	            
 	            var arr = [];
@@ -443,7 +459,7 @@
 	                        if (this.results.rows[0]) {
 	                            var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
 	                            var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
-	                            for (var currentDay = startDate; currentDay.isAfter(endDate) === false; startDate.add('days', 1)) {
+	                            for (var currentDay = startDate; currentDay.isAfter(endDate) === false; startDate.add(1, 'days')) {
 	                                if (! toRemove.includes(i)) {
 	                                    var currentDate = currentDay.format('YYYY-MM-DD');
 	                                    var dataExists = false;

@@ -278,7 +278,7 @@
 				chartWidth = chartWidth - spaceForLabels;
 
 				// Color scale
-				var color = d3.scale.category20();
+				var color =d3.scaleOrdinal(d3.schemeCategory20);
 				var chartHeight = barHeight * data.values.length + gapBetweenGroups * data.labels.length;
 
 				var x = d3.scale.linear()

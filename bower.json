@@ -24,12 +24,12 @@
     "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#7.0.2",
     "bootstrap-multiselect": "https://github.com/davidstutz/bootstrap-multiselect.git#0.9.15",
     "handlebars": "~4.0.12",
-    "d3": "3",
+    "d3": "5.7.0",
     "moment": "~2.9.0",
     "backbone-forms": "https://github.com/squidsolutions/backbone-forms.git#master",
     "backbone.bootstrap-modal": "https://github.com/squidsolutions/backbone.bootstrap-modal.git#master",
     "backbone-deep-model": "https://github.com/squidsolutions/backbone-deep-model.git#master",
-    "metrics-graphics": "~2.8.0",
+    "metrics-graphics": "~2.15.6",
     "mg-line-brushing": "^0.0.3"
   }
 }
