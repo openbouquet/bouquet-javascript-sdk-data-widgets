@@ -7318,9 +7318,9 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	            if (compare) {
 	                this.configuration.colors = this.colorPaletteCompare;
 	            } else {
-	            	if (false && legend.length<=10) {
+	            	if (legend.length<=10) {
 	            		this.configuration.colors = this.colorPalette;
-	            	} else if (false && legend.length<=20) {
+	            	} else if (legend.length<=20) {
 	            		this.configuration.colors = this.c;
 	            	} else {
 	            		var customColorPalette = $.extend(true, [], this.colorPalette);
