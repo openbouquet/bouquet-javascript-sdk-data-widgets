@@ -7352,7 +7352,9 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	                                        "date" : currentDate
 	                                    };
 	                                    for (ix=0; ix<this.results.rows.length; ix++) {
-	                                        if (this.results.rows[ix].v[0] === currentDate) {
+		                                    var currentDateFormatted = moment(this.results.rows[ix].v[0]).format('YYYY-MM-DD');
+	                                        if (this.results.rows[ix].v[0] === currentDate
+	                                        	 || currentDateFormatted === currentDate) {
 	                                            dataExists = true;
 	                                            obj.value = this.results.rows[ix].v[i];
 	                                        }
