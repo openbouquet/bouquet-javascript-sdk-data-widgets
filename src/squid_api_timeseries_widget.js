@@ -40,7 +40,12 @@
                 if (options.colorPaletteCompare) {
                     this.colorPaletteCompare = options.colorPaletteCompare;
                 } else {
-                    this.colorPaletteCompare = d3.scaleOrdinal(d3.schemeCategory20).range();
+                    this.colorPaletteCompare = d3.scaleOrdinal(d3.schemePaired).range();
+                    for (var cp=0; cp<this.colorPaletteCompare.length; cp=cp+2) {
+                    	var tmp = this.colorPaletteCompare[cp];
+                    	this.colorPaletteCompare[cp] = this.colorPaletteCompare[cp+1];
+                    	this.colorPaletteCompare[cp+1]=tmp;
+                    }
                 }
                 if (options.timeUnits) {
                     this.timeUnits = options.timeUnits;
@@ -311,11 +316,11 @@
 
             // reset configuration to default (if previous svg has been brushed)
             this.configuration = _.clone(this.defaultConfiguration);
-            if (this.config.get("timeUnit") && this.config.get("timeUnit") !== "TO_DATE") {
+            /*if (this.config.get("timeUnit") && this.config.get("timeUnit") !== "TO_DATE") {
             	this.configuration.interpolate= d3.curveMonotoneX;
             } else {
             	this.configuration.interpolate= d3.curveLinear;
-            }
+            }*/
             // for manipulation time
             var start = new Date().getTime();
 
@@ -424,6 +429,9 @@
 	            	} else {
 	            		var customColorPalette = $.extend(true, [], this.colorPalette);
 	            		customColorPalette.concat(this.colorPaletteCompare);
+	            		customColorPalette.concat(d3.scaleOrdinal(d3.schemeSet1).range());
+	            		customColorPalette.concat(d3.scaleOrdinal(d3.schemeSet2).range());
+	            		customColorPalette.concat(d3.scaleOrdinal(d3.schemeSet3).range());
 	            		for (var cc=0; cc<legend.length; cc++) {
 	            			customColorPalette.push(customColorPalette[cc % customColorPalette.length]);
 	            		}	            		
@@ -444,7 +452,7 @@
 	                    for (var date in hashMap[keys[i]]) {
 	                        /*jshint forin: false */
 	                        var obj1 = {
-	                            "date" : date,
+	                            "date" : moment(date).format('YYYY-MM-DD'),
 	                            "value": hashMap[keys[i]][date]
 	                        };
 	                        arr.push(obj1);

@@ -278,26 +278,28 @@
 				chartWidth = chartWidth - spaceForLabels;
 
 				// Color scale
-				var color =d3.scaleOrdinal(d3.schemeCategory20);
+				var color =d3.scaleOrdinal(d3.schemePaired).range();
+                for (var cp=0; cp<color.length; cp=cp+2) {
+                	var tmp = color[cp];
+                	color[cp] = color[cp+1];
+                	color[cp+1]=tmp;
+                }
+				
 				var chartHeight = barHeight * data.values.length + gapBetweenGroups * data.labels.length;
 
-				var x = d3.scale.linear()
+				var x = d3.scaleLinear()
 				.domain([0, d3.max(data.values)])
 				.range([0, chartWidth]);
 
-				var y = d3.scale.ordinal()
+				var y = d3.scaleBand()
 				.domain(data.labels)
-				.rangePoints([0, chartHeight]);
+				.range([0, chartHeight]);
 
-				var xAxis = d3.svg.axis()
-				.scale(x)
-				.tickFormat(d3.format("s"))
-				.orient('bottom');
+				var xAxis = d3.axisBottom(x)
+				.tickFormat(d3.format("s"));
 
-				var yAxis = d3.svg.axis()
-				.scale(y)
-				.ticks(10)
-				.orient("left");
+				var yAxis = d3.axisLeft(y)
+				.ticks(10);
 
 				// Specify the chart area and dimensions
 				var chart = d3.select("#bar_chart")
@@ -350,7 +352,7 @@
 					return "translate("+spaceForLabels+", " + (i * barHeight + gapBetweenGroups * (0.5 + Math.floor(i/data.series.length))) + ")";
 				})
 				.append("rect")
-				.attr("fill", function(d,i) { return color(i % data.series.length); })
+				.attr("fill", function(d,i) { return color[i % data.series.length]; })
 				.attr("class", "bar")
 				.attr("width", x)
 				.attr("height", barHeight - 1)
@@ -385,7 +387,7 @@
 					return i * 20;
 				})
 				.duration(1000)
-				.ease('bounce')
+				.easeBounce
 				;
 
 				// xAxis (Starting 200px from left)
