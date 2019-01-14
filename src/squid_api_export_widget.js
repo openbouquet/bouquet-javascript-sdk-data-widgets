@@ -414,6 +414,9 @@
 
         render : function() {
             var me = this;
+            if (typeof $.i18n !== "undefined") {
+            	this.downloadButtonLabel = $.i18n.t("export-download");
+            }
             var analysis = this.model.get("analysis");
             if (!analysis) {
                 analysis = this.model;

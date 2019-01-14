@@ -1,6 +1,10 @@
 {
   "name":"Name",
   "description":"Description",
+  "export-format": "Select a format",
+  "export-dim-metrics": "Select dimensions & metrics",
+  "export-compression": "Compression",
+  "export-download": "Download",
   "noDataMessage":"No data found",
   "computing":"Computing",
   "reRunMessage":"Please manually refresh your analysis",

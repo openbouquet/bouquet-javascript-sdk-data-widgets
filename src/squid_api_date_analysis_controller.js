@@ -101,6 +101,24 @@
             var chosenDimensions = config.get("chosenDimensions");
             var dimensions = this.loadChosenDimensions(chosenDimensions);
             var indexToRemoveFromChosen = null;
+            
+            //Order by must be set before the facets 
+            if (config.hasChanged("orderBy")) {
+				a.set({
+					"orderBy" :  $.extend(true, [], config.get("orderBy"))
+				}, {
+					"silent" : silent
+				});
+            } else {
+            	a.attributes.orderBy=$.extend(true, [], config.get("orderBy"));
+            	a.attributes.offset=0;
+            	a.attributes.startIndex=0;
+            }
+            //with this code, sort doesn't work anymore in data table for date columns
+            /*if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
+            	a.get("orderBy").splice(indexToRemoveFromChosen, 1);
+            }*/
+            changed = changed || a.hasChanged();
             $.when(dimensions).done(function(dimensions)  {
                 if (selection) {
                     var dateFound = false;
@@ -141,22 +159,6 @@
                     "silent" : silent
                 });
                 changed = changed || a.hasChanged();
-                if (config.hasChanged("orderBy")) {
-    				a.set({
-    					"orderBy" :  $.extend(true, [], config.get("orderBy"))
-    				}, {
-    					"silent" : silent
-    				});
-                } else {
-                	a.attributes.orderBy=$.extend(true, [], config.get("orderBy"));
-                	a.attributes.offset=0;
-                	a.attributes.startIndex=0;
-                }
-                //with this code, sort doesn't work anymore in data table for date columns
-                /*if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
-                	a.get("orderBy").splice(indexToRemoveFromChosen, 1);
-                }*/
-                changed = changed || a.hasChanged();
 
                 if (changed === true) {
                     me.onChangeHandler(me.analysis);
@@ -176,10 +178,18 @@
             if (toDate) {
                 var timeUnit = this.config.get("timeUnit");
                 var dimensions = $.extend(true, [], this.config.get("chosenDimensions"));
-
+            	var orders = $.extend(true, [], a.get("orderBy"));
+            	
                 // if current date is in dimension list, remove it
                 if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
-                    dimensions.splice(indexToRemoveFromChosen, 1);
+                    var dimension = dimensions.splice(indexToRemoveFromChosen, 1);
+                    if (Array.isArray(dimension) && dimension.length === 1) {
+                    	if (Array.isArray(orders) && orders.length>0) {
+                    		if (orders[0].expression && orders[0].expression.value === dimension[0]) {
+                    			orders.splice(0, 1);
+                    		}
+                    	}
+                    }
                 }
                 a.setFacets(dimensions, {silent : true});
                 var facets = a.get("facets");
@@ -189,6 +199,8 @@
                         expression = timeUnit + "("+ id + ")";
                     }
                     facets.unshift({value: expression});
+                    orders.unshift({"direction": "ASC", "expression": { "value" : expression}});
+                    a.attributes.orderBy = orders;
                 }
             } else {
                 a.setFacets([id], silent);
