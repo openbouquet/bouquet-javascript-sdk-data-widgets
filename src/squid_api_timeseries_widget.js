@@ -276,38 +276,44 @@
 
         standardizeData: function(compare, currentDateIndex) {
             // standardize data
+            var start = new Date().getTime();
+
         	if (this.results.rows.length>0 && this.results.rows[0].v.length === this.results.cols.length) {
                 for (i=0; i<this.results.rows.length; i++) {
                     // store date
+                	var currentRow = this.results.rows[i];
                     if (! currentDateIndex) {
-                        var v = [this.results.rows[i].v[0]];
+                        var v = [currentRow.v[0]];
                         var dim = "";
                         var metricVals = [];
-                        for (ix=1; ix<this.results.rows[i].v.length; ix++) {
-                        	if (this.results.cols[ix].role === "DOMAIN" && this.results.rows[i].v[ix]) {
+                        for (ix=1; ix<currentRow.v.length; ix++) {
+                        	var currentValue = currentRow.v[ix];
+                        	if (this.results.cols[ix].role === "DOMAIN" && currentValue) {
                                 if (dim.length === 0) {
-                                    dim += this.results.rows[i].v[ix];
+                                    dim += currentValue;
                                 } else {
-                                    dim += " / " + this.results.rows[i].v[ix];
+                                    dim += " / " + currentValue;
                                 }
-                            } else if (this.results.cols[ix].role === "DATA" || this.results.rows[i].v[ix] === null) {
-                                metricVals.push(this.results.rows[i].v[ix]);
+                            } else if (this.results.cols[ix].role === "DATA" || currentValue === null) {
+                                metricVals.push(currentValue);
                             }
                         }
                         v.push(dim);
                         for (ix1=0; ix1<metricVals.length; ix1++) {
                             v.push(metricVals[ix1]);
                         }
-                        this.results.rows[i].v = v;
+                        currentRow.v = v;
                     } else {
                         // remove currentDateRow
-                        this.results.rows[i].v.splice(currentDateIndex, 1);
+                        currentRow.v.splice(currentDateIndex, 1);
                     }
                 }
                 if (currentDateIndex) {
                     this.results.cols.splice(currentDateIndex, 1);
                 }
             }
+            console.log("result processing time: " + (new Date().getTime() - start) + " ms");
+
         },
 
         renderGraphic: function(metrics) {
@@ -380,20 +386,21 @@
 	
 	            for (i=1; i<this.results.cols.length; i++) {
 	                if (! toRemove.includes(i)) {
-	
+	                	var startInter = new Date().getTime();
 	                    if (nVariate) {
 	                        // obtain legend names from results
 	                        for (ix1=0; ix1<this.results.rows.length; ix1++) {
-	                            if (this.results.rows[ix1].v[1] !== null) {
-	                                if ($.inArray(this.results.rows[ix1].v[1], legend) < 0) {
+	                        	var currentRow = this.results.rows[ix1];
+	                            if (currentRow.v[1] !== null) {
+	                                if ($.inArray(currentRow.v[1], legend) < 0) {
 	                                    // store unique legend items
-	                                    legend.push(this.results.rows[ix1].v[1]);
+	                                    legend.push(currentRow.v[1]);
 	                                }
 	                                // create hashMap
-	                                var i1 = this.results.rows[ix1].v[0];
-	                                var i2 = this.results.rows[ix1].v[1];
-	                                var i3 = this.results.rows[ix1].v[2];
-	                                var i4 = this.results.rows[ix1].v[3];
+	                                var i1 = currentRow.v[0];
+	                                var i2 = currentRow.v[1];
+	                                var i3 = currentRow.v[2];
+	                                var i4 = currentRow.v[3];
 	                                if (hashMap[i2]) {
 	                                    hashMap[i2][i1] = i3;
 	                                } else {
@@ -416,6 +423,7 @@
 	                    } else {
 	                        legend.push(this.results.cols[i].name);
 	                    }
+	                    console.log("nvariate fill time: " + (new Date().getTime() - startInter) + " ms");
 	                }
 	            }
 	
@@ -452,50 +460,60 @@
 	                    for (var date in hashMap[keys[i]]) {
 	                        /*jshint forin: false */
 	                        var obj1 = {
-	                            "date" : moment(date).format('YYYY-MM-DD'),
+	                            "date" : moment(date).toDate(),
 	                            "value": hashMap[keys[i]][date]
 	                        };
 	                        arr.push(obj1);
 	                    }
-	                    arr = MG.convert.date(arr, 'date');
+	                    //arr = MG.convert.date(arr, 'date');
 	                    dataset.push(arr);
 	                }
 	            } else {
 	                // make sure a value is available for every day (standard timeseries)
 	                if (! nVariate) {
+	                	var startInter = new Date().getTime();
+
+                        var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
+                        var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
+                        var previousDate = startDate;
+                        var dataset = [];
 	                    for (i=1; i<this.results.cols.length; i++) {
-	                        arr = [];
-	                        /* Date Results */
-	                        if (this.results.rows[0]) {
-	                            var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
-	                            var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
-	                            for (var currentDay = startDate; currentDay.isAfter(endDate) === false; startDate.add(1, 'days')) {
-	                                if (! toRemove.includes(i)) {
-	                                    var currentDate = currentDay.format('YYYY-MM-DD');
-	                                    var dataExists = false;
-	                                    var obj = {
-	                                        "date" : currentDate
-	                                    };
-	                                    for (ix=0; ix<this.results.rows.length; ix++) {
-		                                    var currentDateFormatted = moment(this.results.rows[ix].v[0]).format('YYYY-MM-DD');
-	                                        if (this.results.rows[ix].v[0] === currentDate
-	                                        	 || currentDateFormatted === currentDate) {
-	                                            dataExists = true;
-	                                            obj.value = this.results.rows[ix].v[i];
-	                                        }
-	                                    }
-	                                    if (dataExists === false && this.fillMissingDataValues) {
-	                                        obj.value = null;
-	                                        arr.push(obj);
-	                                    } else if (dataExists) {
-	                                        arr.push(obj);
-	                                    }
-	                                }
-	                            }
-	                            arr = MG.convert.date(arr, 'date');
-	                            dataset.push(arr);
-	                        }
+                     		if (! toRemove.includes(i)) {
+                     			dataset[i-1] = [];
+                     		}
 	                    }
+                        for (ix=0; ix<this.results.rows.length; ix++) {
+                        	var currentRow = this.results.rows[ix];
+                            var currentDate = moment(currentRow.v[0]);
+                            var currentDateFormatted = currentDate.format('YYYY-MM-DD');
+                            if (currentDate.unix() === previousDate.unix()) {
+                             	for (i=1; i<this.results.cols.length; i++) {
+                             		if (! toRemove.includes(i)) {
+	                            		arr = dataset[i-1];
+	                                   	var obj = {
+	                                            "date" : currentDate.toDate(),
+	                                            "value": currentRow.v[i]
+	                                    };
+	                            		arr.push(obj);
+	                             	}
+                            	}
+                             	previousDate = previousDate.add(1, 'd');
+                            } else if (this.fillMissingDataValues) {
+                            	if (previousDate.unix()>=startDate.unix() && previousDate.unix()<=endDate.unix() && currentDate.unix()>previousDate.unix() && currentDate.unix()<=endDate.unix()) {
+                            		while (previousDate.unix()<=currentDate.unix()) {
+                                     	for (i=1; i<this.results.cols.length; i++) {
+    	                            		arr = dataset[i-1];
+                                     		var obj = {
+    	                                            "date" : previousDate.toDate()
+    	                                    };
+    	                            		arr.push(obj);
+                                     	}
+                                     	previousDate = previousDate.add(1, 'd');
+                            		}
+                            	}
+                            }
+                        }
+	                    console.log("univariate fill time: " + (new Date().getTime() - startInter) + " ms");
 	                }
 	            }
 	
@@ -521,7 +539,7 @@
 	            MG.data_graphic(this.configuration);
             }
             // manipulation time
-            console.log("timeseries manipulation time: " + (new Date().getTime() - start) + " ms");
+            console.log("Timeseries total manipulation time: " + (new Date().getTime() - start) + " ms");
         },
 
         hide: function() {
