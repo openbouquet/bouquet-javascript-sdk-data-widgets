@@ -2504,57 +2504,57 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
         
         refreshAnalysis : function(silent) {
             var changed = false;
-            var a = this.analysis;
             var config = this.config;
             if (silent !== false) {
                 silent = true;
             }
-
-            a.set({
-                "id" : {
-                    "projectId" : config.get("project"),
-                    "analysisJobId" : a.get("id").analysisJobId
-                }
-            }, {
-                "silent" : silent
-            });
-            changed = changed || a.hasChanged();
-            a.set({
-                "domains" : [ {
-                    "projectId" : config.get("project"),
-                    "domainId" : config.get("domain")
-                } ]
-            }, {
-                "silent" : silent
-            });
-            changed = changed || a.hasChanged();
-            var selection = this.config.get("selection");
-            var me = this;
             var chosenDimensions = config.get("chosenDimensions");
             var dimensions = this.loadChosenDimensions(chosenDimensions);
-            var indexToRemoveFromChosen = null;
-            
-            //Order by must be set before the facets 
-            if (config.hasChanged("orderBy")) {
-				a.set({
-					"orderBy" :  $.extend(true, [], config.get("orderBy"))
-				}, {
-					"silent" : silent
-				});
-            } else {
-            	a.attributes.orderBy=$.extend(true, [], config.get("orderBy"));
-            	a.attributes.offset=0;
-            	a.attributes.startIndex=0;
-            }
-            //with this code, sort doesn't work anymore in data table for date columns
-            /*if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
-            	a.get("orderBy").splice(indexToRemoveFromChosen, 1);
-            }*/
-            changed = changed || a.hasChanged();
+            var me = this;
             $.when(dimensions).done(function(dimensions)  {
+	            	  
+	            var a = me.analysis;
+	            a.set({
+	                "id" : {
+	                    "projectId" : me.config.get("project"),
+	                    "analysisJobId" : a.get("id").analysisJobId
+	                }
+	            }, {
+	                "silent" : silent
+	            });
+	            changed = changed || a.hasChanged();
+	            a.set({
+	                "domains" : [ {
+	                    "projectId" : me.config.get("project"),
+	                    "domainId" : me.config.get("domain")
+	                } ]
+	            }, {
+	                "silent" : silent
+	            });
+	            changed = changed || a.hasChanged();
+	            var selection = me.config.get("selection");
+	            var indexToRemoveFromChosen = null;
+	            
+	            //Order by must be set before the facets 
+	            if (me.config.hasChanged("orderBy")) {
+					a.set({
+						"orderBy" :  $.extend(true, [], me.config.get("orderBy"))
+					}, {
+						"silent" : silent
+					});
+	            } else {
+	            	a.attributes.orderBy=$.extend(true, [], me.config.get("orderBy"));
+	            	a.attributes.offset=0;
+	            	a.attributes.startIndex=0;
+	            }
+	            //with this code, sort doesn't work anymore in data table for date columns
+	            /*if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
+	            	a.get("orderBy").splice(indexToRemoveFromChosen, 1);
+	            }*/
+	            changed = changed || a.hasChanged();
                 if (selection) {
                     var dateFound = false;
-                    var id = config.get("period")[config.get("domain")];
+                    var id = me.config.get("period")[me.config.get("domain")];
                     if (dimensions) {
                         for (var j=0; j<dimensions.length; j++) {
                           	var expression = dimensions[j].get("expression");
@@ -2575,18 +2575,18 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                     me.setFacets(a, id, indexToRemoveFromChosen);
                  }
                 changed = changed || a.hasChanged();
-                a.setMetrics(config.get("chosenMetrics"), silent);
+                a.setMetrics(me.config.get("chosenMetrics"), silent);
                 changed = changed || a.hasChanged();
-                a.setSelection(config.get("selection"), silent);
+                a.setSelection(me.config.get("selection"), silent);
                 changed = changed || a.hasChanged();
                 a.set({
-                    "limit" : config.get("limit")
+                    "limit" : me.config.get("limit")
                 }, {
                     "silent" : silent
                 });
                 changed = changed || a.hasChanged();
                 a.set({
-                    "rollups" : config.get("rollups")
+                    "rollups" : me.config.get("rollups")
                 }, {
                     "silent" : silent
                 });
@@ -7240,7 +7240,17 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             var compare = false;
             var toRemove = [];
             var nrDomainCol = 0;
-
+            var unit = "days";
+            if (this.config.get("timeUnit")) {
+            	if ("WEEKLY" === this.config.get("timeUnit")) {
+            		unit ="weeks";
+            	} else if ("MONTHLY" === this.config.get("timeUnit")) {
+            		unit ="months";
+            	} else if ("WEEKLY" === this.config.get("timeUnit")) {
+            		unit ="years";
+            	}
+            }
+            
             if (this.results && this.results.cols) {
 	            // see if multiple dimensions exist
 	            for (var col=1; col<this.results.cols.length; col++) {
@@ -7286,14 +7296,15 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	
 	            // get data
 	            var hashMap = {};
-	
+	            var currentRow;
+            	var startInter;
 	            for (i=1; i<this.results.cols.length; i++) {
 	                if (! toRemove.includes(i)) {
-	                	var startInter = new Date().getTime();
+	                	startInter = new Date().getTime();
 	                    if (nVariate) {
 	                        // obtain legend names from results
 	                        for (ix1=0; ix1<this.results.rows.length; ix1++) {
-	                        	var currentRow = this.results.rows[ix1];
+	                        	currentRow = this.results.rows[ix1];
 	                            if (currentRow.v[1] !== null) {
 	                                if ($.inArray(currentRow.v[1], legend) < 0) {
 	                                    // store unique legend items
@@ -7374,44 +7385,44 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	            } else {
 	                // make sure a value is available for every day (standard timeseries)
 	                if (! nVariate) {
-	                	var startInter = new Date().getTime();
+	                	startInter = new Date().getTime();
 
                         var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
                         var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
                         var previousDate = startDate;
-                        var dataset = [];
+                        dataset = [];
 	                    for (i=1; i<this.results.cols.length; i++) {
                      		if (! toRemove.includes(i)) {
                      			dataset[i-1] = [];
                      		}
 	                    }
+	                    var obj;
                         for (ix=0; ix<this.results.rows.length; ix++) {
-                        	var currentRow = this.results.rows[ix];
+                        	currentRow = this.results.rows[ix];
                             var currentDate = moment(currentRow.v[0]);
-                            var currentDateFormatted = currentDate.format('YYYY-MM-DD');
                             if (currentDate.unix() === previousDate.unix()) {
                              	for (i=1; i<this.results.cols.length; i++) {
                              		if (! toRemove.includes(i)) {
 	                            		arr = dataset[i-1];
-	                                   	var obj = {
+	                                   	obj = {
 	                                            "date" : currentDate.toDate(),
 	                                            "value": currentRow.v[i]
 	                                    };
 	                            		arr.push(obj);
 	                             	}
                             	}
-                             	previousDate = previousDate.add(1, 'd');
+                             	previousDate = previousDate.add(1, unit);
                             } else if (this.fillMissingDataValues) {
                             	if (previousDate.unix()>=startDate.unix() && previousDate.unix()<=endDate.unix() && currentDate.unix()>previousDate.unix() && currentDate.unix()<=endDate.unix()) {
                             		while (previousDate.unix()<=currentDate.unix()) {
                                      	for (i=1; i<this.results.cols.length; i++) {
     	                            		arr = dataset[i-1];
-                                     		var obj = {
+                                     		obj = {
     	                                            "date" : previousDate.toDate()
     	                                    };
     	                            		arr.push(obj);
                                      	}
-                                     	previousDate = previousDate.add(1, 'd');
+                                     	previousDate = previousDate.add(1, unit);
                             		}
                             	}
                             }

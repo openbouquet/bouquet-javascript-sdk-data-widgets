@@ -72,57 +72,57 @@
         
         refreshAnalysis : function(silent) {
             var changed = false;
-            var a = this.analysis;
             var config = this.config;
             if (silent !== false) {
                 silent = true;
             }
-
-            a.set({
-                "id" : {
-                    "projectId" : config.get("project"),
-                    "analysisJobId" : a.get("id").analysisJobId
-                }
-            }, {
-                "silent" : silent
-            });
-            changed = changed || a.hasChanged();
-            a.set({
-                "domains" : [ {
-                    "projectId" : config.get("project"),
-                    "domainId" : config.get("domain")
-                } ]
-            }, {
-                "silent" : silent
-            });
-            changed = changed || a.hasChanged();
-            var selection = this.config.get("selection");
-            var me = this;
             var chosenDimensions = config.get("chosenDimensions");
             var dimensions = this.loadChosenDimensions(chosenDimensions);
-            var indexToRemoveFromChosen = null;
-            
-            //Order by must be set before the facets 
-            if (config.hasChanged("orderBy")) {
-				a.set({
-					"orderBy" :  $.extend(true, [], config.get("orderBy"))
-				}, {
-					"silent" : silent
-				});
-            } else {
-            	a.attributes.orderBy=$.extend(true, [], config.get("orderBy"));
-            	a.attributes.offset=0;
-            	a.attributes.startIndex=0;
-            }
-            //with this code, sort doesn't work anymore in data table for date columns
-            /*if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
-            	a.get("orderBy").splice(indexToRemoveFromChosen, 1);
-            }*/
-            changed = changed || a.hasChanged();
+            var me = this;
             $.when(dimensions).done(function(dimensions)  {
+	            	  
+	            var a = me.analysis;
+	            a.set({
+	                "id" : {
+	                    "projectId" : me.config.get("project"),
+	                    "analysisJobId" : a.get("id").analysisJobId
+	                }
+	            }, {
+	                "silent" : silent
+	            });
+	            changed = changed || a.hasChanged();
+	            a.set({
+	                "domains" : [ {
+	                    "projectId" : me.config.get("project"),
+	                    "domainId" : me.config.get("domain")
+	                } ]
+	            }, {
+	                "silent" : silent
+	            });
+	            changed = changed || a.hasChanged();
+	            var selection = me.config.get("selection");
+	            var indexToRemoveFromChosen = null;
+	            
+	            //Order by must be set before the facets 
+	            if (me.config.hasChanged("orderBy")) {
+					a.set({
+						"orderBy" :  $.extend(true, [], me.config.get("orderBy"))
+					}, {
+						"silent" : silent
+					});
+	            } else {
+	            	a.attributes.orderBy=$.extend(true, [], me.config.get("orderBy"));
+	            	a.attributes.offset=0;
+	            	a.attributes.startIndex=0;
+	            }
+	            //with this code, sort doesn't work anymore in data table for date columns
+	            /*if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
+	            	a.get("orderBy").splice(indexToRemoveFromChosen, 1);
+	            }*/
+	            changed = changed || a.hasChanged();
                 if (selection) {
                     var dateFound = false;
-                    var id = config.get("period")[config.get("domain")];
+                    var id = me.config.get("period")[me.config.get("domain")];
                     if (dimensions) {
                         for (var j=0; j<dimensions.length; j++) {
                           	var expression = dimensions[j].get("expression");
@@ -143,18 +143,18 @@
                     me.setFacets(a, id, indexToRemoveFromChosen);
                  }
                 changed = changed || a.hasChanged();
-                a.setMetrics(config.get("chosenMetrics"), silent);
+                a.setMetrics(me.config.get("chosenMetrics"), silent);
                 changed = changed || a.hasChanged();
-                a.setSelection(config.get("selection"), silent);
+                a.setSelection(me.config.get("selection"), silent);
                 changed = changed || a.hasChanged();
                 a.set({
-                    "limit" : config.get("limit")
+                    "limit" : me.config.get("limit")
                 }, {
                     "silent" : silent
                 });
                 changed = changed || a.hasChanged();
                 a.set({
-                    "rollups" : config.get("rollups")
+                    "rollups" : me.config.get("rollups")
                 }, {
                     "silent" : silent
                 });

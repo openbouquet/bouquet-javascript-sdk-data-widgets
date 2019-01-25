@@ -337,7 +337,17 @@
             var compare = false;
             var toRemove = [];
             var nrDomainCol = 0;
-
+            var unit = "days";
+            if (this.config.get("timeUnit")) {
+            	if ("WEEKLY" === this.config.get("timeUnit")) {
+            		unit ="weeks";
+            	} else if ("MONTHLY" === this.config.get("timeUnit")) {
+            		unit ="months";
+            	} else if ("WEEKLY" === this.config.get("timeUnit")) {
+            		unit ="years";
+            	}
+            }
+            
             if (this.results && this.results.cols) {
 	            // see if multiple dimensions exist
 	            for (var col=1; col<this.results.cols.length; col++) {
@@ -383,14 +393,15 @@
 	
 	            // get data
 	            var hashMap = {};
-	
+	            var currentRow;
+            	var startInter;
 	            for (i=1; i<this.results.cols.length; i++) {
 	                if (! toRemove.includes(i)) {
-	                	var startInter = new Date().getTime();
+	                	startInter = new Date().getTime();
 	                    if (nVariate) {
 	                        // obtain legend names from results
 	                        for (ix1=0; ix1<this.results.rows.length; ix1++) {
-	                        	var currentRow = this.results.rows[ix1];
+	                        	currentRow = this.results.rows[ix1];
 	                            if (currentRow.v[1] !== null) {
 	                                if ($.inArray(currentRow.v[1], legend) < 0) {
 	                                    // store unique legend items
@@ -471,44 +482,44 @@
 	            } else {
 	                // make sure a value is available for every day (standard timeseries)
 	                if (! nVariate) {
-	                	var startInter = new Date().getTime();
+	                	startInter = new Date().getTime();
 
                         var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
                         var endDate = moment(moment(this.results.rows[this.results.rows.length - 1].v[0]).format('YYYY-MM-DD'));
                         var previousDate = startDate;
-                        var dataset = [];
+                        dataset = [];
 	                    for (i=1; i<this.results.cols.length; i++) {
                      		if (! toRemove.includes(i)) {
                      			dataset[i-1] = [];
                      		}
 	                    }
+	                    var obj;
                         for (ix=0; ix<this.results.rows.length; ix++) {
-                        	var currentRow = this.results.rows[ix];
+                        	currentRow = this.results.rows[ix];
                             var currentDate = moment(currentRow.v[0]);
-                            var currentDateFormatted = currentDate.format('YYYY-MM-DD');
                             if (currentDate.unix() === previousDate.unix()) {
                              	for (i=1; i<this.results.cols.length; i++) {
                              		if (! toRemove.includes(i)) {
 	                            		arr = dataset[i-1];
-	                                   	var obj = {
+	                                   	obj = {
 	                                            "date" : currentDate.toDate(),
 	                                            "value": currentRow.v[i]
 	                                    };
 	                            		arr.push(obj);
 	                             	}
                             	}
-                             	previousDate = previousDate.add(1, 'd');
+                             	previousDate = previousDate.add(1, unit);
                             } else if (this.fillMissingDataValues) {
                             	if (previousDate.unix()>=startDate.unix() && previousDate.unix()<=endDate.unix() && currentDate.unix()>previousDate.unix() && currentDate.unix()<=endDate.unix()) {
                             		while (previousDate.unix()<=currentDate.unix()) {
                                      	for (i=1; i<this.results.cols.length; i++) {
     	                            		arr = dataset[i-1];
-                                     		var obj = {
+                                     		obj = {
     	                                            "date" : previousDate.toDate()
     	                                    };
     	                            		arr.push(obj);
                                      	}
-                                     	previousDate = previousDate.add(1, 'd');
+                                     	previousDate = previousDate.add(1, unit);
                             		}
                             	}
                             }
