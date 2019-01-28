@@ -367,7 +367,7 @@
 							schema[x].yearStart = moment().get("year");
 							schema[x].yearEnd = moment().get("year")+1;
 							schema[x].validators = [dateNotInPast];
-						} else if (data[x].instance === "Array") {
+						} else if (Array.isArray(data[x].instance)) {
 							schema[x].type = "List";
 							schema[x].itemType = "Text";
 							schema[x].addLabel = "Add Email";

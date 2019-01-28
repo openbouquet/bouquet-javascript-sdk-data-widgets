@@ -2443,21 +2443,20 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
         domain: null,
 
         loadChosenDimensions: function(chosenDimensions) {
-			var dfd = new $.Deferred();
-			var chosenDimensionsCopy = chosenDimensions;
+        	const dfd = new $.Deferred();
+			const chosenDimensionsCopy = chosenDimensions;
 			var me = this;
 			if (chosenDimensionsCopy) {
                 squid_api.getCustomer().then(function(customer) {
                     customer.get("projects").load(me.config.get("project")).then(function(project) {
-                    	var dimensions = [];
+                    	const dimensions = [];
 	                    for (var j=0; j<chosenDimensionsCopy.length; j++) {
 	                        var dimensionflatten =  chosenDimensionsCopy[j];
-	                        var dimension;
 	                        me.dimension = dimensionflatten.replace(/.*'([^']+)'/, "$1");
 	                        me.domain = dimensionflatten.replace(/.*'([^']+)'\.@'[^']+'$/, "$1");
 	                        me.dimensionflatten = dimensionflatten;
 	                        if (dimensionflatten.startsWith("@'"+me.domain+"'") === false) {
-	    	                	dimension = me.loadDimensionFromRelation(project, me.domain, me.dimension);
+	    	                	const dimension = me.loadDimensionFromRelation(project, me.domain, me.dimension);
 	    	                	$.when(dimension).done(function(dimension) {
 		    	               		dimensions.push(dimension);
 		    	                	if (dimensions.length === chosenDimensionsCopy.length) {
@@ -3435,7 +3434,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 							schema[x].yearStart = moment().get("year");
 							schema[x].yearEnd = moment().get("year")+1;
 							schema[x].validators = [dateNotInPast];
-						} else if (data[x].instance === "Array") {
+						} else if (Array.isArray(data[x].instance)) {
 							schema[x].type = "List";
 							schema[x].itemType = "Text";
 							schema[x].addLabel = "Add Email";

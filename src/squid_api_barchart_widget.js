@@ -1,3 +1,4 @@
+/* jshint expr: true */
 (function (root, factory) {
 	root.squid_api.view.BarChartView = factory(root.Backbone, root.squid_api, squid_api.template.squid_api_barchart_widget);
 
