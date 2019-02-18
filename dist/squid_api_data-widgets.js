@@ -3926,6 +3926,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             downloadBtn.removeClass("disabled");
 
             downloadForm.attr("action",analysisJobResults.url());
+            downloadForm.attr("enctype", "multipart/form-data");
             downloadForm.attr("method",postMethod);
             downloadForm.attr("accept-charset","UTF-8");
             downloadForm.empty();
