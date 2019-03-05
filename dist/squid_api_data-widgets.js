@@ -3434,7 +3434,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 							schema[x].yearStart = moment().get("year");
 							schema[x].yearEnd = moment().get("year")+1;
 							schema[x].validators = [dateNotInPast];
-						} else if (Array.isArray(data[x].instance)) {
+						} else if (Array.isArray(data[x].instance) || data[x].instance === "Array") {
 							schema[x].type = "List";
 							schema[x].itemType = "Text";
 							schema[x].addLabel = "Add Email";
