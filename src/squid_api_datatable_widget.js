@@ -930,7 +930,9 @@
 					customer.get("projects").load(me.config.get("project")).then(function(project) {
 						project.get("domains").load(parentId).then(function(domain) {
 							if (domain.get("metrics")) {
-								domain.get("metrics").load().then(function(metrics) {
+								var metrics = domain.get("metrics");
+								//Old way
+								//domain.get("metrics").load().then(function(metrics) {
 									// display table header
 									var arr = [];
 									for(i=0; i<metrics.size(); i++) {
@@ -984,7 +986,7 @@
 										me.$el.find("#table-container").show();
 										me.$el.find("#re-run").hide();
 									}
-								});
+								//});
 							}
 						});
 					});
