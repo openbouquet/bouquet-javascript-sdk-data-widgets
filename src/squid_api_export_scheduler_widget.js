@@ -337,20 +337,32 @@
 				var validateEmails = function(value, formValues) {
 					var msg = 'Please enter at least an email';
 					var re = /\S+@\S+\.\S+/;
+					
+
 					if (formValues.emails.length === 0) {
 						return {
 							type: 'emailsList',
 							message: "Please define one email"
 						};
-
 					} else if (formValues.emails.indexOf(value) !== - 1) {
-						var isEmail = re.test(value);
-						if (!isEmail) {
-							msg = "Email syntax invalid, please check";
-							return {
-								type: 'emailsList',
-								message: msg
-							};
+						var emails = formValues.emails; //Return an array with [old,values,new,values]
+						if (typeof emails !== 'undefined' && emails.length>0) {
+							// Take the new values assuming no deletion
+							emails = formValues.emails.slice((((formValues.emails.length - 1) / 2) + 1), formValues.emails.length);
+							// computing the separator old new values using the first old value.
+							if (formValues.emails.lastIndexOf(formValues.emails[0]) > 0) {
+								emails = formValues.emails.slice(formValues.emails.lastIndexOf(formValues.emails[0]), formValues.emails.length);
+							}
+						}
+						if (emails.indexOf(value) !== -1) {
+							var isEmail = re.test(value);
+							if (!isEmail) {
+								msg = "Email syntax invalid, please check";
+								return {
+									type: 'emailsList',
+									message: msg
+								};
+							}
 						}
 					}
 				};
