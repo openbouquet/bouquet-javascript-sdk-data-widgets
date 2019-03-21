@@ -379,7 +379,27 @@
 
             if (analysis.get("id").projectId && enabled !== false) {
                 var downloadAnalysis = new squid_api.model.ProjectAnalysisJob();
+                var orderBy = [], i, j;
+                if (analysis.attributes.orderBy) {
+                	for (i = 0; i < analysis.attributes.orderBy.length; i++)  {
+                		orderBy.push( analysis.attributes.orderBy[i]);
+                	}
+                }
+                if (analysis.attributes.facets) {
+                 	for (i = 0; i < analysis.attributes.facets.length; i++)  {
+                 		var toAdd = true;
+                 		for (j=0; j<orderBy.length; j++) {
+                 			if (orderBy[j].expression.value === analysis.attributes.facets[i].value) {
+                 				toAdd = false;
+                 			}
+                 		}
+                 		if (toAdd) {
+                    		orderBy.push({expression: {value:  analysis.attributes.facets[i].value},  direction: "ASC"});
+                 		}
+                	}
+                }
                 downloadAnalysis.set(analysis.attributes);
+                downloadAnalysis.set("orderBy", orderBy);
                 downloadAnalysis.setParameter("timeout", 10000);
                 downloadAnalysis.setParameter("maxResults", 1);
                 downloadAnalysis.set("autoRun", false);
