@@ -7580,8 +7580,9 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 
                 if (data.done && this.model.get("error")) {
                     this.$el.find("#error").html("<div id='error'>" + this.model.get("error").message + "</div>");
+                } else if (data.done) {
+                	this.renderGraphic();
                 }
-                this.renderGraphic();
             }
         },
 
