@@ -591,9 +591,12 @@
             	//this.compression = (t.checked);
             }
 
-            $(this.viewPort).find("#download").click(function() {
-                me.download();
-            });
+            var button = $(this.viewPort).find("#download");
+            if (button.length === 1 &&  button[0].onclick === null) {
+            	button[0].onclick = function() {
+                    me.download();
+                };
+            }
             if(this.materializeDatasetsView === true) {
                 $(this.viewPort).find("#view-materializedatasets").click(function () {
                     me.refreshViewMaterializeDatasets();
