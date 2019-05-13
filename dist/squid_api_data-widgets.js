@@ -159,7 +159,7 @@ this["squid_api"]["template"]["squid_api_export_scheduler_index_view"] = Handleb
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "<div class=\"squid-api-export-scheduler-index-view table-responsive\">\n    <button class=\"btn btn-default create-job\">New Schedule</button>\n    <table class=\"table table-bordered table-striped table-hover\">\n        <thead>\n            <tr>\n                <th class=\"col-xs-1\">Report</th>\n                <th class=\"col-xs-3\">Report Settings</th>\n                <th class=\"col-xs-3\">Schedule Settings</th>\n                <th class=\"col-xs-2\">Delivered to</th>\n                <th class=\"col-xs-1\">Run Now</th>\n                <th class=\"col-xs-1\">Edit</th>\n                <th class=\"col-xs-1\">Delete</th>\n            </tr>\n        </thead>\n        <tbody>\n"
+  return "<div class=\"squid-api-export-scheduler-index-view table-responsive\">\n    <button class=\"btn btn-default create-job\">New Schedule</button>\n    <table class=\"table table-bordered table-striped table-hover\">\n        <thead>\n            <tr>\n                <th class=\"col-xs-1\">Report</th>\n                <th class=\"col-xs-3\">Report Settings</th>\n                <th class=\"col-xs-3\">Schedule Settings</th>\n                <th class=\"col-xs-2\">Delivered to</th>\n                <th class=\"col-xs-1 no-sort\">Run Now</th>\n                <th class=\"col-xs-1 no-sort\">Edit</th>\n                <th class=\"col-xs-1 no-sort\">Delete</th>\n            </tr>\n        </thead>\n        <tbody>\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.jobs : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "        </tbody>\n    </table>\n</div>\n";
 },"useData":true});
@@ -3203,7 +3203,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 				events: {
 					"click .bslink": function (event) {
 						var id = $(event.target).parents(".job-item").attr("data-attr");
-						var clipboard = new Clipboard("a[title='"+id+"']"); 
+						var clipboard = new Clipboard("a[title='"+id+"']");
 						clipboard.on('success', function(e) {
 							console.info('Action:', e.action);
 							console.info('Text:', e.text);
@@ -3308,7 +3308,10 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 							"searchPlaceholder": "Search all fields incl. Schedule Id",
 							"emptyTable": "No report is currently scheduled"
 						},
-						"autoWidth":true
+						"autoWidth":true,
+						"columnDefs": [
+							{ "targets": "no-sort", "orderable": false }
+						  ]
 					});
 					if (me.canCreate) {
 						this.$el.find("button.create-job").prop('disabled', false);
@@ -3406,7 +3409,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 				var validateEmails = function(value, formValues) {
 					var msg = 'Please enter at least an email';
 					var re = /\S+@\S+\.\S+/;
-					
+
 
 					if (formValues.emails.length === 0) {
 						return {
@@ -3462,7 +3465,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 								schema[x].options = data[x].options.enumValues;
 								schema[x].validators = ['required'];
 							} else if (data[x].options.enum) {
-								
+
 								schema[x].type = "Select";
 								schema[x].options = data[x].options.enum;
 								schema[x].validators = ['required'];
