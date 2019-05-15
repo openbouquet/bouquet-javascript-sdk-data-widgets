@@ -134,7 +134,7 @@
 				events: {
 					"click .bslink": function (event) {
 						var id = $(event.target).parents(".job-item").attr("data-attr");
-						var clipboard = new Clipboard("a[title='"+id+"']"); 
+						var clipboard = new Clipboard("a[title='"+id+"']");
 						clipboard.on('success', function(e) {
 							console.info('Action:', e.action);
 							console.info('Text:', e.text);
@@ -239,7 +239,10 @@
 							"searchPlaceholder": "Search all fields incl. Schedule Id",
 							"emptyTable": "No report is currently scheduled"
 						},
-						"autoWidth":true
+						"autoWidth":true,
+						"columnDefs": [
+							{ "targets": "no-sort", "orderable": false }
+						  ]
 					});
 					if (me.canCreate) {
 						this.$el.find("button.create-job").prop('disabled', false);
@@ -337,7 +340,7 @@
 				var validateEmails = function(value, formValues) {
 					var msg = 'Please enter at least an email';
 					var re = /\S+@\S+\.\S+/;
-					
+
 
 					if (formValues.emails.length === 0) {
 						return {
@@ -393,7 +396,7 @@
 								schema[x].options = data[x].options.enumValues;
 								schema[x].validators = ['required'];
 							} else if (data[x].options.enum) {
-								
+
 								schema[x].type = "Select";
 								schema[x].options = data[x].options.enum;
 								schema[x].validators = ['required'];
