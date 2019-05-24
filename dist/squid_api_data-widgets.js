@@ -4051,7 +4051,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                  	for (i = 0; i < analysis.attributes.facets.length; i++)  {
                  		var toAdd = true;
                  		for (j=0; j<orderBy.length; j++) {
-                 			if (orderBy[j].expression.value === analysis.attributes.facets[i].value) {
+                 			if (orderBy[j].expression && orderBy[j].expression.value === analysis.attributes.facets[i].value) {
                  				toAdd = false;
                  			}
                  		}
