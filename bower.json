@@ -21,7 +21,7 @@
     "Gruntfile.js"
   ],
   "dependencies": {
-    "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#7.0.7",
+    "squid_api": "https://github.com/openbouquet/bouquet-javascript-sdk.git#7.0.8",
     "bootstrap-multiselect": "https://github.com/davidstutz/bootstrap-multiselect.git#0.9.15",
     "handlebars": "~4.0.12",
     "d3": "5.7.0",
