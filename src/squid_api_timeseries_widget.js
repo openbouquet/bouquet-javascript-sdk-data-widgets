@@ -23,6 +23,7 @@
         fillMissingDataValues: null,
         timeUnitSelector: null,
         legendState: {},
+        displayFormat: null,
 
         initialize : function(options) {
             var me = this;

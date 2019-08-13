@@ -6966,6 +6966,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
         fillMissingDataValues: null,
         timeUnitSelector: null,
         legendState: {},
+        displayFormat: null,
 
         initialize : function(options) {
             var me = this;
