@@ -498,7 +498,7 @@
                         for (ix=0; ix<this.results.rows.length; ix++) {
                         	currentRow = this.results.rows[ix];
                             var currentDate = moment(currentRow.v[0]);
-                            if (currentDate.unix() === previousDate.unix()) {
+                            if (currentDate.unix() === previousDate.unix() || !this.fillMissingDataValues) {
                              	for (i=1; i<this.results.cols.length; i++) {
                              		if (! toRemove.includes(i)) {
 	                            		arr = dataset[i-1];
@@ -509,7 +509,7 @@
 	                            		arr.push(obj);
 	                             	}
                             	}
-                             	previousDate = previousDate.add(1, unit);
+                             	previousDate = startDate.add(1, unit);
                             } else if (this.fillMissingDataValues) {
                             	if (previousDate.unix()>=startDate.unix() && previousDate.unix()<=endDate.unix() && currentDate.unix()>previousDate.unix() && currentDate.unix()<=endDate.unix()) {
                             		while (previousDate.unix()<=currentDate.unix()) {
