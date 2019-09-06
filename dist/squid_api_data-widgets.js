@@ -836,6 +836,9 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                         this.onChangeHandler(a);
                         squid_api.compute(a);
                     }
+                } else if (startIndexChange) {
+                	//In case we change the bookmark
+                	a.setParameter("startIndex", configStartIndex, true);
                 }
             }
             if (changed === true) {
