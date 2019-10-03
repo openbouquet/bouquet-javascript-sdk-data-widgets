@@ -4042,11 +4042,13 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             if (analysis.get("id").projectId && enabled !== false) {
                 var downloadAnalysis = new squid_api.model.ProjectAnalysisJob();
                 var orderBy = [], i, j;
-                if (analysis.attributes.orderBy) {
+                
+                /*if (analysis.attributes.orderBy) {
                 	for (i = 0; i < analysis.attributes.orderBy.length; i++)  {
                 		orderBy.push( analysis.attributes.orderBy[i]);
                 	}
                 }
+                */
                 if (analysis.attributes.facets) {
                  	for (i = 0; i < analysis.attributes.facets.length; i++)  {
                  		var toAdd = true;
