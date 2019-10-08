@@ -137,7 +137,15 @@
 
                 this.listenTo(this.config, 'change', function() {
                     // reflect config changes to configClone
+                    var chosenDimensions = me.configClone.get("chosenDimensions"); 
+                    var chosenMetrics = me.configClone.get("chosenMetrics"); 
                     me.configClone.set(_.clone(me.config.attributes));
+                    if (me.config.hasChanged("selection") && !me.config.hasChanged("chosenDimensions") && !me.config.hasChanged("chosenMetrics")) {
+                    	me.configClone.set({
+                    		"chosenDimensions": chosenDimensions, 
+                    		"chosenMetrics": chosenMetrics
+                    		});
+                    }
                     me.dimensionSelector.render();
                     me.metricSelector.render();
                 });
