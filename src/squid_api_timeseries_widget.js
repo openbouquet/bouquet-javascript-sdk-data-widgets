@@ -344,7 +344,7 @@
             		unit ="weeks";
             	} else if ("MONTHLY" === this.config.get("timeUnit")) {
             		unit ="months";
-            	} else if ("WEEKLY" === this.config.get("timeUnit")) {
+            	} else if ("YEARLY" === this.config.get("timeUnit")) {
             		unit ="years";
             	}
             }

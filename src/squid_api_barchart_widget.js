@@ -33,7 +33,7 @@
 			if (d3) {
 				this.d3Formatter = d3.format(",.0f");
 			}
-			if (options.format) {
+			if (options && options.format) {
 				this.format = options.format;
 			} else {
 				// default number formatter

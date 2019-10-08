@@ -9,123 +9,87 @@
         config : null,
         dimension: null,
         domain: null,
-
-        loadChosenDimensions: function(chosenDimensions) {
-        	const dfd = new $.Deferred();
-			const chosenDimensionsCopy = chosenDimensions;
-			var me = this;
-			if (chosenDimensionsCopy) {
-                squid_api.getCustomer().then(function(customer) {
-                    customer.get("projects").load(me.config.get("project")).then(function(project) {
-                    	const dimensions = [];
-	                    for (var j=0; j<chosenDimensionsCopy.length; j++) {
-	                        var dimensionflatten =  chosenDimensionsCopy[j];
-	                        me.dimension = dimensionflatten.replace(/.*'([^']+)'/, "$1");
-	                        me.domain = dimensionflatten.replace(/.*'([^']+)'\.@'[^']+'$/, "$1");
-	                        me.dimensionflatten = dimensionflatten;
-	                        if (dimensionflatten.startsWith("@'"+me.domain+"'") === false) {
-	    	                	const dimension = me.loadDimensionFromRelation(project, me.domain, me.dimension);
-	    	                	$.when(dimension).done(function(dimension) {
-		    	               		dimensions.push(dimension);
-		    	                	if (dimensions.length === chosenDimensionsCopy.length) {
-		    	        				dfd.resolve(dimensions);
-		    	                	}    	 
-	    	                	});
-	    	                } else {
-	    	                	dimension = me.loadDimensionFromDomain(project, me.domain, me.dimension);
-	    	                	$.when(dimension).done(function(dimension) {
-		    	               		dimensions.push(dimension);
-		    	                	if (dimensions.length === chosenDimensionsCopy.length) {
-		    	        				dfd.resolve(dimensions);
-		    	                	}    	 
-	    	                	});
-	    	                }
-	                     }
-                   });
-                });
-			}
-			return dfd;
-        },
-        
-        loadDimensionFromRelation: function(project, relationId, dimensionId) {
-			var dfd = new $.Deferred();
-        	project.get("relations").load(relationId).then(function(relation) {
-        		project.get("domains").load(relation.get("rightId").domainId).then(function(domain) {
-        			domain.get("dimensions").load(dimensionId).then(function(dimension) {
-        				dfd.resolve(dimension);
-                    });
-                });
-            });
-        	return dfd;
-        },
        
-        loadDimensionFromDomain: function(project, domainId, dimensionId) {
-			var dfd = new $.Deferred();
-            project.get("domains").load(domainId).then(function(domain) {
-            	domain.get("dimensions").load(dimensionId).then(function(dimension) {
-    				dfd.resolve(dimension);
-                });
-            });
-        	return dfd;
+        loadChosenDimensions: function(chosenDimensions, allDimensions) {
+        	const dimensions = [];
+        	if (typeof allDimensions.models !== "undefined") {
+        		allDimensions = allDimensions.models;
+        	}
+        	for (i=0; i<chosenDimensions.length; i++) {
+        		for (j=0; j<allDimensions.length; j++) {
+        			var id;
+        			if (typeof allDimensions[j].attributes === "object" && Array.isArray(allDimensions[j].attributes) === false) {
+        				id = allDimensions[j].get("id").dimensionId;
+        			} else {
+        				id = allDimensions[j].id.dimensionId;
+        			}
+        			if (chosenDimensions[i].endsWith("@'" + id + "'")) {
+    					dimensions.push(allDimensions[j]);
+        			}
+        		}
+        	}
+        	return dimensions;
         },
         
         refreshAnalysis : function(silent) {
+            var me = this;
             var changed = false;
-            var config = this.config;
             if (silent !== false) {
                 silent = true;
             }
-            var chosenDimensions = config.get("chosenDimensions");
-            var dimensions = this.loadChosenDimensions(chosenDimensions);
-            var me = this;
-            $.when(dimensions).done(function(dimensions)  {
-	            	  
-	            var a = me.analysis;
-	            a.set({
-	                "id" : {
-	                    "projectId" : me.config.get("project"),
-	                    "analysisJobId" : a.get("id").analysisJobId
-	                }
-	            }, {
-	                "silent" : silent
-	            });
-	            changed = changed || a.hasChanged();
-	            a.set({
-	                "domains" : [ {
-	                    "projectId" : me.config.get("project"),
-	                    "domainId" : me.config.get("domain")
-	                } ]
-	            }, {
-	                "silent" : silent
-	            });
-	            changed = changed || a.hasChanged();
-	            var selection = me.config.get("selection");
-	            var indexToRemoveFromChosen = null;
-	            
-	            //Order by must be set before the facets 
-	            if (me.config.hasChanged("orderBy")) {
-					a.set({
-						"orderBy" :  $.extend(true, [], me.config.get("orderBy"))
-					}, {
-						"silent" : silent
-					});
-	            } else {
-	            	a.attributes.orderBy=$.extend(true, [], me.config.get("orderBy"));
-	            	a.attributes.offset=0;
-	            	a.attributes.startIndex=0;
-	            }
-	            //with this code, sort doesn't work anymore in data table for date columns
-	            /*if (indexToRemoveFromChosen || indexToRemoveFromChosen === 0) {
-	            	a.get("orderBy").splice(indexToRemoveFromChosen, 1);
-	            }*/
-	            changed = changed || a.hasChanged();
-                if (selection) {
-                    var dateFound = false;
-                    var id = me.config.get("period")[me.config.get("domain")];
-                    if (dimensions) {
+        	  
+            var a = me.analysis;
+            a.set({
+                "id" : {
+                    "projectId" : me.config.get("project"),
+                    "analysisJobId" : a.get("id").analysisJobId
+                }
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            a.set({
+                "domains" : [ {
+                    "projectId" : me.config.get("project"),
+                    "domainId" : me.config.get("domain")
+                } ]
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+            
+            //Order by must be set before the facets 
+            if (me.config.hasChanged("orderBy")) {
+				a.set({
+					"orderBy" :  $.extend(true, [], me.config.get("orderBy"))
+				}, {
+					"silent" : silent
+				});
+            } else {
+            	a.attributes.orderBy=$.extend(true, [], me.config.get("orderBy"));
+            	a.attributes.offset=0;
+            	a.attributes.startIndex=0;
+            }
+            changed = changed || a.hasChanged();
+            var selection = me.config.get("selection");
+            var indexToRemoveFromChosen = null;
+            var chosenDimensions = this.config.get("chosenDimensions");
+            if (selection && typeof me.config.get("allDimensions") !== "undefined" && me.config.get("allDimensions") !== null && chosenDimensions) {
+                var dateFound = false;
+                var id = me.config.get("period")[me.config.get("domain")];
+                if (id) {
+                    var dimensions = this.loadChosenDimensions(chosenDimensions, me.config.get("allDimensions"));
+                	if (dimensions) {
                         for (var j=0; j<dimensions.length; j++) {
-                          	var expression = dimensions[j].get("expression");
-                        	if (dimensions[j].get("oid") === id.replace(/.*'([^']+)'/, "$1")) {
+                          	var expression, oid;
+                          	if (dimensions[j].expression) {
+                          		expression = dimensions[j].expression;
+                          		oid = dimensions[j].oid;
+                          	} else {
+                          		expression = dimensions[j].get("expression");
+                          		oid = dimensions[j].get("oid");
+                          	}
+                        	if (oid === id.replace(/.*'([^']+)'/, "$1")) {
                         		dateFound = true;
                         		indexToRemoveFromChosen = j;
                         	} else if (Array.isArray(expression.references)) {
@@ -140,29 +104,33 @@
                     }
                     //
                     me.setFacets(a, id, indexToRemoveFromChosen);
-                 }
-                changed = changed || a.hasChanged();
-                a.setMetrics(me.config.get("chosenMetrics"), silent);
-                changed = changed || a.hasChanged();
-                a.setSelection(me.config.get("selection"), silent);
-                changed = changed || a.hasChanged();
-                a.set({
-                    "limit" : me.config.get("limit")
-                }, {
-                    "silent" : silent
-                });
-                changed = changed || a.hasChanged();
-                a.set({
-                    "rollups" : me.config.get("rollups")
-                }, {
-                    "silent" : silent
-                });
-                changed = changed || a.hasChanged();
-
-                if (changed === true) {
-                    me.onChangeHandler(me.analysis);
+                } else {
+                    a.setFacets(me.config.get("chosenDimensions"), silent);
                 }
+            } else {
+                a.setFacets(me.config.get("chosenDimensions"), silent);
+            }
+            changed = changed || a.hasChanged();
+            a.setMetrics(me.config.get("chosenMetrics"), silent);
+            changed = changed || a.hasChanged();
+            a.setSelection(me.config.get("selection"), silent);
+            changed = changed || a.hasChanged();
+            a.set({
+                "limit" : me.config.get("limit")
+            }, {
+                "silent" : silent
             });
+            changed = changed || a.hasChanged();
+            a.set({
+                "rollups" : me.config.get("rollups")
+            }, {
+                "silent" : silent
+            });
+            changed = changed || a.hasChanged();
+
+            if (changed === true) {
+                me.onChangeHandler(me.analysis);
+            }
         },
 
         setFacets: function(a, id, indexToRemoveFromChosen) {
