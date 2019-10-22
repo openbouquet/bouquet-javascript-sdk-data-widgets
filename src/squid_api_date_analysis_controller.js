@@ -74,6 +74,7 @@
             var selection = me.config.get("selection");
             var indexToRemoveFromChosen = null;
             var chosenDimensions = this.config.get("chosenDimensions");
+            a.setFacets(chosenDimensions, silent);
             if (selection && typeof me.config.get("allDimensions") !== "undefined" && me.config.get("allDimensions") !== null && chosenDimensions) {
                 var dateFound = false;
                 var id = me.config.get("period")[me.config.get("domain")];
@@ -97,18 +98,17 @@
                         			if (expression.references[0].reference.dimensionId === id.replace(/.*'([^']+)'/, "$1")) {
                         				dateFound = true;
                                 		indexToRemoveFromChosen = j;
+
                         			}
                         		}
                         	}
                         }
                     }
                     //
-                    me.setFacets(a, id, indexToRemoveFromChosen);
-                } else {
-                    a.setFacets(me.config.get("chosenDimensions"), silent);
-                }
-            } else {
-                a.setFacets(me.config.get("chosenDimensions"), silent);
+                	if (!dateFound) {
+                        me.setFacets(a, id, indexToRemoveFromChosen);
+                	}
+                 }
             }
             changed = changed || a.hasChanged();
             a.setMetrics(me.config.get("chosenMetrics"), silent);

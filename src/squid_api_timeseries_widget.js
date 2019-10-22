@@ -482,7 +482,7 @@
 	                }
 	            } else {
 	                // make sure a value is available for every day (standard timeseries)
-	                if (! nVariate) {
+	                if (! nVariate && this.results && this.results.rows && this.results.rows.length > 0) {
 	                	startInter = new Date().getTime();
 
                         var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));

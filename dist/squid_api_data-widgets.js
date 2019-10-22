@@ -2508,6 +2508,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             var selection = me.config.get("selection");
             var indexToRemoveFromChosen = null;
             var chosenDimensions = this.config.get("chosenDimensions");
+            a.setFacets(chosenDimensions, silent);
             if (selection && typeof me.config.get("allDimensions") !== "undefined" && me.config.get("allDimensions") !== null && chosenDimensions) {
                 var dateFound = false;
                 var id = me.config.get("period")[me.config.get("domain")];
@@ -2531,18 +2532,17 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                         			if (expression.references[0].reference.dimensionId === id.replace(/.*'([^']+)'/, "$1")) {
                         				dateFound = true;
                                 		indexToRemoveFromChosen = j;
+
                         			}
                         		}
                         	}
                         }
                     }
                     //
-                    me.setFacets(a, id, indexToRemoveFromChosen);
-                } else {
-                    a.setFacets(me.config.get("chosenDimensions"), silent);
-                }
-            } else {
-                a.setFacets(me.config.get("chosenDimensions"), silent);
+                	if (!dateFound) {
+                        me.setFacets(a, id, indexToRemoveFromChosen);
+                	}
+                 }
             }
             changed = changed || a.hasChanged();
             a.setMetrics(me.config.get("chosenMetrics"), silent);
@@ -7403,7 +7403,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 	                }
 	            } else {
 	                // make sure a value is available for every day (standard timeseries)
-	                if (! nVariate) {
+	                if (! nVariate && this.results && this.results.rows && this.results.rows.length > 0) {
 	                	startInter = new Date().getTime();
 
                         var startDate = moment(moment(this.results.rows[0].v[0]).format('YYYY-MM-DD'));
