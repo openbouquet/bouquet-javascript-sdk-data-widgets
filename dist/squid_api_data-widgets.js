@@ -2517,9 +2517,9 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             var indexToRemoveFromChosen = null;
             var chosenDimensions = this.config.get("chosenDimensions");
             a.setFacets(chosenDimensions, silent);
+            var id = me.config.get("period")[me.config.get("domain")];
             if (selection && typeof me.config.get("allDimensions") !== "undefined" && me.config.get("allDimensions") !== null && chosenDimensions) {
                 var dateFound = false;
-                var id = me.config.get("period")[me.config.get("domain")];
                 if (id) {
                     var dimensions = this.loadChosenDimensions(chosenDimensions, me.config.get("allDimensions"));
                 	if (dimensions) {
@@ -2555,9 +2555,9 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                 		 me.setFacets(a, dimensions[indexToRemoveFromChosen].chosenDimension, indexToRemoveFromChosen);
                 	}
                  }
-            } else {
-            	var id = me.config.get("period")[me.config.get("domain")];
-            	me.setFacets(a, id, 0);
+            } else if (id) {
+        		chosenDimensions.splice(0,0, id);
+                a.setFacets(chosenDimensions, silent);
             }
             changed = changed || a.hasChanged() || me.config.hasChanged("allDimensions");
             a.setMetrics(me.config.get("chosenMetrics"), silent);
