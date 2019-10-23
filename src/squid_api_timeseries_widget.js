@@ -548,7 +548,12 @@
 	            }
 
 	            // reinitialize timeseries
-	            MG.data_graphic(this.configuration);
+	            try {
+		            MG.data_graphic(this.configuration);
+	            } catch (error) {
+	            	console.log(error);
+	            }
+	            
             }
             // manipulation time
             console.log("Timeseries total manipulation time: " + (new Date().getTime() - start) + " ms");

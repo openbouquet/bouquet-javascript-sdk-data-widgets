@@ -16,6 +16,8 @@
         		allDimensions = allDimensions.models;
         	}
         	for (i=0; i<chosenDimensions.length; i++) {
+        		var chosenDimension=chosenDimensions[i];
+        		var found=false;
         		for (j=0; j<allDimensions.length; j++) {
         			var id;
         			if (typeof allDimensions[j].attributes === "object" && Array.isArray(allDimensions[j].attributes) === false) {
@@ -23,9 +25,14 @@
         			} else {
         				id = allDimensions[j].id.dimensionId;
         			}
-        			if (chosenDimensions[i].endsWith("@'" + id + "'")) {
-    					dimensions.push(allDimensions[j]);
+        			if (chosenDimension.endsWith("@'" + id + "'")) {
+    					dimensions.push({ "chosenDimension": chosenDimension, "definition": allDimensions[j]});
+    					found=true;
+    					break;
         			}
+        		}
+        		if (!found) {
+					dimensions.push({ "chosenDimension": chosenDimension, "definition": null});
         		}
         	}
         	return dimensions;
@@ -83,34 +90,41 @@
                 	if (dimensions) {
                         for (var j=0; j<dimensions.length; j++) {
                           	var expression, oid;
-                          	if (dimensions[j].expression) {
-                          		expression = dimensions[j].expression;
-                          		oid = dimensions[j].oid;
-                          	} else {
-                          		expression = dimensions[j].get("expression");
-                          		oid = dimensions[j].get("oid");
+                          	if  (dimensions[j].definition !== null) {
+	                          	if (dimensions[j].definition.expression) {
+	                          		expression = dimensions[j].definition.expression;
+	                          		oid = dimensions[j].definition.oid;
+	                          	} else {
+	                          		expression = dimensions[j].definition.get("expression");
+	                          		oid = dimensions[j].definition.get("oid");
+	                          	}
+	                        	if (oid === id.replace(/.*'([^']+)'/, "$1")) {
+	                        		dateFound = true;
+	                        		indexToRemoveFromChosen = j;
+	                        	} else if (Array.isArray(expression.references)) {
+	                        		if (expression.references.length === 1) {
+	                        			if (expression.references[0].reference.dimensionId === id.replace(/.*'([^']+)'/, "$1")) {
+	                        				dateFound = true;
+	                                		indexToRemoveFromChosen = j;
+	                        			}
+	                        		}
+	                        	}
                           	}
-                        	if (oid === id.replace(/.*'([^']+)'/, "$1")) {
-                        		dateFound = true;
-                        		indexToRemoveFromChosen = j;
-                        	} else if (Array.isArray(expression.references)) {
-                        		if (expression.references.length === 1) {
-                        			if (expression.references[0].reference.dimensionId === id.replace(/.*'([^']+)'/, "$1")) {
-                        				dateFound = true;
-                                		indexToRemoveFromChosen = j;
-
-                        			}
-                        		}
-                        	}
                         }
                     }
                     //
                 	if (!dateFound) {
-                        me.setFacets(a, id, indexToRemoveFromChosen);
+                		chosenDimensions.splice(0,0, id);
+                        a.setFacets(chosenDimensions, silent);
+                	} else if (indexToRemoveFromChosen>0) {
+                		 me.setFacets(a, dimensions[indexToRemoveFromChosen].chosenDimension, indexToRemoveFromChosen);
                 	}
                  }
+            } else {
+            	var id = me.config.get("period")[me.config.get("domain")];
+            	me.setFacets(a, id, 0);
             }
-            changed = changed || a.hasChanged();
+            changed = changed || a.hasChanged() || me.config.hasChanged("allDimensions");
             a.setMetrics(me.config.get("chosenMetrics"), silent);
             changed = changed || a.hasChanged();
             a.setSelection(me.config.get("selection"), silent);

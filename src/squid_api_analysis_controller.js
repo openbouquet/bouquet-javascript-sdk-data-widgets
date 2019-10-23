@@ -52,10 +52,11 @@
                     me.refreshAnalysis();
                 }
             });
-            this.listenTo(this.model, "change", function() {
-                console.log("Model change");
+            this.listenTo(squid_api.model.config, "change:allDimensions", function() {
+                if (squid_api.model.status.get("configReady") === true) {
+                    me.refreshAnalysis();
+                }
             });
-           
 
             // controller
             if (! this.ignoreConfigChange) {
