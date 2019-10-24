@@ -80,10 +80,10 @@
             changed = changed || a.hasChanged();
             var selection = me.config.get("selection");
             var indexToRemoveFromChosen = null;
-            var chosenDimensions = this.config.get("chosenDimensions");
+            var chosenDimensions = $.extend(true, [], this.config.get("chosenDimensions"));
             a.setFacets(chosenDimensions, silent);
             var id = me.config.get("period")[me.config.get("domain")];
-            if (selection && typeof me.config.get("allDimensions") !== "undefined" && me.config.get("allDimensions") !== null && chosenDimensions) {
+            if (chosenDimensions && typeof me.config.get("allDimensions") !== "undefined" && me.config.get("allDimensions") !== null && chosenDimensions) {
                 var dateFound = false;
                 if (id) {
                     var dimensions = this.loadChosenDimensions(chosenDimensions, me.config.get("allDimensions"));
@@ -114,15 +114,13 @@
                     }
                     //
                 	if (!dateFound) {
-                		chosenDimensions.splice(0,0, id);
-                        a.setFacets(chosenDimensions, silent);
+               		 	me.setFacets(a, id);
                 	} else if (indexToRemoveFromChosen>0) {
                 		 me.setFacets(a, dimensions[indexToRemoveFromChosen].chosenDimension, indexToRemoveFromChosen);
                 	}
                  }
             } else if (id) {
-        		chosenDimensions.splice(0,0, id);
-                a.setFacets(chosenDimensions, silent);
+            	me.setFacets(a, id);
             }
             changed = changed || a.hasChanged() || me.config.hasChanged("allDimensions");
             a.setMetrics(me.config.get("chosenMetrics"), silent);

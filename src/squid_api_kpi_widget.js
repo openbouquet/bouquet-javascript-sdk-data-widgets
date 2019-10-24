@@ -54,7 +54,7 @@
 				jsonData = [];
 				jsonData.done = true;
 				results = this.model.get("results");
-				if (results) {
+				if (results && results.rows.length>0) {
 					var cols = results.cols;
 					var hasGrowth=false;
 
