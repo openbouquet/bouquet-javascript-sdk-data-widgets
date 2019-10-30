@@ -1746,7 +1746,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 									facetId = facetWithAlias.substring(0, facetWithAlias.toLowerCase().indexOf("' as '")+1);
 									alias =  facetWithAlias.substring(facetWithAlias.toLowerCase().indexOf("' as '")+6, facetWithAlias.length-1);
 								}
-		
+
 								obj = squid_api.utils.find(this.filters.get("selection").facets, "id", facetId) || {};
 								if (obj) {
 									obj = {
@@ -1969,7 +1969,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 								return d.definition;
 							} else {
 								return d.id;
-							}	
+							}
 						} else {
 							if (d.definition && d.definition.startsWith("@")) {
 								return d.definition;
@@ -2011,7 +2011,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 									var originType = column.attr("origin-type");
 									var id = column.attr("data-content");
 									var metricItem, metricItemDescription;
-									
+
 									/*var options = {
 											position: {
 												my: "center bottom",
@@ -2261,13 +2261,13 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 									rolCol = rollups[Math.min(rollups.length-1,levelId-1)].col + 1;
 									text = "Total for ";
 								}
-								if (levelId <=rollups.length) { 
+								if (levelId <=rollups.length) {
 									text = text + this.parentNode.__data__.v[rolCol];
 								} else {
 									text = text + this.parentNode.__data__.v[i];
 								}
 							} else if ((levelId === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
-								text = "Grant Total";
+								text = "Grand Total";
 							}
 						} else if (i === 1){
 							rolCol = rollupColIndex;
@@ -2280,7 +2280,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 							}
 						} else  if (i === 2) {
 							if ((levelId === 0) && (this.parentNode === this.parentNode.parentNode.childNodes[0])) {
-								text = "Grant Total";
+								text = "Grand Total";
 							}
 						} else if (this.parentNode && levelId === 1) {
 							if (i >= me.firstMeasure && me.model.get("hideRollupTotal") === true) {
@@ -2305,7 +2305,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 				} else {
 					this.$el.find("#total").hide();
 					this.$el.find("#no-data").show();
-				} 
+				}
 				if (typeof $.i18n !== "undefined") {
 					this.$el.localize();
 				}
