@@ -70,8 +70,8 @@
             if (options.materializeDatasetsView) {
                 this.materializeDatasetsView = true;
             }
-            if (options.downloadButtonLabel) {
-                this.downloadButtonLabel = options.downloadButtonLabel;
+            if (options.saveButtonLabel) {
+                this.saveButtonLabel = options.saveButtonLabel;
             }
             if (options.displayScripting === false) {
                 this.displayScripting = false;
