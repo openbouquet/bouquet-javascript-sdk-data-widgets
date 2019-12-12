@@ -1,6 +1,6 @@
 {
   "name": "squid_api_data_widgets",
-  "version": "7.3.11",
+  "version": "7.3.13",
   "homepage": "https://github.com/openbouquet/bouquet-javascript-sdk-data-widgets",
   "authors": [
     "obalbous <oba@squid>"
