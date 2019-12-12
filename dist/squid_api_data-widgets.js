@@ -3642,9 +3642,10 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 }));
 
 (function (root, factory) {
+	"use strict";
     root.squid_api.view.DataExport = factory(root.Backbone, root.squid_api);
 }(this, function (Backbone, squid_api) {
-
+	"use strict";
     View = Backbone.View.extend( {
 
         template : null,
@@ -3662,7 +3663,11 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
         materializeDatasetsView : false,
         buttonLabel: "Export",
         popupDialogClass : "squid-api-export-panel-popup",
-        downloadButtonLabel : "Download",
+        downloadButtonLabel: "Download",
+    	saveButtonLabel: "Save",
+    	selectFormatLabel:  "Select a format",
+    	selectDimsMetricsLabel:  "Select dimensions & metrics",
+    	compressionLabel: "Compression",
         analysisConfigurationEnabled : false,
         metricSelectorEnabled : false,
         configClone : null,
@@ -3708,8 +3713,8 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             if (options.materializeDatasetsView) {
                 this.materializeDatasetsView = true;
             }
-            if (options.downloadButtonLabel) {
-                this.downloadButtonLabel = options.downloadButtonLabel;
+            if (options.saveButtonLabel) {
+                this.saveButtonLabel = options.saveButtonLabel;
             }
             if (options.displayScripting === false) {
                 this.displayScripting = false;
@@ -4090,6 +4095,10 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             var me = this;
             if (typeof $.i18n !== "undefined") {
             	this.downloadButtonLabel = $.i18n.t("export-download");
+            	this.saveButtonLabel = $.i18n.t("export-save");
+            	this.selectFormatLabel = $.i18n.t("export-format");
+            	this.selectDimsMetricsLabel = $.i18n.t("export-dim-metrics");
+            	this.compressionLabel = $.i18n.t("export-compression");
             }
             var analysis = this.model.get("analysis");
             if (!analysis) {
@@ -4146,6 +4155,10 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
                 $(this.viewPort).html(this.template({
                     "displayInAccordion" : this.displayInAccordion,
                     "downloadButtonLabel" : this.downloadButtonLabel,
+                    "saveButtonLabel" : this.saveButtonLabel,
+                    "selectFormatLabel" : this.selectFormatLabel,
+                    "selectDimsMetricsLabel" : this.selectDimsMetricsLabel,
+                    "compressionLabel" : this.compressionLabel,
                     "displayInPopup" : this.displayInPopup,
                     "sqlView" : this.sqlView,
                     "materializeDatasetsView" : this.materializeDatasetsView,
