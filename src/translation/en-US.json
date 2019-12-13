@@ -11,7 +11,7 @@
   "export-title-select": "My Saved Exports & Shared", 
   "export-placeholder-name": "Export name",    
   "export-no-export": "You don't have yet saved any export. There is no other export shared by an administrator",  
-  "export-confirm-delete": "Are you sure you would like to delete this export",  
+  "export-confirm-delete": "Are you sure you would like to delete the export",  
   "noDataMessage":"No data found",
   "computing":"Computing",
   "reRunMessage":"Please manually refresh your analysis",

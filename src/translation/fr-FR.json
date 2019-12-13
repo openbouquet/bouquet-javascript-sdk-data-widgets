@@ -11,7 +11,7 @@
   "export-title-select": "Mes Exports Sauvegardés et Partagés",  
   "export-placeholder-name": "Nom de l'export",    
   "export-no-export": "Vous n'avez pas encore sauvegardé d'export. Aucun administrateur n'a partagé d'export.",  
-  "export-confirm-delete": "Veuillez confirmer pour supprimer cet export",  
+  "export-confirm-delete": "Veuillez confirmer pour supprimer l'export",  
   "noDataMessage":"Il n'y a pas de données",
   "computing":"Calcul en cours",
   "reRunMessage":"Veuillez réexecuter votre analyse",
