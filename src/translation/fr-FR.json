@@ -8,7 +8,7 @@
   "export-create": "Créer",
   "export-edit": "Modifier",
   "export-save": "Enregistrer",  
-  "export-title-select": "Mes Exports Sauvegardés et Partagés",  
+  "export-title-select": "Exports Personnels et Partagés",  
   "export-placeholder-name": "Nom de l'export",    
   "export-no-export": "Vous n'avez pas encore sauvegardé d'export. Aucun administrateur n'a partagé d'export.",  
   "export-confirm-delete": "Veuillez confirmer pour supprimer l'export",  

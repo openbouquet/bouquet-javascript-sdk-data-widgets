@@ -8,7 +8,7 @@
   "export-create": "Create",
   "export-edit": "Edit",
   "export-save": "Save",  
-  "export-title-select": "My Saved Exports & Shared", 
+  "export-title-select": "Shared & Owned Saved Exports", 
   "export-placeholder-name": "Export name",    
   "export-no-export": "You don't have yet saved any export. There is no other export shared by an administrator",  
   "export-confirm-delete": "Are you sure you would like to delete the export",  
