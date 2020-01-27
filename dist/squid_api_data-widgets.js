@@ -1533,6 +1533,10 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 				this.filters = squid_api.model.filters;
 			}
 
+			if(options.removeTotalsBookmarkIds){
+				this.removeTotalsBookmarkIds = options.removeTotalsBookmarkIds;
+			}
+
 			if (options.maxRowsPerPage) {
 				this.maxRowsPerPage = options.maxRowsPerPage;
 			}
@@ -2294,6 +2298,10 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
 				});
 
 				if (results.totalSize>0) {
+					// Hide totals for PR_P1 & DR_D1 reports
+					if(this.removeTotalsBookmarkIds && (this.removeTotalsBookmarkIds.indexOf(this.config.get('bookmark')) > -1)){
+							$('tr.group td.new-category.current.measure').text('');
+					}
 					// display total
 					this.$el.find("#no-data").hide();
 					var resultsInfo = "Showing "+(results.startIndex + 1) + " - " + (results.startIndex + data.results.rows.length)+" of "+results.totalSize+" entries";
