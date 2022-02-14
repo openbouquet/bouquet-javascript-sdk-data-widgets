@@ -626,7 +626,7 @@
 														if (typeof $.i18n !== "undefined") {
 															columnTitle = $.i18n.t("compare-growth-title", {"type":(originType === "COMPARETO"? $.i18n.t("comparison-label"):$.i18n.t("growth-label")), "metric":metricItemDescription, "lower":lowerBound, "upper":upperBound});
 											            }
-
+														columnTitle = columnTitle.replace(/&amp;/g, '&');
 														column.attr("title", columnTitle);
 													}
 												}
