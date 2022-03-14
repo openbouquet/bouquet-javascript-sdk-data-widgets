@@ -78,7 +78,7 @@
             	a.attributes.startIndex=0;
             }
             changed = changed || a.hasChanged();
-            var selection = me.config.get("selection");
+            //var selection = me.config.get("selection");
             var indexToRemoveFromChosen = null;
             var chosenDimensions = $.extend(true, [], this.config.get("chosenDimensions"));
             a.setFacets(chosenDimensions, silent);

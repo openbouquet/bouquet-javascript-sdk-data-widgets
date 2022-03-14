@@ -2521,7 +2521,7 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             	a.attributes.startIndex=0;
             }
             changed = changed || a.hasChanged();
-            var selection = me.config.get("selection");
+            //var selection = me.config.get("selection");
             var indexToRemoveFromChosen = null;
             var chosenDimensions = $.extend(true, [], this.config.get("chosenDimensions"));
             a.setFacets(chosenDimensions, silent);
@@ -4044,26 +4044,37 @@ this["squid_api"]["template"]["squid_api_timeseries_widget"] = Handlebars.templa
             if (analysis.get("id").projectId && enabled !== false) {
                 var downloadAnalysis = new squid_api.model.ProjectAnalysisJob();
                 var orderBy = [], i, j;
+                var items = [];
+                $("div#dimensionSelector ul.multiselect-container li").each(function(){
+                    if($(this).hasClass("active") && $(this)[0].classList.length === 1){
+                        items.push({
+                            value: $(this).find("input").val()
+                        });
+                    }
+                });
                 
+                let attributes = analysis.attributes;
+                attributes.facets = items;
+                if (items) {
+                    for (i = 0; i < items.length; i++)  {
+                        var toAdd = true;
+                        for (j=0; j<orderBy.length; j++) {
+                            if (orderBy[j].expression && orderBy[j].expression.value === items[i].value) {
+                                toAdd = false;
+                            }
+                        }
+                        if (toAdd) {
+                            orderBy.push({expression: {value:  items[i].value},  direction: "ASC"});
+                        }
+                    }
+                }
+
                 /*if (analysis.attributes.orderBy) {
                 	for (i = 0; i < analysis.attributes.orderBy.length; i++)  {
                 		orderBy.push( analysis.attributes.orderBy[i]);
                 	}
                 }
                 */
-                if (analysis.attributes.facets) {
-                 	for (i = 0; i < analysis.attributes.facets.length; i++)  {
-                 		var toAdd = true;
-                 		for (j=0; j<orderBy.length; j++) {
-                 			if (orderBy[j].expression && orderBy[j].expression.value === analysis.attributes.facets[i].value) {
-                 				toAdd = false;
-                 			}
-                 		}
-                 		if (toAdd) {
-                    		orderBy.push({expression: {value:  analysis.attributes.facets[i].value},  direction: "ASC"});
-                 		}
-                	}
-                }
                 downloadAnalysis.set(analysis.attributes);
                 downloadAnalysis.set("orderBy", orderBy);
                 downloadAnalysis.setParameter("timeout", 10000);
